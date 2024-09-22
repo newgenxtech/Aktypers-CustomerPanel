@@ -4,10 +4,12 @@ import {
 } from "react-router-dom";
 import { Provider } from 'react-redux'
 import BaseLayout from "./layouts/BaseLayout";
-import Home from "./pages/HomePage"
+import Home from "./pages/HomePage";
 import ErrorPage from "./pages/ErrorPage";
 import { store } from "./store/store";
 import NotFound from "./pages/NotFound";
+import WarehouseListPage from "./pages/WareHouse/WarehouseListPage";
+import WarehouseDetailPage from "./pages/WareHouse/WarehouseDetailPage";
 
 
 const router = createBrowserRouter([
@@ -22,18 +24,19 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: "warehouse/:code",
+                path: 'dashboard',
+                element: <NotFound />,
+            },
+            {
+                path: "warehouse",
                 element: (
-                    <div>
-                        <h1>Warehouse</h1>
-                        <h2>Warehouse Details</h2>
-                    </div>
+                    <WarehouseListPage />
                 ),
             },
-            // Product
-            // Dashboard
-            // Order
-            // Biling
+            {
+                path: "warehouse/:code",
+                element: <WarehouseDetailPage />
+            },
             {
                 path: "product",
                 element: <NotFound />,

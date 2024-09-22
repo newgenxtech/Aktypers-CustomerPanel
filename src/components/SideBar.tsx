@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, Package, Warehouse, ShoppingCart, CreditCard } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 import DocsIcon from '@/assets/icons8-open-book-96.png';
 import Logo from '@/assets/logo.png';
@@ -8,22 +9,22 @@ import '@/styles/SideBar.css';
 
 type MenuItem = {
     label: string;
-    icon?: string;
+    icon?: React.ReactNode;
     path: string;
 };
 
 const menuItems: MenuItem[] = [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Product', path: '/product' },
-    { label: 'Warehouse', path: '/warehouse' },
+    { label: 'Dashboard', path: '/dashboard', icon: <Home /> },
+    { label: 'Product', path: '/product', icon: <Package /> },
+    { label: 'Warehouse', path: '/warehouse', icon: <Warehouse /> },
     // { label: 'Purchaser', path: '/purchaser' },
     // { label: 'Contracts', path: '/contracts' },
     // { label: 'RFP', path: '/rfp' },
     // { label: 'WRO', path: '/wro' },
     // { label: 'Inventory', path: '/inventory' },
-    { label: 'Order', path: '/order' },
+    { label: 'Order', path: '/order', icon: <ShoppingCart /> },
     // { label: 'Work Order', path: '/work-order' },
-    { label: 'Billing', path: '/billing' },
+    { label: 'Billing', path: '/billing', icon: <CreditCard /> },
 ];
 
 const Sidebar = () => {
@@ -96,7 +97,7 @@ const Sidebar = () => {
                             className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
                             onClick={() => handleItemClick(item.path)}
                         >
-                            {item.icon && <span className={`menu-icon ${item.icon}`}></span>}
+                            {item.icon && <span className="menu-icon">{item.icon}</span>}
                             <span>{item.label}</span>
                         </li>
                     ))}
