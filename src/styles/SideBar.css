@@ -1,0 +1,84 @@
+/* .sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 15px;
+  }
+   */
+
+   /* Sidebar container */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #2d3748; /* gray-800 */
+  padding: 16px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.sidebar-open {
+  width: 256px; /* w-64 */
+}
+
+.sidebar-closed {
+  width: 80px; /* w-20 */
+}
+
+/* Header styles */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.toggle-button {
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.toggle-line {
+  width: 24px;
+  height: 2px;
+  background-color: white;
+  margin-bottom: 4px;
+}
+
+/* Hide and show classes */
+.show {
+  display: block;
+}
+
+.hide {
+  display: none;
+}
+
+/* Sidebar navigation */
+.sidebar-nav {
+  margin-top: 40px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.icon {
+  font-size: 1.25rem; /* text-xl */
+}
+
+.link-text {
+  margin-left: 16px;
+  transition: all 0.3s ease;
+}

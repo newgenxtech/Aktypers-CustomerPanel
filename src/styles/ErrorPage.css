@@ -1,0 +1,19 @@
+.error-page {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .error-page h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .error-page p {
+    margin-bottom: 20px;
+  }
+  
+  .error-page button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+  }

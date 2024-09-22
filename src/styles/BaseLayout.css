@@ -1,0 +1,8 @@
+.base-layout {
+    display: flex;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 15px;
+  }
