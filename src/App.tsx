@@ -7,6 +7,7 @@ import BaseLayout from "./layouts/BaseLayout";
 import Home from "./pages/HomePage"
 import ErrorPage from "./pages/ErrorPage";
 import { store } from "./store/store";
+import NotFound from "./pages/NotFound";
 
 
 const router = createBrowserRouter([
@@ -28,7 +29,23 @@ const router = createBrowserRouter([
                         <h2>Warehouse Details</h2>
                     </div>
                 ),
-            }
+            },
+            // Product
+            // Dashboard
+            // Order
+            // Biling
+            {
+                path: "product",
+                element: <NotFound />,
+            },
+            {
+                path: "order",
+                element: <NotFound />,
+            },
+            {
+                path: "billing",
+                element: <NotFound />,
+            },
         ],
     },
     {

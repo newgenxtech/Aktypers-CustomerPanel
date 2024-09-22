@@ -7,7 +7,7 @@ export interface TableState<T>{
   sortColumn: string | null;
 }
 
-const initialState: TableState<any> = {
+const initialState: TableState<never> = {
   data: [],
   sortedData: [],
   sortDirection: "asc",
@@ -39,9 +39,14 @@ const tableSlice = createSlice({
     searchTable: (state, action: PayloadAction<string>) => {
       const searchTerm = action.payload.toLowerCase();
       state.sortedData = state.data.filter((row: { [s: string]: unknown; } | ArrayLike<unknown>) =>
-        Object.values(row).some((value) =>
-          typeof value === 'string' && value.toLowerCase().includes(searchTerm)
-        )
+        Object.values(row).some((value) => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(searchTerm);
+          } else if (typeof value === 'number') {
+            return value.toString().includes(searchTerm);
+          }
+          return false;
+        })
       );
     },
   },
