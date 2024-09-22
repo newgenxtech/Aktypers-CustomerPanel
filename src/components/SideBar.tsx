@@ -20,12 +20,17 @@ const Sidebar = () => {
             </div>
             <nav className="sidebar-nav">
                 <Link to="/" className="sidebar-link">
-                    <img src="https://img.icons8.com/ios/50/000000/warehouse.png" alt="warehouse" className="icon" />
+                    <img src="https://img.icons8.com/ios/50/000000/dashboard.png" alt="dashboard" className="icon" />
                     <span className={`link-text ${isOpen ? 'show' : 'hide'}`}>Dashboard</span>
                 </Link>
                 <Link to="/contracts" className="sidebar-link">
                     <img src="https://img.icons8.com/ios/50/000000/contract.png" alt="contract" className="icon" />
                     <span className={`link-text ${isOpen ? 'show' : 'hide'}`}>Contracts</span>
+                </Link>
+                {/* Warehouse */}
+                <Link to="/warehouse" className="sidebar-link">
+                    <img src="https://img.icons8.com/ios/50/000000/warehouse.png" alt="warehouse" className="icon" />
+                    <span className={`link-text ${isOpen ? 'show' : 'hide'}`}>Warehouse</span>
                 </Link>
                 <Link to="/inventory" className="sidebar-link">
                     <img src="https://img.icons8.com/ios/50/000000/box.png" alt="box" className="icon" />

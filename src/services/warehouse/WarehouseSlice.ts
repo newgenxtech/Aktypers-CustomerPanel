@@ -4,7 +4,7 @@ import {
 } from '@reduxjs/toolkit';
 
 const initialState = {
-    warehouse: [
+    data: [
         {
           "name" : "Warehouse-165",
           "code" : "W-00001",
@@ -167,14 +167,14 @@ const WareHouseSlice = createSlice({
                 is_registered: action.payload.is_registered,
                 is_live: action.payload.is_live
             }
-            state.warehouse.push(addWarehouse)
+            state.data.push(addWarehouse)
         },
         deleteWarehouse: (state, action) => {
-            state.warehouse = state.warehouse.filter((item) => item.id !== action.payload)
+            state.data = state.data.filter((item) => item.id !== action.payload)
         },
         updateWarehouse: (state, action) => {
-            const index = state.warehouse.findIndex((item) => item.id === action.payload.id)
-            state.warehouse[index] = action.payload
+            const index = state.data.findIndex((item) => item.id === action.payload.id)
+            state.data[index] = action.payload
         }
     }
 })

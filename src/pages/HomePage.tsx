@@ -1,12 +1,27 @@
 import SearchComponent from "../components/SearchComponent"
 import TableComponent from "../components/TableComponent"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { WareHouseData } from "../Interfaces/interface"
 import { Link } from "react-router-dom"
-
+import { useEffect } from "react"
+import { searchTable, setData, TableState } from "../services/TableSlice"
+import sortIcon from "@/assets/icons8-sort-30.png"
 
 const HomePage = () => {
-    const data = useSelector((state: { warehouse: WareHouseData[] }) => state.warehouse)
+    const data = useSelector((state: { warehouse: { data: WareHouseData[] } }) => state.warehouse.data);
+    const SortedColumnName = useSelector((state: { table: TableState<WareHouseData> }) => state.table.sortColumn);
+    console.log(data);
+
+    const dispatch = useDispatch();
+
+    const handleSearch = (data) => {
+        console.log(data);
+        dispatch(searchTable(data));
+    };
+
+    useEffect(() => {
+        dispatch(setData(data));
+    }, [data, dispatch]);
 
     return (
         <div>
@@ -16,30 +31,60 @@ const HomePage = () => {
                 padding: '1rem',
                 gap: '6rem',
             }}>
-                <h1 style={{
-
-                }}>WareHouse</h1>
+                <label style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold'
+                }}>WareHouse</label>
                 <SearchComponent
                     style={{
+                        backgroundColor: '#EDEDF3',
                         width: '200%',
                         padding: '10px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc',
-                        backgroundColor: 'white',
-                        color: 'black',
+                        borderRadius: '4px',
+                        border: 'none',
+                        color: '#C2C2C8',
+                        fontFamily: 'Montserrat',
+                        fontSize: '1rem',
+                        fontWeight: 500,
+                        // opacity: 0.7,
+                        outline: 'none'
                     }}
-                    placeholder="Search..."
-                    onHandleChange={(e) => {
-                        console.log(e)
-                    }}
+                    placeholder="Search WareHouse"
+                    onHandleChange={handleSearch}
+                    postfix={<i className="fa fa-search" />}
                 />
             </div>
             <TableComponent
-                columns={['Code', 'Name', 'Type', 'City', 'Available Space']}
-                dataCols={
+                columns={
                     [
                         {
-                            label: 'Code',
+                            label: (
+                                // 'Code'
+                                // Sortable icon
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+
+                                    <span >Code</span>
+                                    {
+                                        SortedColumnName === 'code' ?
+
+                                            <img src={sortIcon} alt="sort"
+                                                style={{ width: '16px', height: '16px' }}
+                                            />
+                                            :
+                                            <img src={sortIcon} alt="sort"
+                                                style={{
+                                                    width: '16px', height: '16px',
+                                                    transform: 'rotate(180deg)'
+                                                }}
+                                            />
+
+                                    }
+                                </div>
+                            ),
                             key: 'code',
                             render: (data: Partial<WareHouseData>) => {
                                 return (
@@ -51,7 +96,8 @@ const HomePage = () => {
                                         }}
                                     >{data.code}</Link>
                                 )
-                            }
+                            },
+                            sortable: true
                         },
                         {
                             label: 'Name',

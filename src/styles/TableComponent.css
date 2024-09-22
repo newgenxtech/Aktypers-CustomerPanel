@@ -6,7 +6,6 @@
 .modern-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: Arial, sans-serif;
   margin: 20px 0;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
@@ -22,9 +21,11 @@
 }
 
 .modern-table th {
-  background-color: #007bff;
-  color: #ffffff;
-  text-transform: uppercase;
+  background-color: #F6F5FB;
+  color: #70807E;
+  /* text-transform: uppercase; */
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .modern-table tr:hover {

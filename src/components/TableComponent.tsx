@@ -1,18 +1,31 @@
 import "@/styles/TableComponent.css"
+import { useDispatch, useSelector } from "react-redux";
+import { sortTable } from "../services/TableSlice";
+import { RootState } from "../store/store";
 
 interface DataCol<T> {
-  label: string;
-  key: keyof T;
+  label: string | React.ReactNode;
+  key: string
   render: (data: T) => React.ReactNode;
+  sortable?: boolean;
+  onSort?: (accessor: string) => boolean
+
 }
 
 interface TableComponentProps<T> {
-  columns: string[] | React.ReactNode[]
+  columns: DataCol<T>[] | undefined;
   data: T[]
-  dataCols: DataCol<T>[];
 }
 
 const TableComponent = <T,>(props: TableComponentProps<T>) => {
+  const dispatch = useDispatch();
+
+  const sortedData = useSelector((state: RootState) => state.table.sortedData);
+  const handleSort = (accessor: string) => {
+    dispatch(sortTable(accessor));
+  };
+
+
   return (
     <div className="table-container">
       <table className="modern-table">
@@ -22,7 +35,13 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
               <tr>
                 {
                   props.columns.map((header, index) => (
-                    <th key={index}>{header}</th>
+                    <th
+                      key={index}
+                      onClick={() => header.sortable ? handleSort(header.key) : undefined}
+                      style={{ cursor: header.sortable ? "pointer" : "default" }}
+                    >
+                      {header.label}
+                    </th>
                   ))
                 }
               </tr>
@@ -30,12 +49,16 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
           )
         }
         <tbody>
-          {props.data &&
-            props.data.map((rowData, rowIndex) => (
+          {sortedData &&
+            sortedData.map((rowData, rowIndex) => (
               <tr key={rowIndex}>
-                {props.dataCols.map((col, colIndex) => (
-                  <td key={colIndex}>{col.render(rowData)}</td>
-                ))}
+                {
+                  props.columns && props.columns.map((col, colIndex) => (
+                    <td key={colIndex}>
+                      {col.render(rowData)}
+                    </td>
+                  ))
+                }
               </tr>
             ))}
         </tbody>
