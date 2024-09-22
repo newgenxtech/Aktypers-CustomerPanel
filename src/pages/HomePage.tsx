@@ -14,7 +14,7 @@ const HomePage = () => {
 
     const dispatch = useDispatch();
 
-    const handleSearch = (data) => {
+    const handleSearch = (data: string) => {
         console.log(data);
         dispatch(searchTable(data));
     };
