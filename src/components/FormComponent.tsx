@@ -36,11 +36,27 @@ const FormComponent = <T,>({ fields, onSubmit, initialValues }: FormProps<T>) =>
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
         const { name, value, checked } = e.target;
         console.log(name, value, checked);
-
-        setFormValues({
-            ...formValues, [name]:
-                type === 'checkbox' ? checked : value
-        });
+        switch (type) {
+            case 'checkbox':
+                setFormValues({
+                    ...formValues, [name]: checked
+                });
+                break;
+            case 'radio':
+                setFormValues({
+                    ...formValues, [name]: value
+                });
+                break;
+            case 'number':
+                setFormValues({
+                    ...formValues, [name]: Number(value)
+                });
+                break;
+            default:
+                setFormValues({
+                    ...formValues, [name]: value
+                });
+        }
     };
 
     const validateField = (_name: string, value: string, validation?: ValidationRule) => {

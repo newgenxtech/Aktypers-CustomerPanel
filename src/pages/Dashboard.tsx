@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
     // Memoize the calculations
     const totalWarehouses = useMemo(() => data.length, [data]);
     const totalSpaceAvailable = useMemo(
-        () => data.reduce((sum, warehouse) => sum + warehouse.space_available, 0),
+        () => Sum(data),
         [data]
     );
     const liveWarehouses = useMemo(
@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="metric-card">
                     <h2>Total Space Available</h2>
-                    <p>{totalSpaceAvailable.toLocaleString()} sq. ft.</p>
+                    <p>{totalSpaceAvailable} sq. ft.</p>
                 </div>
                 <div className="metric-card">
                     <h2>Live Warehouses</h2>
