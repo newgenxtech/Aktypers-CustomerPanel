@@ -58,15 +58,21 @@ const WarehouseListPage = () => {
                             <img src={FilterIcon} alt="filter" className='filterIcon' />
                             <span className="filter-title">Filters</span>
                         </div>
-                        <button
-                            onClick={() => {
-                                dispatch(UpdateFilteredData([]));
-                                dispatch(resetFilter());
-                            }}
-                            className="clear-filter-button"
-                        >
-                            Clear Filter
-                        </button>
+                        {
+                            StoreData.filterData.length > 0 && StoreData.sortColumn &&
+                            (
+
+                                <button
+                                    onClick={() => {
+                                        dispatch(UpdateFilteredData([]));
+                                        dispatch(resetFilter());
+                                    }}
+                                    className="clear-filter-button"
+                                >
+                                    Clear Filter
+                                </button>
+                            )
+                        }
                     </div>
 
                     {

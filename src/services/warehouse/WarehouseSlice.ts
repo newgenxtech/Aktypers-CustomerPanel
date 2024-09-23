@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 
 const createData = () => {
     const data = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
         data.push({
             name: `Warehouse-${faker.number.int({
                 min: 1,

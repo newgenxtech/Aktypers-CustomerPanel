@@ -1,9 +1,36 @@
+
+
+  /* Base styles */
 .base-layout {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  .base-layout {
+      flex-direction: column;
   }
-  
+
   .main-content {
-    flex-grow: 1;
-    padding: 15px;
+      padding: 8px;
   }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .base-layout {
+      flex-direction: row;
+  }
+
+  .main-content {
+      padding: 12px;
+  }
+}
