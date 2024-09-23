@@ -3,7 +3,7 @@ import { WareHouseData } from "@/Interfaces/interface";
 import { updateWarehouse } from "@/services/warehouse/WarehouseSlice";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import '@/styles/WarehouseDetailPage.css';
 
 const WarehouseDetailPage = () => {
     const location = useLocation()
@@ -78,16 +78,22 @@ const WarehouseDetailPage = () => {
     };
 
     return (
-        <div style={{
-            margin: '10%',
-        }}>
-
-            <FormComponent<WareHouseData>
-                fields={fields}
-                onSubmit={handleSubmit}
-                initialValues={propsData}
-            />
+        <div className="
+        container-fluid
+        ">
+            <div className="card">
+                <div className="card-header">
+                    <h2 className="card-title">Warehouse Details</h2>
+                    <p className="card-description">Fill in the details of the warehouse</p>
+                </div>
+                <FormComponent<WareHouseData>
+                    fields={fields}
+                    onSubmit={handleSubmit}
+                    initialValues={propsData}
+                />
+            </div>
         </div>
+
     );
 }
 

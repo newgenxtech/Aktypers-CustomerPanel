@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { WareHouseData, WarehouseDataStoreInterface } from "@/Interfaces/interface";
 import { Link } from "react-router-dom";
 import sortIcon from "@/assets/icons8-sort-30.png";
-
 import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
 import FilterIcon from '@/assets/icons8-filter-96.png';
 import { useCallback } from 'react';
@@ -40,7 +39,7 @@ const WarehouseListPage = () => {
         }
     }, [StoreData.data, dispatch]);
     return (
-        <div>
+        <div className='warehouse'>
             <div className="container">
                 <label className="label">Warehouse</label>
                 <SearchComponent
