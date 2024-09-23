@@ -36,7 +36,7 @@ const FormComponent = <T,>({ fields, onSubmit, initialValues }: FormProps<T>) =>
         }));
     }, []);
 
-    const validateField = (name: string, value: string, validation?: ValidationRule) => {
+    const validateField = (_name: string, value: string, validation?: ValidationRule) => {
         if (!validation) return null;
         if (validation.required && !value) return 'This field is required';
         if (validation.minLength && value.length < validation.minLength) return `Minimum length is ${validation.minLength}`;
