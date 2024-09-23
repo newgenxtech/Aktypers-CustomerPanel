@@ -30,10 +30,22 @@ const createData = () => {
 
 const initialState = {
     data: createData(),
+    filterData: [],
     sortDirection: "asc",
     sortColumn: null,
     currentPage: 1,
-    rowsPerPage: 10
+    rowsPerPage: 10,
+    searchColumn: {
+        name: '',
+        code: '',
+        city: '',
+        space_available: '',
+        type: '',
+        cluster: '',
+        is_registered: '',
+        is_live: ''
+    }
+
 }
 
 
@@ -64,6 +76,9 @@ const WareHouseSlice = createSlice({
             const index = state.data.findIndex((item) => item.id === action.payload.id)
             state.data[index] = action.payload
         },
+        UpdateFilteredData : (state, action) => {
+            state.filterData = action.payload
+        },
         updateSort: (state, action) => {
             state.sortColumn = action.payload
             state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
@@ -72,6 +87,9 @@ const WareHouseSlice = createSlice({
             state.currentPage = action.payload.currentPage
             state.rowsPerPage = action.payload.rowsPerPage
         },
+        updateSearchColumn: (state, action) => {
+            state.searchColumn = action.payload
+        },  
         resetData: (state) => {
             state.data = createData()
         },
@@ -87,6 +105,17 @@ const WareHouseSlice = createSlice({
     }
 })
 
-export const {addWarehouse, deleteWarehouse, updateWarehouse, updateSort, updatePagination} = WareHouseSlice.actions
+export const {
+    addWarehouse,
+    deleteWarehouse,
+    updateWarehouse,
+    updateSort,
+    updatePagination,
+    resetData,
+    resetPagination,
+    resetFilter,
+    UpdateFilteredData,
+    updateSearchColumn
+} = WareHouseSlice.actions
 
 export default WareHouseSlice.reducer

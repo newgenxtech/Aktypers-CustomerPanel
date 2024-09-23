@@ -15,5 +15,16 @@ export interface WarehouseDataStoreInterface {
     sortDirection: "asc" | "desc",
     sortColumn: string | null,
     currentPage: number,
-    rowsPerPage: number
+    rowsPerPage: number,
+    filterData: WareHouseData[]
+    searchColumn: {
+        name: string,
+        code: string,
+        city: string,
+        space_available: string,
+        type: string,
+        cluster: string,
+        is_registered: string,
+        is_live: string
+    }
 }

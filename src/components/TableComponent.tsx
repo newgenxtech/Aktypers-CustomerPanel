@@ -5,7 +5,7 @@ interface DataCol<T> {
   key: string
   render: (data: T) => React.ReactNode;
   sortable?: boolean;
-  onSort?: (accessor: string) => boolean
+  onSort?: (accessor: string) => void
 
 }
 
