@@ -1,12 +1,16 @@
 import FormComponent from "@/components/FormComponent";
 import { WareHouseData } from "@/Interfaces/interface";
-import { useLocation } from "react-router-dom";
+import { updateWarehouse } from "@/services/warehouse/WarehouseSlice";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const WarehouseDetailPage = () => {
     const location = useLocation()
     const { propsData } = location.state || { propsData: {} };
-    console.log(propsData);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
 
     const fields = [
         {
@@ -61,6 +65,7 @@ const WarehouseDetailPage = () => {
             label: 'Is Live',
             type: 'checkbox',
         },
+
     ];
 
     const handleSubmit = (values: {
@@ -68,11 +73,15 @@ const WarehouseDetailPage = () => {
         string | boolean | number | null
     }) => {
         console.log('Form Submitted:', values);
+        dispatch(updateWarehouse(values));
+        navigate('/warehouse');
     };
 
     return (
-        <div>
-            <h1>Reusable Form Example</h1>
+        <div style={{
+            margin: '10%',
+        }}>
+
             <FormComponent<WareHouseData>
                 fields={fields}
                 onSubmit={handleSubmit}

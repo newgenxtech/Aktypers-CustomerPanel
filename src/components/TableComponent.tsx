@@ -62,6 +62,7 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
               </tr>
             ))}
         </tbody>
+        {/* implement pagination */}
       </table>
     </div>
   )

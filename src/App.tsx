@@ -10,6 +10,7 @@ import { store } from "./store/store";
 import NotFound from "./pages/NotFound";
 import WarehouseListPage from "./pages/WareHouse/WarehouseListPage";
 import WarehouseDetailPage from "./pages/WareHouse/WarehouseDetailPage";
+import Dashboard from "./pages/Dashboard";
 
 
 const router = createBrowserRouter([
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'dashboard',
-                element: <NotFound />,
+                element: <Dashboard />,
             },
             {
                 path: "warehouse",

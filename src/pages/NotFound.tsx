@@ -6,8 +6,9 @@ const containerStyle: CSSProperties = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f7fafc'
+    
+    // minHeight: '100vh',
+    // backgroundColor: '#f7fafc'
 };
 
 const titleStyle = {
