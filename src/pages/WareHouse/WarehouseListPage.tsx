@@ -8,30 +8,37 @@ import sortIcon from "@/assets/icons8-sort-30.png";
 
 import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
 import FilterIcon from '@/assets/icons8-filter-96.png';
+import { useCallback } from 'react';
 
 
 const WarehouseListPage = () => {
     const StoreData = useSelector((state: { warehouse: WarehouseDataStoreInterface }) => state.warehouse);
     const dispatch = useDispatch();
 
-    const handleSearch = (data: string) => {
+
+
+    const handleSearch = useCallback((data: string) => {
         console.log(data);
         const searchTerm = data.toLowerCase();
-        if (data) {
-            const filteredData = StoreData.data.filter((row: WareHouseData) =>
-                Object.values(row).some((value) => {
-                    if (typeof value === 'string') {
-                        return value.toLowerCase().includes(searchTerm);
-                    } else if (typeof value === 'number') {
-                        return value.toString().includes(searchTerm);
-                    }
-                    return false;
-                })
-            );
+
+        const filteredData = StoreData.data.filter((row: WareHouseData) => {
+            return Object.values(row).some((value) => {
+                if (typeof value === 'string') {
+                    return value.toLowerCase().includes(searchTerm);
+                } else if (typeof value === 'number') {
+                    return value.toString().includes(searchTerm);
+                }
+                return false;
+            });
+        });
+
+        console.log(filteredData);
+        if (filteredData.length === 0) {
+            // alert('No Data Found');
+        } else {
             dispatch(UpdateFilteredData(filteredData));
         }
-
-    };
+    }, [StoreData.data, dispatch]);
     return (
         <div>
             <div className="container">
