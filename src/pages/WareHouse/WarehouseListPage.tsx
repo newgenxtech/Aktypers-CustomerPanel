@@ -2,28 +2,21 @@ import '@/styles/WarehouseListPage.css';
 import SearchComponent from "@/components/SearchComponent";
 import TableComponent from "@/components/TableComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { WareHouseData } from "@/Interfaces/interface";
+import { WareHouseData, WarehouseDataStoreInterface } from "@/Interfaces/interface";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { searchTable, setData, TableState } from "@/services/TableSlice";
 import sortIcon from "@/assets/icons8-sort-30.png";
+import { searchTable } from '@/services/TableSlice';
+import { updatePagination } from '@/services/warehouse/WarehouseSlice';
 
 const WarehouseListPage = () => {
-    const data = useSelector((state: { warehouse: { data: WareHouseData[] } }) => state.warehouse.data);
-    const SortedColumnName = useSelector((state: { table: TableState<WareHouseData> }) => state.table.sortColumn);
-    console.log(data);
-
+    const data = useSelector((state: { warehouse: WarehouseDataStoreInterface }) => state.warehouse);
     const dispatch = useDispatch();
 
     const handleSearch = (data: string) => {
         console.log(data);
         dispatch(searchTable(data));
+
     };
-
-    useEffect(() => {
-        dispatch(setData(data));
-    }, [data, dispatch]);
-
     return (
         <div>
             <div className="container">
@@ -40,11 +33,11 @@ const WarehouseListPage = () => {
                     {
                         label: 'Name',
                         key: 'name',
-                        render: (data: Partial<WareHouseData>) => {
-                            return <Link to={`/warehouse/${data.code}`} className="link" state={{
-                                propsData: data
-                            }}>{data.name}</Link>;
-                        }
+                        render: (data: Partial<WareHouseData>) => (
+                            <Link to={`/warehouse/${data.code}`} className="link" state={{ propsData: data }}>
+                                {data.name}
+                            </Link>
+                        )
                     },
                     {
                         label: (
@@ -53,15 +46,16 @@ const WarehouseListPage = () => {
                                 <img
                                     src={sortIcon}
                                     alt="sort"
-                                    className={SortedColumnName === 'code' ? 'sortable-icon' : 'sortable-icon-rotated'}
+                                // className={sortBy === 'code' ? (sortDirection === 'asc' ? 'sortable-icon' : 'sortable-icon-rotated') : ''}
                                 />
                             </div>
                         ),
                         key: 'code',
-                        render: (data: Partial<WareHouseData>) => {
-                            return <span>{data.code}</span>;
-                        },
-                        sortable: true
+                        sortable: true,
+                        render: (data: Partial<WareHouseData>) => <span>{data.code}</span>,
+                        // onSort: (columnKey: string) => {
+
+                        // }
                     },
                     {
                         label: 'Type',
@@ -118,7 +112,18 @@ const WarehouseListPage = () => {
                         }
                     }
                 ]}
-                data={data}
+                data={data.data}
+                pagination={
+                    {
+                        currentPage: data.currentPage,
+                        rowsPerPage: data.rowsPerPage,
+                    }
+                }
+                setPagination={
+                    (data: { currentPage: number, rowsPerPage: number }) => {
+                        dispatch(updatePagination(data));
+                    }
+                }
             />
         </div>
     );

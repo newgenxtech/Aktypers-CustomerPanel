@@ -1,7 +1,4 @@
 import "@/styles/TableComponent.css"
-import { useDispatch, useSelector } from "react-redux";
-import { sortTable } from "../services/TableSlice";
-import { RootState } from "../store/store";
 
 interface DataCol<T> {
   label: string | React.ReactNode;
@@ -14,15 +11,30 @@ interface DataCol<T> {
 
 interface TableComponentProps<T> {
   columns: DataCol<T>[] | undefined;
-  data: T[]
+  data: T[],
+  pagination: {
+    currentPage: number,
+    rowsPerPage: number
+  },
+  setPagination: (pagination: { currentPage: number, rowsPerPage: number }) => void
 }
 
 const TableComponent = <T,>(props: TableComponentProps<T>) => {
-  const dispatch = useDispatch();
 
-  const sortedData = useSelector((state: RootState) => state.table.sortedData);
-  const handleSort = (accessor: string) => {
-    dispatch(sortTable(accessor));
+
+
+
+  // Calculate the data to be displayed on the current page
+  const indexOfLastRow = props.pagination.currentPage * props.pagination.rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - props.pagination.rowsPerPage;
+  const currentData = props.data.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(props.data.length / props.pagination.rowsPerPage);
+  // Function to handle page change
+  const handlePageChange = (pageNumber: number) => {
+    // setCurrentPage(pageNumber);
+    props.setPagination({ currentPage: pageNumber, rowsPerPage: props.pagination.rowsPerPage })
   };
 
 
@@ -37,7 +49,7 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
                   props.columns.map((header, index) => (
                     <th
                       key={index}
-                      onClick={() => header.sortable ? handleSort(header.key) : undefined}
+                      onClick={() => header.sortable && header.onSort ? header.onSort(header.key) : undefined}
                       style={{ cursor: header.sortable ? "pointer" : "default" }}
                     >
                       {header.label}
@@ -49,8 +61,8 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
           )
         }
         <tbody>
-          {sortedData &&
-            sortedData.map((rowData, rowIndex) => (
+          {props.data &&
+            currentData.map((rowData, rowIndex) => (
               <tr key={rowIndex}>
                 {
                   props.columns && props.columns.map((col, colIndex) => (
@@ -62,8 +74,57 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
               </tr>
             ))}
         </tbody>
-        {/* implement pagination */}
       </table>
+      {/* implement pagination */}
+      <div className="pagination" style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "20px",
+        gap: "3px"
+      }}>
+        <div style={{
+          display: "flex",
+          gap: "5px"
+        }}>
+          <span>Page</span>
+          <span>{props.pagination.currentPage}</span>
+          <span>of</span>
+          <span>{totalPages}</span>
+        </div>
+        {/* show the first 2 and last 2 in middle 3 dot's */}
+        <div style={{
+          display: "flex",
+          gap: "5px"
+        }}>
+          <button
+            onClick={() => handlePageChange(1)}
+            disabled={
+
+              props.pagination.currentPage === 1
+            }
+          >
+            {"<<"}
+          </button>
+          <button
+            onClick={() => handlePageChange(props.pagination.currentPage - 1)}
+            disabled={props.pagination.currentPage === 1}
+          >
+            {"<"}
+          </button>
+          <button
+            onClick={() => handlePageChange(props.pagination.currentPage + 1)}
+            disabled={props.pagination.currentPage === totalPages}
+          >
+            {">"}
+          </button>
+          <button
+            onClick={() => handlePageChange(totalPages)}
+            disabled={props.pagination.currentPage === totalPages}
+          >
+            {">>"}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
