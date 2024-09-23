@@ -79,8 +79,9 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
       <div className="pagination" style={{
         display: "flex",
         justifyContent: "flex-end",
+        alignItems: "center",
         marginTop: "20px",
-        gap: "3px"
+        gap: "10px"
       }}>
         <div style={{
           display: "flex",

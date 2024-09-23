@@ -76,6 +76,10 @@ const Dashboard: React.FC = () => {
         () => data.filter((warehouse) => warehouse.is_live).length,
         [data]
     )
+    const registeredWarehouses = useMemo(
+        () => data.filter((warehouse) => warehouse.is_registered).length,
+        [data]
+    )
 
     return (
         <div className="dashboard">
@@ -101,6 +105,10 @@ const Dashboard: React.FC = () => {
                 <div className="metric-card">
                     <h2>Live Warehouses</h2>
                     <p>{liveWarehouses}</p>
+                </div>
+                <div className="metric-card">
+                    <h2>Registered Warehouses</h2>
+                    <p>{registeredWarehouses}</p>
                 </div>
             </div>
 

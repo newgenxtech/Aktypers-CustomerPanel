@@ -106,13 +106,16 @@ const WarehouseListPage = () => {
                         ),
                         key: 'name',
                         render: (data: Partial<WareHouseData>) => (
-                            <Link to={`/warehouse/${data.code}`} className="link" state={{ propsData: data }}>
+                            <Link to={`/warehouse/${data.code}`} className="link" >
                                 {data.name}
                             </Link>
                         ),
                         sortable: true,
                         onSort: (columnKey: string) => {
-                            dispatch(updateSort(columnKey));
+                            dispatch(updateSort({
+                                sortColumn: columnKey,
+                                sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
+                            }));
                             // Warehouse-2205
                             const trimAndConvertToNumber = (name: string) => {
                                 return parseInt(name.replace('Warehouse-', ''), 10);
@@ -146,7 +149,10 @@ const WarehouseListPage = () => {
                         sortable: true,
                         render: (data: Partial<WareHouseData>) => <span>{data.code}</span>,
                         onSort: (columnKey: string) => {
-                            dispatch(updateSort(columnKey));
+                            dispatch(updateSort({
+                                sortColumn: columnKey,
+                                sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
+                            }));
                             // W-1, W-2, W-3
                             // Helper function to trim the 'W-' prefix and convert to number
                             const trimAndConvertToNumber = (code: string) => {
@@ -199,7 +205,10 @@ const WarehouseListPage = () => {
                         },
                         sortable: true,
                         onSort: (columnKey: string) => {
-                            dispatch(updateSort(columnKey));
+                            dispatch(updateSort({
+                                sortColumn: columnKey,
+                                sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
+                            }));
                             const sortedData = [...StoreData.data].sort((a, b) => {
                                 if (StoreData.sortDirection === 'asc') {
                                     return a.space_available - b.space_available;

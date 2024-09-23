@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Home, Package, Warehouse, ShoppingCart, CreditCard } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 import DocsIcon from '@/assets/icons8-open-book-96.png';
+import AccountIcon from '@/assets/icons8-male-user-96.png';
 import Logo from '@/assets/logo.png';
 import '@/styles/SideBar.css';
 
@@ -85,6 +86,14 @@ const Sidebar = () => {
                             marginLeft: '1.2rem',
                         }} />
                     </a>
+                    <a href='https://stockarea.io' target="_blank">
+                        <img src={AccountIcon} alt="docs" className="icon" style={{
+                            width: '30px',
+                            height: '30px',
+                            marginBottom: '1rem',
+                            marginLeft: '1.2rem',
+                        }} />
+                    </a>
 
                 </footer>
             </div>
@@ -102,10 +111,7 @@ const Sidebar = () => {
                         </li>
                     ))}
                 </ul>
-                {/* <div className="get-started">
-                    <p>Follow this step-by-step guide to get on board with Digital Warehouse.</p>
-                    <button className="start-setup-btn">Start Setup</button>
-                </div> */}
+
             </div>
         </>
     );

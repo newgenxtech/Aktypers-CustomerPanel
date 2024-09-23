@@ -37,6 +37,7 @@
   
   .card-footer {
     width: 100%;
+    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
   }
@@ -54,6 +55,22 @@
   
   .submit-button:hover {
     background-color: #252525;
+  }
+
+  .add-sub-item{
+
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1.5rem;
+
   }
   
   /* Mobile styles */

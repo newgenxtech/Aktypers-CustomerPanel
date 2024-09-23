@@ -3,6 +3,7 @@ import {
     nanoid
 } from '@reduxjs/toolkit';
 import { faker } from '@faker-js/faker';
+import { WarehouseDataStoreInterface } from '@/Interfaces/interface';
 
 const createData = () => {
     const data = [];
@@ -22,14 +23,16 @@ const createData = () => {
             type: faker.helpers.arrayElement(['Leasable Space', 'Warehouse Service']),
             cluster: faker.helpers.arrayElement(['cluster-a-1', 'cluster-a-21', 'cluster-a-32', 'cluster-v-2']),
             is_registered: faker.datatype.boolean(),
-            is_live: faker.datatype.boolean()
+            is_live: faker.datatype.boolean(),     
+            customItems: []    
         });
     }
     return data;
 }
 
-const initialState = {
+const initialState: WarehouseDataStoreInterface = {
     data: createData(),
+    columns: [],
     filterData: [],
     sortDirection: "asc",
     sortColumn: null,
@@ -43,7 +46,8 @@ const initialState = {
         type: '',
         cluster: '',
         is_registered: '',
-        is_live: ''
+        is_live: '',
+        customItems: []
     }
 
 }
@@ -65,7 +69,8 @@ const WareHouseSlice = createSlice({
                 type: action.payload.type,
                 cluster: action.payload.cluster,
                 is_registered: action.payload.is_registered,
-                is_live: action.payload.is_live
+                is_live: action.payload.is_live,
+                customItems: action.payload.customItems
             }
             state.data.push(addWarehouse)
         },
@@ -80,8 +85,8 @@ const WareHouseSlice = createSlice({
             state.filterData = action.payload
         },
         updateSort: (state, action) => {
-            state.sortColumn = action.payload
-            state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
+            state.sortColumn = action.payload.sortColumn
+            state.sortDirection = action.payload.sortDirection
         },
         updatePagination: (state, action) => {
             state.currentPage = action.payload.currentPage

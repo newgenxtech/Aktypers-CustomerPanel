@@ -1,3 +1,5 @@
+import { InputField } from "@/components/FormComponent"
+
 export interface WareHouseData {
     name : string,
     code : string,
@@ -8,10 +10,12 @@ export interface WareHouseData {
     cluster : string,
     is_registered : boolean,
     is_live : boolean
+    customItems: InputField[]
 }
 
 export interface WarehouseDataStoreInterface {
     data: WareHouseData[],
+    columns:InputField[]
     sortDirection: "asc" | "desc",
     sortColumn: string | null,
     currentPage: number,
@@ -25,6 +29,7 @@ export interface WarehouseDataStoreInterface {
         type: string,
         cluster: string,
         is_registered: string,
-        is_live: string
+        is_live: string,
+        customItems: InputField[]
     }
 }
