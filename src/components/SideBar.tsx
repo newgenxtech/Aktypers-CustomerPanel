@@ -41,6 +41,7 @@ const Sidebar = () => {
     const handleItemClick = (path: string) => {
         setActiveItem(path);
         naviagte(path);
+        setShowSidebar(false)
     };
 
 
