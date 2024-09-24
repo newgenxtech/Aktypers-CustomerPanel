@@ -134,7 +134,15 @@ const Sidebar = () => {
                         </div>
                     </div>
                     <div className='mobile-navbar-icon '>
-                        <img src={Logo} alt="dashboard" className="mobile-navbar-logo" />
+                        <img src={Logo} alt="dashboard" className="mobile-navbar-logo"
+                            onClick={
+                                () => {
+                                    handleItemClick('/warehouse');
+                                    setActiveItem('/warehouse');
+                                }
+                            }
+
+                        />
                     </div>
                     <div className='mobile-navbar-right'>
                         <div className='mobile-navbar-icon '>
