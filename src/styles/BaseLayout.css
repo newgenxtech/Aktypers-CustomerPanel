@@ -26,9 +26,9 @@
 
 /* Tablet styles */
 @media (min-width: 768px) and (max-width: 1024px) {
-  .base-layout {
+  /* .base-layout {
       flex-direction: row;
-  }
+  } */
 
   .main-content {
       padding: 12px;

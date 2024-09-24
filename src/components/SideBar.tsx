@@ -5,7 +5,9 @@ import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
 import Logo from '@/assets/logo.png';
+import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 
 type MenuItem = {
@@ -29,10 +31,12 @@ const menuItems: MenuItem[] = [
 ];
 
 const Sidebar = () => {
+    const [parent] = useAutoAnimate();
     const naviagte = useNavigate();
 
     const [active, setActive] = useState<string>('home');
     const [activeItem, setActiveItem] = useState<string>('/warehouse');
+    const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
     const handleItemClick = (path: string) => {
         setActiveItem(path);
@@ -48,70 +52,117 @@ const Sidebar = () => {
 
     return (
         <>
-            <div className="sidebar-parent">
-                <header>
-                    <img src={Logo} alt="dashboard" className="logo" style={{
-                        width: '50%',
-                        marginLeft: '1rem',
-                        marginBottom: '2rem',
-                    }} />
-                    <div
-                        className={`sidebar-parent-icon ${active === 'home' ? 'active' : ''}`}
-                        onClick={() => handleIconClick('home')}
-                    >
-                        <img src={WareHouseIcon} alt="dashboard" style={{
-                            width: '25px',
-                            height: '25px',
-                        }} />
-                    </div>
-                    <div
-                        className={`sidebar-parent-icon ${active === 'file' ? 'active' : ''}`}
-                        onClick={() => handleIconClick('file')}
-                    >
-                        <i className="fas fa-file"></i> {/* Replace with file icon */}
-                    </div>
-                    <div
-                        className={`sidebar-parent-icon ${active === 'user' ? 'active' : ''}`}
-                        onClick={() => handleIconClick('user')}
-                    >
-                        <i className="fas fa-user"></i> {/* Replace with user icon */}
-                    </div>
-                </header>
-                <footer>
-                    <a href='https://stockarea.io/quick-guides' target="_blank">
-                        <img src={DocsIcon} alt="docs" className="icon" style={{
-                            width: '30px',
-                            height: '30px',
-                            marginBottom: '1rem',
-                            marginLeft: '1.2rem',
-                        }} />
-                    </a>
-                    <a href='https://stockarea.io' target="_blank">
-                        <img src={AccountIcon} alt="docs" className="icon" style={{
-                            width: '30px',
-                            height: '30px',
-                            marginBottom: '1rem',
-                            marginLeft: '1.2rem',
-                        }} />
-                    </a>
+            <div ref={parent}>
+                <div
+                    className='sidebar-container'
+                >
+                    <div className="sidebar-parent">
+                        <div className="sidebar-overlay">
+                            <header className='sidebar-header'>
+                                <img src={Logo} alt="dashboard" className="logo" />
+                                <div
+                                    className={`sidebar-parent-icon ${active === 'home' ? 'active' : ''}`}
+                                    onClick={() => handleIconClick('home')}
+                                >
+                                    <img src={WareHouseIcon} alt="dashboard" style={{
+                                        width: '25px',
+                                        height: '25px',
+                                    }} />
+                                </div>
+                                <div
+                                    className={`sidebar-parent-icon ${active === 'file' ? 'active' : ''}`}
+                                    onClick={() => handleIconClick('file')}
+                                >
+                                    <i className="fas fa-file"></i> {/* Replace with file icon */}
+                                </div>
+                                <div
+                                    className={`sidebar-parent-icon ${active === 'user' ? 'active' : ''}`}
+                                    onClick={() => handleIconClick('user')}
+                                >
+                                    <i className="fas fa-user"></i> {/* Replace with user icon */}
+                                </div>
+                            </header>
+                            <footer className='
+                    sidebar-footer
+                    '>
+                                <a href='https://stockarea.io/quick-guides' target="_blank">
+                                    <img src={DocsIcon} alt="docs" className="icon" style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        marginBottom: '1rem',
+                                        marginLeft: '1.2rem',
+                                    }} />
+                                </a>
+                                <a href='https://stockarea.io' target="_blank">
+                                    <img src={AccountIcon} alt="docs" className="icon" style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        marginBottom: '1rem',
+                                        marginLeft: '1.2rem',
+                                    }} />
+                                </a>
 
-                </footer>
-            </div>
-            <div className="sidebar">
-                <p className="sidebar-title">Digital Warehouse</p>
-                <ul className="menu-list">
-                    {menuItems.map((item) => (
-                        <li
-                            key={item.path}
-                            className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
-                            onClick={() => handleItemClick(item.path)}
-                        >
-                            {item.icon && <span className="menu-icon">{item.icon}</span>}
-                            <span>{item.label}</span>
-                        </li>
-                    ))}
-                </ul>
+                            </footer>
+                        </div>
+                    </div>
+                    <div className="sidebar">
+                        <p className="sidebar-title">Digital Warehouse</p>
+                        <ul className="menu-list">
+                            {menuItems.map((item) => (
+                                <li
+                                    key={item.path}
+                                    className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
+                                    onClick={() => handleItemClick(item.path)}
+                                >
+                                    {item.icon && <span className="menu-icon">{item.icon}</span>}
+                                    <span>{item.label}</span>
+                                </li>
+                            ))}
+                        </ul>
 
+                    </div>
+                </div>
+                <div className='mobile-navbar'>
+                    <div className='mobile-navbar-left'>
+                        <div className='mobile-navbar-icon '>
+                            <img src={HamburgerIcon} alt="dashboard" style={{
+                                width: '25px',
+                                height: '25px',
+                                cursor: 'pointer',
+                            }} className="mobile-navbar-logo" onClick={() => setShowSidebar(!showSidebar)} />
+                        </div>
+                    </div>
+                    <div className='mobile-navbar-icon '>
+                        <img src={Logo} alt="dashboard" className="mobile-navbar-logo" />
+                    </div>
+                    <div className='mobile-navbar-right'>
+                        <div className='mobile-navbar-icon '>
+                            <img src={AccountIcon} alt="docs" className="mobile-navbar-logo" style={{
+                                width: '30px',
+                                height: '30px',
+                                cursor: 'pointer',
+                            }} />
+                        </div>
+                    </div>
+                </div>
+                {
+                    showSidebar && (
+                        <div className='mobile-sidebar'>
+                            <ul className="menu-list">
+                                {menuItems.map((item) => (
+                                    <li
+                                        key={item.path}
+                                        className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
+                                        onClick={() => handleItemClick(item.path)}
+                                    >
+                                        {item.icon && <span className="menu-icon">{item.icon}</span>}
+                                        <span>{item.label}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )
+                }
             </div>
         </>
     );

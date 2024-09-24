@@ -21,15 +21,15 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onHandleChange, ...pr
     }, [debouncedSearchTerm, onHandleChange]);
 
     return (
-        <div>
-            <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                {...props}
-            />
-        </div>
+        // <div>
+        <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            {...props}
+        />
+        // </div>
     );
 };
 
