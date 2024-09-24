@@ -24,7 +24,8 @@
   }
 
   .chart-container {
-    width: 100% !important;
+    width: 90% !important;
+    height: 22rem;
   }
 
   .recent-activity {

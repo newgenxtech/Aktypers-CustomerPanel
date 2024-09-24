@@ -117,7 +117,17 @@ const Dashboard: React.FC = () => {
                 {/* Bar Chart */}
                 <div className="chart-container">
                     <h3>Space Availability by City</h3>
-                    <Bar data={barData} />
+                    <Bar
+                        data={barData}
+                        width={
+                            // on mobile devices, the chart width should be smaller
+                            window.innerWidth < 768 ? "100%" : undefined
+                        }
+                        height={
+                            // on mobile devices, the chart height should be smaller
+                            window.innerWidth < 768 ? "100%" : undefined
+                        }
+                    />
                 </div>
 
                 {/* Recent Warehouse Activity */}
