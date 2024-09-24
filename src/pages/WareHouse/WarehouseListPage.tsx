@@ -236,11 +236,12 @@ const WarehouseListPage = () => {
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        width: '100%',
-                                        height: '100%',
                                         borderRadius: '5px',
                                         paddingTop: '5px',
                                         paddingBottom: '5px',
+                                        width: '100%',
+                                        height: '100%',
+                                        minWidth: '80px',
                                         backgroundColor: data.is_live ? '#61BC68' : '#EA5756',
                                     }}>
                                     <span style={{
@@ -268,7 +269,7 @@ const WarehouseListPage = () => {
                     }
                 }
             />
-        </div>
+        </div >
     );
 };
 

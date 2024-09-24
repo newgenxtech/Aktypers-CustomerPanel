@@ -39,43 +39,45 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
 
 
   return (
-    <div className="table-container">
-      <table className="modern-table">
-        {
-          props.columns && (
-            <thead>
-              <tr>
-                {
-                  props.columns.map((header, index) => (
-                    <th
-                      key={index}
-                      onClick={() => header.sortable && header.onSort ? header.onSort(header.key) : undefined}
-                      style={{ cursor: header.sortable ? "pointer" : "default" }}
-                    >
-                      {header.label}
-                    </th>
-                  ))
-                }
-              </tr>
-            </thead>
-          )
-        }
-        <tbody>
-          {props.data &&
-            currentData.map((rowData, rowIndex) => (
-              <tr key={rowIndex}>
-                {
-                  props.columns && props.columns.map((col, colIndex) => (
-                    <td key={colIndex}>
-                      {col.render(rowData)}
-                    </td>
-                  ))
-                }
-              </tr>
-            ))}
-        </tbody>
-      </table>
-      {/* implement pagination */}
+    <>
+      <div className="table-container">
+        <table className="modern-table">
+          {
+            props.columns && (
+              <thead>
+                <tr>
+                  {
+                    props.columns.map((header, index) => (
+                      <th
+                        key={index}
+                        onClick={() => header.sortable && header.onSort ? header.onSort(header.key) : undefined}
+                        style={{ cursor: header.sortable ? "pointer" : "default" }}
+                      >
+                        {header.label}
+                      </th>
+                    ))
+                  }
+                </tr>
+              </thead>
+            )
+          }
+          <tbody>
+            {props.data &&
+              currentData.map((rowData, rowIndex) => (
+                <tr key={rowIndex}>
+                  {
+                    props.columns && props.columns.map((col, colIndex) => (
+                      <td key={colIndex}>
+                        {col.render(rowData)}
+                      </td>
+                    ))
+                  }
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        {/* implement pagination */}
+      </div>
       <div className="pagination" style={{
         display: "flex",
         justifyContent: "flex-end",
@@ -126,7 +128,7 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
           </button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
