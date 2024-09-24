@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, Package, Warehouse, ShoppingCart, CreditCard } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
@@ -36,27 +36,31 @@ const Sidebar = () => {
 
     const [active, setActive] = useState<string>('home');
     const [activeItem, setActiveItem] = useState<string>('/warehouse');
-    const [showSidebar, setShowSidebar] = useState<boolean>(false);
+
+    const [showMobileSidebar, setMobileSidebar] = useState<boolean>(false);
+    const [showChildSidebar, setChildSidebar] = useState<boolean>(true);
 
     const handleItemClick = (path: string) => {
         setActiveItem(path);
         naviagte(path);
-        setShowSidebar(false)
+        setMobileSidebar(false)
     };
 
 
-    const handleIconClick = (icon: string) => {
+    const handleIconClick = useCallback((icon: string) => {
         setActive(icon);
         console.log(`${icon} icon clicked`);
+
+        if (icon === 'home') {
+            setChildSidebar(!showChildSidebar);
+        }
         // You can add functionality to navigate or perform actions here
-    };
+    }, [showChildSidebar]);
 
     return (
         <>
             <div ref={parent}>
-                <div
-                    className='sidebar-container'
-                >
+                <div className='sidebar-container'>
                     <div className="sidebar-parent">
                         <div className="sidebar-overlay">
                             <header className='sidebar-header'>
@@ -83,9 +87,7 @@ const Sidebar = () => {
                                     <i className="fas fa-user"></i> {/* Replace with user icon */}
                                 </div>
                             </header>
-                            <footer className='
-                    sidebar-footer
-                    '>
+                            <footer className='sidebar-footer'>
                                 <a href='https://stockarea.io/quick-guides' target="_blank">
                                     <img src={DocsIcon} alt="docs" className="icon" style={{
                                         width: '30px',
@@ -106,22 +108,26 @@ const Sidebar = () => {
                             </footer>
                         </div>
                     </div>
-                    <div className="sidebar">
-                        <p className="sidebar-title">Digital Warehouse</p>
-                        <ul className="menu-list">
-                            {menuItems.map((item) => (
-                                <li
-                                    key={item.path}
-                                    className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
-                                    onClick={() => handleItemClick(item.path)}
-                                >
-                                    {item.icon && <span className="menu-icon">{item.icon}</span>}
-                                    <span>{item.label}</span>
-                                </li>
-                            ))}
-                        </ul>
+                    {
+                        showChildSidebar && (
+                            <div className={`sidebar`}>
+                                <p className="sidebar-title">Digital Warehouse</p>
+                                <ul className="menu-list">
+                                    {menuItems.map((item) => (
+                                        <li
+                                            key={item.path}
+                                            className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
+                                            onClick={() => handleItemClick(item.path)}
+                                        >
+                                            {item.icon && <span className="menu-icon">{item.icon}</span>}
+                                            <span>{item.label}</span>
+                                        </li>
+                                    ))}
+                                </ul>
 
-                    </div>
+                            </div>
+                        )
+                    }
                 </div>
                 <div className='mobile-navbar'>
                     <div className='mobile-navbar-left'>
@@ -130,7 +136,7 @@ const Sidebar = () => {
                                 width: '25px',
                                 height: '25px',
                                 cursor: 'pointer',
-                            }} className="mobile-navbar-logo" onClick={() => setShowSidebar(!showSidebar)} />
+                            }} className="mobile-navbar-logo" onClick={() => setMobileSidebar(!showMobileSidebar)} />
                         </div>
                     </div>
                     <div className='mobile-navbar-icon '>
@@ -155,7 +161,7 @@ const Sidebar = () => {
                     </div>
                 </div>
                 {
-                    showSidebar && (
+                    showMobileSidebar && (
                         <div className='mobile-sidebar'>
                             <ul className="menu-list">
                                 {menuItems.map((item) => (
