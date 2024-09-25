@@ -1,5 +1,6 @@
 .container-fluid{
     background-color: #F1F3F5;
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,6 +16,17 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 16px;
     background-color: #fff;
+  }
+
+  @media screen  and (max-width: 768px) {
+    .container-fluid {
+      background-color: #fff;
+    }
+    
+    .card {
+      width: 80%;
+      margin-top: 10rem;
+    }
   }
   
   .card-header {
