@@ -93,6 +93,7 @@ const WarehouseDetailPage = () => {
                 type: item.type,
                 placeholder: item.placeholder,
                 validation: item.validation,
+                options: item.options,
             }));
             setFields([...initialFields, ...newFields]);
         }

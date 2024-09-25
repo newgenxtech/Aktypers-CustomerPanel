@@ -8,6 +8,7 @@ import sortIcon from "@/assets/icons8-sort-30.png";
 import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
 import FilterIcon from '@/assets/icons8-filter-96.png';
 import { useCallback } from 'react';
+import { trimAndConvertToNumber } from '@/utils/utils';
 
 
 const WarehouseListPage = () => {
@@ -117,13 +118,10 @@ const WarehouseListPage = () => {
                                 sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
                             }));
                             // Warehouse-2205
-                            const trimAndConvertToNumber = (name: string) => {
-                                return parseInt(name.replace('Warehouse-', ''), 10);
-                            };
 
                             const sortedData = [...StoreData.data].sort((a, b) => {
-                                const numA = trimAndConvertToNumber(a.name);
-                                const numB = trimAndConvertToNumber(b.name);
+                                const numA = trimAndConvertToNumber(a.name, 'Warehouse-', '');
+                                const numB = trimAndConvertToNumber(b.name, 'Warehouse-', '');
 
                                 if (StoreData.sortDirection === 'asc') {
                                     return numA - numB;
@@ -154,15 +152,11 @@ const WarehouseListPage = () => {
                                 sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
                             }));
                             // W-1, W-2, W-3
-                            // Helper function to trim the 'W-' prefix and convert to number
-                            const trimAndConvertToNumber = (code: string) => {
-                                return parseInt(code.replace('W-', ''), 10);
-                            };
 
                             // Sorting logic
                             const sortedData = [...StoreData.data].sort((a, b) => {
-                                const numA = trimAndConvertToNumber(a.code);
-                                const numB = trimAndConvertToNumber(b.code);
+                                const numA = trimAndConvertToNumber(a.code, 'W-', '');
+                                const numB = trimAndConvertToNumber(b.code, 'W-', '');
 
                                 if (StoreData.sortDirection === 'asc') {
                                     return numA - numB;

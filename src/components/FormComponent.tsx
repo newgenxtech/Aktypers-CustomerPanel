@@ -35,6 +35,66 @@ interface FormProps<T> {
     initialValues?: T;
     setFields: React.Dispatch<React.SetStateAction<InputField[]>>; // New prop for updating fields
 }
+const renderField = (field: InputField, formValues: { [x: string]: unknown; }, handleChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void, errors: { [x: string]: unknown; }) => {
+    switch (field.type) {
+        case 'radio':
+            return field.options?.map((option) => (
+                <div key={option.value} className="form-group">
+                    <label>
+                        <input
+                            type="radio"
+                            name={field.name}
+                            value={option.value}
+                            checked={formValues[field.name] === option.value}
+                            onChange={(e) => handleChange(e, field.type)}
+                            className="form-input"
+                        />
+                        {option.label}
+                    </label>
+                </div>
+            ));
+        case 'select':
+            return (
+                <select
+                    name={field.name}
+                    value={String(formValues[field.name]) || ''}
+                    onChange={(e) => handleChange(e as unknown as React.ChangeEvent<HTMLInputElement>, field.type)}
+                    className="form-input"
+                >
+                    <option value="">Select an option</option>
+                    {field.options?.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            );
+        default:
+            return (
+                <input
+                    type={field.type}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    value={String(formValues[field.name]) || ''}
+                    onChange={(e) => handleChange(e, field.type)}
+                    className={`form-input ${errors[field.name] ? 'input-error' : ''}`}
+                    defaultChecked={formValues[field.name] as unknown as boolean}
+                    style={{
+                        padding: '0.75rem',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        fontSize: '1rem',
+                        backgroundColor: '#fff',
+                        color: '#333',
+                        outline: 'none',
+                        borderColor: errors[field.name] ? '#e74c3c' : '#ccc',
+                        width: ['checkbox', 'radio'].includes(field.type) ? '100%' : '',
+                        height: ['checkbox', 'radio'].includes(field.type) ? '1rem' : '',
+                    }}
+                />
+            );
+    }
+};
 
 const FormComponent = <T,>({ fields, onSubmit, initialValues, setFields }: FormProps<T>) => {
     const [formValues, setFormValues] = useState<{ [key: string]: string | boolean | number | null | InputField[] }>(initialValues || {});
@@ -80,45 +140,7 @@ const FormComponent = <T,>({ fields, onSubmit, initialValues, setFields }: FormP
                             <label htmlFor={field.name} className="form-label">
                                 {field.label}
                             </label>
-                            {field.type === 'radio' ? (
-                                field.options?.map((option) => (
-                                    <div key={option.value} className="form-group">
-                                        <label>
-                                            <input
-                                                type="radio"
-                                                name={field.name}
-                                                value={option.value}
-                                                checked={formValues[field.name] === option.value}
-                                                onChange={(e) => handleChange(e, field.type)}
-                                                className="form-input"
-                                            />
-                                            {option.label}
-                                        </label>
-                                    </div>
-                                ))
-                            ) : (
-                                <input
-                                    type={field.type}
-                                    name={field.name}
-                                    placeholder={field.placeholder}
-                                    value={String(formValues[field.name]) || ''}
-                                    onChange={(e) => handleChange(e, field.type)}
-                                    className={`form-input ${errors[field.name] ? 'input-error' : ''}`}
-                                    defaultChecked={formValues[field.name] as unknown as boolean}
-                                    style={{
-                                        padding: '0.75rem',
-                                        border: '1px solid #ccc',
-                                        borderRadius: '4px',
-                                        fontSize: '1rem',
-                                        backgroundColor: '#fff',
-                                        color: '#333',
-                                        outline: 'none',
-                                        borderColor: errors[field.name] ? '#e74c3c' : '#ccc',
-                                        width: ['checkbox', 'radio'].includes(field.type) ? '100%' : '',
-                                        height: ['checkbox', 'radio'].includes(field.type) ? '1rem' : '',
-                                    }}
-                                />
-                            )}
+                            {renderField(field, formValues, handleChange, errors)}
                             {errors[field.name] && <span className="error-message">{errors[field.name]}</span>}
                         </div>
                     ))}

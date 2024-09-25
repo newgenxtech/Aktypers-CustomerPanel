@@ -117,7 +117,7 @@ const CustomFormComponent = (
             return;
         }
 
-        if (type === 'radio' || type === 'checkbox' || type === 'select' && options.length === 0) {
+        if ((type === 'radio' || type === 'checkbox' || type === 'select') && options.length === 0) {
             alert('At least one option is required');
             return;
         }

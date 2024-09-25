@@ -35,11 +35,7 @@ const quickSort = (arr: WareHouseData[], sortDirection: string): WareHouseData[]
 };
 
 const Sum = (arr: WareHouseData[]): number => {
-    let data = 0
-    arr.forEach((warehouse) => {
-        data += warehouse.space_available
-    });
-    return data
+    return arr.reduce((total, warehouse) => total + warehouse.space_available, 0);
 }
 
 
