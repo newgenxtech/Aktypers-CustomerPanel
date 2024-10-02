@@ -9,6 +9,8 @@ import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@
 import FilterIcon from '@/assets/icons8-filter-96.png';
 import { useCallback } from 'react';
 import { trimAndConvertToNumber } from '@/utils/utils';
+import { Drawer } from 'vaul';
+import { Button } from '@/components/ui/button';
 
 
 const WarehouseListPage = () => {
@@ -263,6 +265,18 @@ const WarehouseListPage = () => {
                     }
                 }
             />
+            <Drawer.Root>
+                <Drawer.Trigger>Open Drawer</Drawer.Trigger>
+                <Drawer.Portal>
+                    <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+                    <Drawer.Title className="bg-white p-4">Drawer Title</Drawer.Title>
+                    <Drawer.Content className="bg-gray-100 h-fit fixed bottom-0 left-0 right-0 outline-none">
+                        <Drawer.Description className="p-4 bg-white">Drawer Description</Drawer.Description>
+                        <div className="p-4 bg-white">{/* Content */}</div>
+                    </Drawer.Content>
+                </Drawer.Portal>
+            </Drawer.Root>
+
         </div >
     );
 };
