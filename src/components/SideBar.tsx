@@ -8,7 +8,7 @@ import Logo from '@/assets/logo.png';
 import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-
+import { motion, AnimatePresence } from "framer-motion"
 
 type MenuItem = {
     label: string;
@@ -46,16 +46,16 @@ const Sidebar = () => {
         setMobileSidebar(false)
     };
 
-
     const handleIconClick = useCallback((icon: string) => {
         setActive(icon);
         console.log(`${icon} icon clicked`);
 
         if (icon === 'home') {
-            setChildSidebar(!showChildSidebar);
+            setChildSidebar((prev) => !prev);
         }
         // You can add functionality to navigate or perform actions here
-    }, [showChildSidebar]);
+    }, []);
+
 
     return (
         <>
@@ -108,9 +108,19 @@ const Sidebar = () => {
                             </footer>
                         </div>
                     </div>
-                    {
-                        showChildSidebar && (
-                            <div className={`sidebar`}>
+                    <AnimatePresence >
+                        {showChildSidebar && (
+                            <motion.nav className={`sidebar`}
+                                initial={{ x: -300, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                exit={{ x: -300, opacity: 0 }}
+                                transition={
+                                    {
+                                        ease: "easeInOut",
+
+                                    }
+                                }
+                            >
                                 <p className="sidebar-title">Digital Warehouse</p>
                                 <ul className="menu-list">
                                     {menuItems.map((item) => (
@@ -125,9 +135,9 @@ const Sidebar = () => {
                                     ))}
                                 </ul>
 
-                            </div>
-                        )
-                    }
+                            </motion.nav>
+                        )}
+                    </AnimatePresence>
                 </div>
                 <div className='mobile-navbar'>
                     <div className='mobile-navbar-left'>
