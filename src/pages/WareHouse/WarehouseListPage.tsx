@@ -7,16 +7,15 @@ import { Link } from "react-router-dom";
 import sortIcon from "@/assets/icons8-sort-30.png";
 import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
 import FilterIcon from '@/assets/icons8-filter-96.png';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { trimAndConvertToNumber } from '@/utils/utils';
 import { Drawer } from 'vaul';
-import { Button } from '@/components/ui/button';
 
 
 const WarehouseListPage = () => {
     const StoreData = useSelector((state: { warehouse: WarehouseDataStoreInterface }) => state.warehouse);
     const dispatch = useDispatch();
-
+    const [open, setOpen] = useState(false);
 
 
     const handleSearch = useCallback((data: string) => {
@@ -41,6 +40,7 @@ const WarehouseListPage = () => {
             dispatch(UpdateFilteredData(filteredData));
         }
     }, [StoreData.data, dispatch]);
+
     return (
         <div className='warehouse'>
             <div className="container">
@@ -112,6 +112,19 @@ const WarehouseListPage = () => {
                             <Link to={`/warehouse/${data.code}`} className="link" >
                                 {data.name}
                             </Link>
+                            // <button
+                            //     onClick={() => {
+                            //         if (data.code) {
+                            //             setSearchParams({
+                            //                 code: data.code
+                            //             });
+                            //             setOpen(true);
+                            //         }
+                            //     }}
+                            //     className="link"
+                            // >
+                            //     {data.name}
+                            // </button>
                         ),
                         sortable: true,
                         onSort: (columnKey: string) => {
@@ -265,14 +278,61 @@ const WarehouseListPage = () => {
                     }
                 }
             />
-            <Drawer.Root>
-                <Drawer.Trigger>Open Drawer</Drawer.Trigger>
+            <Drawer.Root direction="right" open={open} onOpenChange={setOpen}
+                dismissible={false}
+
+            >
+                {/* <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
+                    Open Drawer
+                </Drawer.Trigger> */}
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-                    <Drawer.Title className="bg-white p-4">Drawer Title</Drawer.Title>
-                    <Drawer.Content className="bg-gray-100 h-fit fixed bottom-0 left-0 right-0 outline-none">
-                        <Drawer.Description className="p-4 bg-white">Drawer Description</Drawer.Description>
-                        <div className="p-4 bg-white">{/* Content */}</div>
+                    <Drawer.Content
+                        className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[310px] flex"
+                        // The gap between the edge of the screen and the drawer is 8px in this case.
+                        style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
+                    >
+                        <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px]">
+                            <div className="max-w-md mx-auto">
+                                <Drawer.Title className="font-medium mb-2 text-zinc-900">It supports all directions.</Drawer.Title>
+                                <Drawer.Description className="text-zinc-600 mb-2">
+                                    The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left.
+                                </Drawer.Description>
+                            </div>
+                            <Drawer.Description >
+                                <div className='flex gap-2'>
+                                    <button
+                                        onClick={() => {
+                                            alert('Submit');
+                                            setOpen(false);
+                                        }}
+                                        className="bg-primary text-white px-4 py-2 rounded-md"
+                                    >
+                                        Submit
+                                    </button>
+                                    <button
+                                        onClick={() => setOpen(false)}
+                                        className="clear-filter-button"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </Drawer.Description>
+
+                        </div>
+                        {/* <Drawer.Root>
+                            <Drawer.Trigger />
+                            <Drawer.Portal>
+                                <Drawer.Overlay />
+                                <Drawer.Content>
+                                    <Drawer.Handle />
+                                    <Drawer.Title />
+                                    <Drawer.Description />
+                                    <Drawer.Close />
+                                </Drawer.Content>
+                            </Drawer.Portal>
+                        </Drawer.Root> */}
+
                     </Drawer.Content>
                 </Drawer.Portal>
             </Drawer.Root>

@@ -12,7 +12,7 @@
 .sidebar-title {
   font-size: 1rem;
   margin-top: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.04rem;
   text-align: center;
   font-weight: 500;
   color: #fff;
@@ -27,7 +27,7 @@
 }
 
 .menu-item {
-  padding: 0.7rem;
+  padding: 0.650rem;
   margin-bottom: 10px;
   border-radius: 2px;
   display: flex;
@@ -38,7 +38,6 @@
 }
 
 .menu-item.active {
-
   background-color: #D74848;
 }
 

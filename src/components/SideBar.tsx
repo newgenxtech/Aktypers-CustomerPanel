@@ -8,7 +8,7 @@ import Logo from '@/assets/logo.png';
 import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { motion, AnimatePresence } from "framer-motion"
+// import { motion, AnimatePresence } from "framer-motion"
 
 type MenuItem = {
     label: string;
@@ -72,6 +72,7 @@ const Sidebar = () => {
                                     <img src={WareHouseIcon} alt="dashboard" style={{
                                         width: '25px',
                                         height: '25px',
+                                        marginLeft: '0.650rem',
                                     }} />
                                 </div>
                                 <div
@@ -108,7 +109,25 @@ const Sidebar = () => {
                             </footer>
                         </div>
                     </div>
-                    <AnimatePresence >
+                    {showChildSidebar && (
+                        <div className={`sidebar`}>
+                            <p className="sidebar-title">Digital Warehouse</p>
+                            <ul className="menu-list">
+                                {menuItems.map((item) => (
+                                    <li
+                                        key={item.path}
+                                        className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
+                                        onClick={() => handleItemClick(item.path)}
+                                    >
+                                        {item.icon && <span className="menu-icon">{item.icon}</span>}
+                                        <span>{item.label}</span>
+                                    </li>
+                                ))}
+                            </ul>
+
+                        </div>
+                    )}
+                    {/* <AnimatePresence >
                         {showChildSidebar && (
                             <motion.nav className={`sidebar`}
                                 initial={{ x: -300, opacity: 0 }}
@@ -137,7 +156,7 @@ const Sidebar = () => {
 
                             </motion.nav>
                         )}
-                    </AnimatePresence>
+                    </AnimatePresence> */}
                 </div>
                 <div className='mobile-navbar'>
                     <div className='mobile-navbar-left'>
