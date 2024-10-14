@@ -23,7 +23,6 @@ export interface CustomField {
     validation?: {
         required?: boolean;
         pattern?: z.ZodTypeAny;
-
     }
     className?: string;
 }
@@ -34,7 +33,6 @@ interface ReusableFormProps {
     buttonComponent?: React.ReactNode;
     AdditionalButton?: React.ReactNode;
     isUpdate?: boolean;
-    layoutConfig: string[][];
     CutomRender?: (
         fields: CustomField[],
         renderField: (field: CustomField) => React.ReactNode,
@@ -52,7 +50,7 @@ interface ReusableFormProps {
     ) => React.ReactNode;
 }
 
-const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, layoutConfig, CutomRender }) => {
+const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, CutomRender }) => {
 
     const SchemaObject = Object.fromEntries(
         fields.map((field) => [
@@ -172,7 +170,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
     return (
         <form
             // className="flex flex-col gap-4 w-full"
-            className={`flex flex-col gap-4 ${layoutConfig.join(' ')}`}
+            className={`flex flex-col gap-4`}
             onSubmit={
                 (e) => {
                     e.preventDefault();

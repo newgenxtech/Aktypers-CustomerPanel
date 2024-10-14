@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { WareHouseData, WarehouseDataStoreInterface } from "@/Interfaces/interface";
 import { Link, useNavigate } from "react-router-dom";
 import sortIcon from "@/assets/icons8-sort-30.png";
-import { resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
+import { addWarehouse, resetFilter, UpdateFilteredData, updatePagination, updateSort } from '@/services/warehouse/WarehouseSlice';
 import FilterIcon from '@/assets/icons8-filter-96.png';
 import { useCallback, useState } from 'react';
 import { trimAndConvertToNumber } from '@/utils/utils';
@@ -44,22 +44,6 @@ const WarehouseListPage = () => {
             dispatch(UpdateFilteredData(filteredData));
         }
     }, [StoreData.data, dispatch]);
-
-
-    const layoutConfig = [
-        // Define rows, with each element being the width of the component
-        // ['w-1/4', 'w-1/4', 'w-1/4', 'w-1/4'], // First row
-        ['w-1/3', 'w-1/3', 'w-1/3'],          // Second row
-        ['w-1/2', 'w-1/2'],                   // Third row
-        ['w-full'],                   // Fourth row
-        ['w-full'],                   // Fifth row
-        // ['w-full'],                           // Fourth row (Single full-width element)
-    ];
-
-
-
-
-
 
     return (
         <div className='warehouse'>
@@ -325,7 +309,8 @@ const WarehouseListPage = () => {
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                     <Drawer.Content
-                        className="right-2 top-2 bottom-2 fixed z-10 outline-none w-[310px] flex"
+                        className="right-2 top-2 bottom-2 fixed z-10 outline-none 
+                         flex lg:w-96 md:w-80 w-72"
                         // The gap between the edge of the screen and the drawer is 8px in this case.
                         style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
                     >
@@ -384,6 +369,10 @@ const WarehouseListPage = () => {
                                                 validation: {
                                                     required: true,
                                                     pattern: z.string()
+                                                        .trim().min(1, {
+                                                            message: 'This field is required'
+                                                        })
+
                                                 }
                                             },
                                             {
@@ -394,7 +383,10 @@ const WarehouseListPage = () => {
                                                     placeholder: 'Enter City'
                                                 },
                                                 validation: {
-                                                    required: true
+                                                    required: true,
+                                                    pattern: z.string().trim().min(2, {
+                                                        message: 'This field is required'
+                                                    })
                                                 }
                                             },
                                             {
@@ -405,7 +397,10 @@ const WarehouseListPage = () => {
                                                     placeholder: 'Enter Space Available'
                                                 },
                                                 validation: {
-                                                    required: true
+                                                    required: true,
+                                                    pattern: z.string().trim().min(1, {
+                                                        message: 'This field is required'
+                                                    })
                                                 }
                                             },
                                             {
@@ -416,7 +411,10 @@ const WarehouseListPage = () => {
                                                     placeholder: 'Enter Cluster'
                                                 },
                                                 validation: {
-                                                    required: true
+                                                    required: true,
+                                                    pattern: z.string().trim().min(2, {
+                                                        message: 'This field is required'
+                                                    })
                                                 }
                                             },
                                             {
@@ -428,21 +426,37 @@ const WarehouseListPage = () => {
                                                 },
                                                 options: ['Live', 'Not Live'],
                                                 validation: {
-                                                    required: true
+                                                    required: true,
+                                                    pattern: z.string().trim().min(1, {
+                                                        message: 'This field is required'
+                                                    })
                                                 }
                                             },
                                         ]}
                                         onSubmit={(data) => {
-                                            console.log(data);
+                                            dispatch(addWarehouse({
+                                                ...data,
+                                                is_live: data.is_live === 'Live' ? true : false,
+                                                is_registered: true,
+                                                id: StoreData.data.length + 1,
+                                            }))
+                                            alert('Warehouse Added Successfully 🎉');
+                                            setOpen(false);
                                         }}
-                                        AdditionalButton={
-                                            <Button onClick={() => setOpen(false)} className='bg-[#629eec] text-white px-4 py-2 rounded-md
-                                            hover:bg-[#629eec] hover:text-white w-2/6
-                                            '>
-                                                Copy
-                                            </Button>
-                                        }
-                                        layoutConfig={layoutConfig}
+                                        // buttonComponent={
+                                        //     <></>
+                                        // }
+
+                                        // AdditionalButton={
+                                        //     // <Button onClick={() => setOpen(false)} className='bg-[#629eec] text-white px-4 py-2 rounded-md
+                                        //     // hover:bg-[#629eec] hover:text-white w-2/6
+                                        //     // '>
+                                        //     //     Copy
+                                        //     // </Button>
+                                        //     <>
+                                        //     </>
+                                        // }
+
                                         CutomRender={
                                             (fields, renderField, { formState }) => {
                                                 return (

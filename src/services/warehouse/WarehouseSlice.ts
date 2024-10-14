@@ -1,6 +1,5 @@
 import {
-    createSlice,
-    nanoid
+    createSlice
 } from '@reduxjs/toolkit';
 import { faker } from '@faker-js/faker';
 import { WarehouseDataStoreInterface } from '@/Interfaces/interface';
@@ -23,8 +22,8 @@ const createData = () => {
             type: faker.helpers.arrayElement(['Leasable Space', 'Warehouse Service']),
             cluster: faker.helpers.arrayElement(['cluster-a-1', 'cluster-a-21', 'cluster-a-32', 'cluster-v-2']),
             is_registered: faker.datatype.boolean(),
-            is_live: faker.datatype.boolean(),     
-            customItems: []    
+            is_live: faker.datatype.boolean(),
+            customItems: []
         });
     }
     return data;
@@ -61,7 +60,7 @@ const WareHouseSlice = createSlice({
     reducers: {
         addWarehouse: (state, action) => {
             const addWarehouse = {
-                id: parseInt(nanoid()),
+                id: action.payload.id,
                 name: action.payload.name,
                 code: action.payload.code,
                 city: action.payload.city,
@@ -81,7 +80,7 @@ const WareHouseSlice = createSlice({
             const index = state.data.findIndex((item) => item.id === action.payload.id)
             state.data[index] = action.payload
         },
-        UpdateFilteredData : (state, action) => {
+        UpdateFilteredData: (state, action) => {
             state.filterData = action.payload
         },
         updateSort: (state, action) => {
@@ -94,7 +93,7 @@ const WareHouseSlice = createSlice({
         },
         updateSearchColumn: (state, action) => {
             state.searchColumn = action.payload
-        },  
+        },
         resetData: (state) => {
             state.data = createData()
         },
@@ -106,7 +105,7 @@ const WareHouseSlice = createSlice({
             state.sortColumn = null
             state.sortDirection = 'asc'
         }
-        
+
     }
 })
 
