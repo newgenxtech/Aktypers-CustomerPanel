@@ -2,9 +2,9 @@ import React from 'react';
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ImageUp, SquareCheck, SquareX } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import { Button, DatePicker, message, Radio, Upload } from 'antd';
+import { SquareCheck, SquareX } from 'lucide-react';
+import { cn, readFileAsBase64 } from "@/lib/utils";
+import { DatePicker, message, Radio } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
 // import { SquareCheck } from 'lucide-react';
@@ -53,6 +53,7 @@ interface ReusableFormProps {
     ) => React.ReactNode;
 }
 
+
 const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, CutomRender }) => {
 
     const SchemaObject = Object.fromEntries(
@@ -87,7 +88,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
         }
     }
 
-    const { register, handleSubmit, formState, setValue } = useForm({
+    const { register, handleSubmit, formState, setValue, getValues } = useForm({
         resolver: zodResolver(schema),
         defaultValues: Object.fromEntries(
             fields.map((field) => [
@@ -97,6 +98,30 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
         )
     });
 
+
+    const handleFileUpload = async (file: File, field: CustomField) => {
+        try {
+            const base64Data = await readFileAsBase64(file);
+            const response = await axios.post<{ message: string, file_name: string, location: string }[]>(routes.backend.file.upload + '?route=uploaddriverFile', [{
+                filename: file.name,
+                data: base64Data
+            }]);
+            console.log(response.data);
+            setValue(field.name, response.data[0].location);
+            return file;
+        } catch (error) {
+            console.error(error);
+            message.error('Failed to upload file');
+            return null;
+        }
+    };
+
+    const constructImageURL = (field: CustomField) => {
+        const value = getValues(field.name);
+        if (value) {
+            return routes.backend.file.download
+        }
+    }
     const renderField = (field: CustomField) => {
         switch (field.type) {
             case 'text':
@@ -186,62 +211,27 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                 );
             case 'upload':
                 return (
-                    // <Upload
-                    //     customRequest={async ({ file, filename, onSuccess }) => {
-                    //         console.log(file, Blob);
-                    //         const formData = new FormData();
-                    //         formData.append('file', file);
-                    //         const response = await axios.post(routes.backend.file.upload + '?route=uploaddriverFile', {
-                    //             filename: (file as File).name,
-                    //             data: file
-                    //         });
-                    //         console.log(response);
-                    //         const data = await (response).json();
-                    //         console.log(data);
-                    //         onSuccess?.(data, file);
-                    //     }}
-                    //     listType="picture"
-                    //     maxCount={1}
-                    // >
-                    //     <Button icon={<ImageUp />}>Upload (Max: 1)</Button>
-                    // </Upload>
-                    <input
-                        type="file"
-                        {...register(field.name)}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                        onChange={(e) => {
-                            console.log(e.target.files);
-                            const file = e.target.files![0];
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = () => {
-                                const base64Data = reader.result?.toString().split(',')[1]; // Get the base64 data
-                                if (base64Data) {
-                                    axios.post<{ message: string, file_name: string, location: string }[]>(routes.backend.file.upload + '?route=uploaddriverFile', [{
-                                        filename: file.name,
-                                        data: base64Data
-                                    }])
-                                        .then((response) => {
-                                            console.log(response.data);
+                    <>
+                        <input
+                            type="file"
+                            {...register(field.name)}
+                            onChange={(e) => handleFileUpload(e.target.files![0], field)
+                                .then((file) => {
+                                    if (file) {
+                                        message.success('File uploaded successfully');
+                                        return file;
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                    message.error('Failed to upload file');
+                                    return null;
+                                })
+                            }
+                            className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                        />
+                    </>
 
-                                            setValue(
-                                                field.name, response.data[0].location
-                                            )
-                                            return e.target.files
-                                        })
-                                        .catch((error) => {
-                                            console.error(error);
-                                            return error
-                                        });
-                                } else {
-                                    message.error('Failed to read file');
-                                }
-                            };
-                            reader.onerror = () => {
-                                message.error('Failed to read file');
-                            };
-                        }}
-                    />
                 );
             default:
                 return null;
@@ -259,24 +249,10 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                 }
             }
         >
-            {/* {fields.map((field) => (
-                <div key={field.name} className="flex flex-col gap-1">
-                    <label htmlFor={field.name} className="text-sm" >{field.label}
-                        {field?.validation?.required && <span className="text-red-500">*</span>}
-                    </label>
-                    {renderField(field)}
-                    {errors[field.name] && (
-                        <p style={{ color: 'red' }}>{
-                            errors[field.name]?.message?.toString() ?? 'This field is required'
-                        }</p>
-                    )}
-                </div>
-            ))} */}
+
             {
                 CutomRender ?
-
                     CutomRender!(fields, renderField, { register, handleSubmit, formState }) :
-
                     fields.map((field) => (
                         <div key={field.name} className="flex flex-col gap-1">
                             <label htmlFor={field.name} className="text-sm" >{field.label}
@@ -290,56 +266,6 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                             )}
                         </div>
                     ))
-                // fields.length === layoutConfig.flat().length ?
-                //     layoutConfig.map((row, rowIndex) => (
-                //         <div key={`row-${rowIndex}`} className="flex gap-2">
-                //             {row.map((config, colIndex) => {
-                //                 const fieldIndex = rowIndex * (row.length) + colIndex;
-                //                 const field = fields[fieldIndex];
-                //                 return (
-                //                     // field.name === 'empty_space' ? (
-                //                     //     <div
-                //                     //         key={field.name}
-                //                     //         className={config}
-                //                     //     >
-                //                     //         <div className="h-10 w-10 bg-gray-200"></div>
-                //                     //     </div>
-                //                     // ) : (
-                //                     <div key={field.name} className={config}>
-                //                         <label htmlFor={field.name} className="text-sm">
-                //                             {field.label}
-                //                             {field?.validation?.required && <span className="text-red-500">*</span>}
-                //                         </label>
-                //                         {renderField(field)}
-                //                         {errors[field.name] && (
-                //                             <p style={{ color: 'red' }}>
-                //                                 {errors[field.name]?.message?.toString() ?? 'This field is required'}
-                //                             </p>
-                //                         )}
-                //                     </div>
-                //                 )
-                //                 // );
-                //             })}
-                //         </div>
-                //     )) 
-                // :
-                // <div>
-                //     <h1 className="text-center text-xl font-semibold">Layout Configuration Error</h1>
-                //     <table className="table-auto w-full border-collapse border border-gray-300">
-                //         <thead className="bg-gray-50 text-gray-500 text-sm font-semibold uppercase tracking-wider">
-                //             <tr>
-                //                 <th className="p-2 border border-gray-300">Fields</th>
-                //                 <th className="p-2 border border-gray-300">Layout Array</th>
-                //             </tr>
-                //         </thead>
-                //         <tbody>
-                //             <tr className="bg-white">
-                //                 <td className="p-2 border border-gray-300 text-center">{fields.length}</td>
-                //                 <td className="p-2 border border-gray-300 text-center">{layoutConfig.flat().length}</td>
-                //             </tr>
-                //         </tbody>
-                //     </table>
-                // </div>
             }
             {
                 buttonComponent ? buttonComponent : (

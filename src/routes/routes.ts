@@ -45,6 +45,7 @@ export const routes = {
         },
         file: {
             upload: `${base}`,
+            download: `${base}`,
         }
     },
 };

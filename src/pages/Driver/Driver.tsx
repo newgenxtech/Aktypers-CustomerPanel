@@ -312,18 +312,20 @@ const DriverListPage = () => {
                                 {/* 
                                     exit button
                                 */}
-                                <Expand className='absolute top-2 left-2 w-5 cursor-pointer' onClick={() => {
-                                    navigate({
-                                        pathname: `/warehouse/1`
-                                    });
-                                }} />
+                                <div className="flex justify-between">
+                                    <Expand className=' w-5 cursor-pointer' onClick={() => {
+                                        navigate({
+                                            pathname: `/warehouse/1`
+                                        });
+                                    }} />
+                                    <X className=' cursor-pointer' onClick={() => {
+                                        setOpen(false)
+                                        setIsEdit(false);
+                                    }} />
+                                </div>
                                 <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
                                     {isEdit ? 'Edit' : 'Add'} Driver Details
                                 </Drawer.Title>
-                                <X className='absolute top-2 right-2 cursor-pointer' onClick={() => {
-                                    setOpen(false)
-                                    setIsEdit(false);
-                                }} />
 
                                 <Drawer.Description className="text-zinc-600 mb-2">
                                     {/* The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left. */}
