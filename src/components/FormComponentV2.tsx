@@ -2,11 +2,14 @@ import React from 'react';
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SquareCheck, SquareX } from 'lucide-react';
+import { ImageUp, SquareCheck, SquareX } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { Button, DatePicker, message, Radio, Upload } from 'antd';
+import { routes } from '@/routes/routes';
+import axios from 'axios';
 // import { SquareCheck } from 'lucide-react';
 
-type FieldType = 'text' | 'email' | 'number' | 'password' | 'checkbox' | 'select' | 'textarea' | 'radio';
+type FieldType = 'text' | 'email' | 'number' | 'password' | 'checkbox' | 'select' | 'textarea' | 'radio' | 'date' | 'upload';
 
 export interface CustomField {
     name: string;
@@ -75,12 +78,16 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                 return field?.isInputProps?.defaultChecked ?? false;
             case 'select':
                 return field?.isInputProps?.defaultSelected ?? '';
+            case 'radio':
+                return field?.isInputProps?.defaultSelected ?? '';
+            case 'date':
+                return field?.isInputProps?.defaultValue ?? '';
             default:
                 return '';
         }
     }
 
-    const { register, handleSubmit, formState } = useForm({
+    const { register, handleSubmit, formState, setValue } = useForm({
         resolver: zodResolver(schema),
         defaultValues: Object.fromEntries(
             fields.map((field) => [
@@ -98,7 +105,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         type={field.type}
                         {...register(field.name)}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800")}
+                        className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800, shadow-md")}
                     />
                 )
             case 'email':
@@ -107,7 +114,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         type={field.type}
                         {...register(field.name)}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 `)}
+                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
                     />
                 )
             case 'number':
@@ -116,7 +123,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         type={field.type}
                         {...register(field.name)}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800`)}
+                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
                     />
                 )
             case 'password':
@@ -125,7 +132,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         type={field.type}
                         {...register(field.name)}
                         placeholder={field.label}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800')}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
                     />
                 );
             case 'checkbox':
@@ -133,13 +140,13 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                     <input
                         type="checkbox"
                         {...register(field.name)}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800')}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
                     />
                 );
             case 'select':
                 return (
                     <select {...register(field.name)}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800')}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
                         multiple={
                             field?.isInputProps?.multiple ?? false
                         }
@@ -147,7 +154,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         <option value="" selected disabled hidden>{field?.isInputProps?.placeholder}</option>
                         {field.options?.map((option) => (
                             <option key={option} value={option}
-                                className='p-2 border rounded-md text-base bg-whitetext-gray-800'
+                                className='p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md'
                             >
                                 {option}
                             </option>
@@ -159,7 +166,81 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                     <textarea
                         {...register(field.name)}
                         placeholder={field.label}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800')}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    />
+                );
+            case 'radio':
+                return (
+                    <Radio
+                        {...register(field.name)}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    />
+                );
+            case 'date':
+                return (
+                    <DatePicker
+                        {...register(field.name)}
+                        placeholder={field?.isInputProps?.placeholder}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
+                    />
+                );
+            case 'upload':
+                return (
+                    // <Upload
+                    //     customRequest={async ({ file, filename, onSuccess }) => {
+                    //         console.log(file, Blob);
+                    //         const formData = new FormData();
+                    //         formData.append('file', file);
+                    //         const response = await axios.post(routes.backend.file.upload + '?route=uploaddriverFile', {
+                    //             filename: (file as File).name,
+                    //             data: file
+                    //         });
+                    //         console.log(response);
+                    //         const data = await (response).json();
+                    //         console.log(data);
+                    //         onSuccess?.(data, file);
+                    //     }}
+                    //     listType="picture"
+                    //     maxCount={1}
+                    // >
+                    //     <Button icon={<ImageUp />}>Upload (Max: 1)</Button>
+                    // </Upload>
+                    <input
+                        type="file"
+                        {...register(field.name)}
+                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                        onChange={(e) => {
+                            console.log(e.target.files);
+                            const file = e.target.files![0];
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () => {
+                                const base64Data = reader.result?.toString().split(',')[1]; // Get the base64 data
+                                if (base64Data) {
+                                    axios.post<{ message: string, file_name: string, location: string }[]>(routes.backend.file.upload + '?route=uploaddriverFile', [{
+                                        filename: file.name,
+                                        data: base64Data
+                                    }])
+                                        .then((response) => {
+                                            console.log(response.data);
+
+                                            setValue(
+                                                field.name, response.data[0].location
+                                            )
+                                            return e.target.files
+                                        })
+                                        .catch((error) => {
+                                            console.error(error);
+                                            return error
+                                        });
+                                } else {
+                                    message.error('Failed to read file');
+                                }
+                            };
+                            reader.onerror = () => {
+                                message.error('Failed to read file');
+                            };
+                        }}
                     />
                 );
             default:

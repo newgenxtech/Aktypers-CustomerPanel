@@ -2,16 +2,19 @@ import { CommonTableEntity } from "@/Interfaces/interface";
 
 export interface DriverMaster extends CommonTableEntity {
     name: string;
-    licenseNumber: string;
-    licenseExpDate: Date;
-    phoneNo: string;
+    customerid: string;
+    license_number: string;
+    license_expiry_date: string;
+    phone_number: string;
     address: string;
-    dateOfBirth: Date;
-    dateOfJoining: Date;
-    emergencyContact: string;
-    adharPic: string;
-    pancardPic: string;
-    licensePic: string;
+    date_of_birth: string;
+    date_of_joining: string;
+    emergency_contact: string;
+    status: string;
+    aadhaar_pic: string;
+    pancard_pic: string;
+    license_pic: string;
+    email: string;
 }
 
 
@@ -24,17 +27,20 @@ export interface DriverDataStoreInterface {
     currentPage: 1,
     rowsPerPage: 10,
     searchColumn: {
-        name: '',
-        licenseNumber: '',
-        licenseExpDate: '',
-        phoneNo: '',
-        address: '',
-        dateOfBirth: '',
-        dateOfJoining: '',
-        emergencyContact: '',
-        adharPic: '',
-        pancardPic: '',
-        licensePic: '',
+        name: string;
+        customerid: string;
+        license_number: string;
+        license_expiry_date: string;
+        phone_number: string;
+        address: string;
+        date_of_birth: string;
+        date_of_joining: string;
+        emergency_contact: string;
+        status: string;
+        aadhaar_pic: string;
+        pancard_pic: string;
+        license_pic: string;
+        email: string;
         customItems: []
     }
 }

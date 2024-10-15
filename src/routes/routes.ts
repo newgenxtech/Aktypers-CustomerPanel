@@ -26,22 +26,25 @@ export const routes = {
             login: `${base}?route=login`,
         },
         driver: {
-            getAll: `${base}route=getDriverroute=getDriver&customer_id=`,
-            create: `${base}route=createDriver`,
-            update: `${base}route=updateDriver`,
-            uploadDriverFile: `${base}route=uploaddriverFile`,
+            getAll: `${base}?route=getDriver&customer_id=`,
+            create: `${base}?route=createDriver`,
+            update: `${base}?route=updateDriver`,
+            uploadDriverFile: `${base}?route=uploaddriverFile`,
         },
         truck: {
-            getAll: `${base}route=getTruck&customer_id=`,
-            create: `${base}route=createTruck`,
-            update: `${base}route=updateTruck`,
-            uploadTruckFile: `${base}route=uploadtruckFile`,
+            getAll: `${base}?route=getTruck&customer_id=`,
+            create: `${base}?route=createTruck`,
+            update: `${base}?route=updateTruck`,
+            uploadTruckFile: `${base}?route=uploadtruckFile`,
         },
         trip: {
-            getAll: `${base}route=gettrip&customer_id=`,
-            create: `${base}route=createTrip`,
-            update: `${base}route=updateTrip`,
-            uploadTripFile: `${base}route=uploadtripFile`,
+            getAll: `${base}?route=gettrip&customer_id=`,
+            create: `${base}?route=createTrip`,
+            update: `${base}?route=updateTrip`,
+            uploadTripFile: `${base}?route=uploadtripFile`,
         },
+        file: {
+            upload: `${base}`,
+        }
     },
 };

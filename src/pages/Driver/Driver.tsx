@@ -1,24 +1,30 @@
 // import '@/styles/DriverListPage.css';
 import SearchComponent from "@/components/SearchComponent";
-import TableComponent from "@/components/TableComponent";
 import { useNavigate } from "react-router-dom";
-import sortIcon from "@/assets/icons8-sort-30.png";;
 import FilterIcon from '@/assets/icons8-filter-96.png';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 // import { trimAndConvertToNumber } from '@/utils/utils';
 import { Drawer } from 'vaul';
 import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
-import { Expand, Plus, X } from 'lucide-react';
+import { Expand, FileImage, Plus, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DriverDataStoreInterface, DriverMaster } from './Driver.Interface';
 import { useDispatch, useSelector } from 'react-redux';
-import { addDriver, UpdateFilteredData, updateSort, updatePagination, resetFilter } from '@/services/Driver/Driver';
+import { Modal, Space, Table, Tag, Image, Tooltip } from 'antd';
+import type { TableProps } from 'antd';
+import { useGetDriverData } from "@/hooks/GetHooks";
+import { routes } from "@/routes/routes";
+import { addDriver, updateSearchColumn } from "@/services/Driver/Driver";
 
 
 const DriverListPage = () => {
     const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
     const dispatch = useDispatch();
+
+    const [isEdit, setIsEdit] = useState(false);
+
+    const { data, isLoading } = useGetDriverData('1001');
 
 
     const [open, setOpen] = useState(false);
@@ -28,24 +34,181 @@ const DriverListPage = () => {
         console.log(data);
         const searchTerm = data.toLowerCase();
 
-        const filteredData = StoreData.data.filter((row: DriverMaster) => {
-            return Object.values(row).some((value) => {
-                if (typeof value === 'string') {
-                    return value.toLowerCase().includes(searchTerm);
-                } else if (typeof value === 'number') {
-                    return value.toString().includes(searchTerm);
-                }
-                return false;
-            });
-        });
+        dispatch(updateSearchColumn({
+            name: searchTerm,
+        }))
+    }, [dispatch]);
 
-        console.log(filteredData);
-        if (filteredData.length === 0) {
-            // alert('No Data Found');
-        } else {
-            dispatch(UpdateFilteredData(filteredData));
+
+    console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
+
+    const columns: TableProps<DriverMaster>['columns'] = useMemo(() => [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (_, data: Partial<DriverMaster>) => <span
+                className="text-blue-500 font-semibold cursor-pointer"
+                onClick={() => {
+                    setOpen(true);
+                    setIsEdit(true);
+                }}
+            >{data.name}</span>,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            width: 100,
+            // filterSearch: true,
+            // onFilter: (value, record) => record.address.includes(value as string),
+            // filtered: true,
+            // filterIcon: () =>
+            //     <Search
+            //         className={`cursor-pointer text-black w-4`}
+            //     />,
+            // filterDropdown(props) {
+            //     let debounceTimeout: NodeJS.Timeout;
+            //     return (
+            //         <div className="p-2">
+            //             <input
+            //                 className="w-full p-2 border border-gray-300 rounded-md"
+            //                 placeholder="Search Name"
+            //                 onChange={(e) => {
+            //                     const value = e.target.value;
+            //                     if (debounceTimeout) {
+            //                         clearTimeout(debounceTimeout);
+            //                     }
+            //                     debounceTimeout = setTimeout(() => {
+            //                         props.setSelectedKeys(value ? [value] : []);
+            //                         props.confirm();
+            //                     }, 300); // Adjust the debounce delay as needed
+            //                 }}
+            //             />
+            //         </div>
+            //     );
+            // },
+            filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
+
+        },
+        {
+            title: 'Cus ID',
+            dataIndex: 'customerid',
+            key: 'customerid',
+            width: 50,
+        },
+        {
+            title: 'License Number',
+            dataIndex: 'license_number',
+            key: 'license_number',
+            width: 100
+        },
+        {
+            title: 'License Expiry Date',
+            dataIndex: 'license_expiry_date',
+            key: 'license_expiry_date',
+            width: 100
+        },
+        {
+            title: 'Phone Number',
+            dataIndex: 'phone_number',
+            key: 'phone_number',
+            width: 100
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+            width: 100,
+            render: (_, data: Partial<DriverMaster>) => (
+                <Tooltip
+                    title={data?.address}
+                    key={data?.address}
+                >
+                    <span>{(data?.address?.trim().length ?? 0) > 20 ? `${data?.address?.slice(0, 20)}...` : data?.address ?? ''
+                    }</span>
+                </Tooltip>
+            ),
+        },
+        {
+            title: 'Date of Birth',
+            dataIndex: 'date_of_birth',
+            key: 'date_of_birth',
+            width: 80
+        },
+        {
+            title: 'Date of Joining',
+            dataIndex: 'date_of_joining',
+            key: 'date_of_joining',
+            width: 80
+        },
+        {
+            title: 'Emergency Contact',
+            dataIndex: 'emergency_contact',
+            key: 'emergency_contact',
+            width: 150
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: 50
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            width: 100
+        },
+        {
+            title: "Documents",
+            dataIndex: 'documents',
+            key: 'documents',
+            width: 80,
+            render: (_, data: Partial<DriverMaster>) => (
+                <div className="flex justify-center items-center">
+                    <FileImage
+                        className="cursor-pointer hover:text-blue-500"
+                        onClick={() => {
+                            Modal.info({
+                                title: "Documents",
+                                width: 500,
+                                content: <>
+                                    <Space className="my-2">
+                                        <Image
+                                            width={
+                                                data?.aadhaar_pic ? 30 : 100
+                                            }
+                                            src={`${routes.backend.file.upload}/${data.aadhaar_pic}`}
+                                            alt={
+                                                data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'
+                                            }
+                                        />
+                                        <Image
+                                            width={
+                                                data?.pancard_pic ? 30 : 100
+                                            }
+                                            src={`${routes.backend.file.upload}/${data.pancard_pic}`}
+                                            alt={
+                                                data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'
+                                            }
+                                        />
+                                        <Image
+                                            width={
+                                                data?.license_pic ? 30 : 100
+                                            }
+                                            src={`${routes.backend.file.upload}/${data.license_pic}`}
+                                            alt={
+                                                data?.license_pic ? 'License' : 'License Not Uploaded'
+                                            }
+                                        />
+                                    </Space>
+                                </>
+                            });
+                        }}
+                    />
+                </div>
+            ),
         }
-    }, [StoreData.data, dispatch]);
+    ], [
+        StoreData.searchColumn.name
+    ])
 
     return (
         <div className='warehouse'>
@@ -56,7 +219,7 @@ const DriverListPage = () => {
                     gap-8
                     w-full
                 '>
-                    <label className="font-bold text-xl">Warehouse</label>
+                    <label className="font-bold text-xl">Driver Master</label>
                     <SearchComponent
                         className="search-component"
                         placeholder="Search WareHouse"
@@ -71,11 +234,11 @@ const DriverListPage = () => {
                     '
                 >
                     <Plus className='mr-1' />
-                    Add Warehouse
+                    Add Driver
                 </Button>
 
             </div>
-            <div>
+            {/* <div>
 
                 <div className="filter-section">
                     <div className="filter-header">
@@ -114,108 +277,24 @@ const DriverListPage = () => {
                     }
                 </div>
 
-            </div>
-
-            <TableComponent
-                columns={[
-                    {
-                        label: (
-                            <div className="sortable-icon-container">
-                                <span>Name</span>
-                                <img
-                                    src={sortIcon}
-                                    alt="sort"
-                                    className={'sortable-icon'}
-                                />
-                            </div>
-                        ),
-                        key: 'name',
-                        render: (data: Partial<DriverMaster>) => <span>{data.name}</span>,
-                        sortable: true,
-                        onSort: (columnKey: string) => {
-                            dispatch(updateSort({
-                                sortColumn: columnKey,
-                                sortDirection: StoreData.sortDirection === 'asc' ? 'desc' : 'asc'
-                            }));
-                            const sortedData = [...StoreData.data].sort((a, b) => {
-                                if (StoreData.sortDirection === 'asc') {
-                                    return a.name.localeCompare(b.name);
-                                } else {
-                                    return b.name.localeCompare(a.name);
-                                }
-                            });
-                            dispatch(UpdateFilteredData(sortedData));
-                        }
-                    },
-                    {
-                        label: 'License Number',
-                        key: 'licenseNumber',
-                        render: (data: Partial<DriverMaster>) => <span>{data.licenseNumber}</span>
-                    },
-                    {
-                        label: 'License Expiry Date',
-                        key: 'licenseExpDate',
-                        render: (data: Partial<DriverMaster>) => <span>{data.licenseExpDate?.toLocaleDateString()}</span>
-                    },
-                    {
-                        label: 'Phone Number',
-                        key: 'phoneNo',
-                        render: (data: Partial<DriverMaster>) => <span>{data.phoneNo}</span>
-                    },
-                    {
-                        label: 'Address',
-                        key: 'address',
-                        render: (data: Partial<DriverMaster>) => <span>{data.address}</span>
-                    },
-                    {
-                        label: 'Date of Birth',
-                        key: 'dateOfBirth',
-                        render: (data: Partial<DriverMaster>) => <span>{data.dateOfBirth?.toLocaleDateString()}</span>
-                    },
-                    {
-                        label: 'Date of Joining',
-                        key: 'dateOfJoining',
-                        render: (data: Partial<DriverMaster>) => <span>{data.dateOfJoining?.toLocaleDateString()}</span>
-                    },
-                    {
-                        label: 'Emergency Contact',
-                        key: 'emergencyContact',
-                        render: (data: Partial<DriverMaster>) => <span>{data.emergencyContact}</span>
-                    },
-                    {
-                        label: 'Aadhar Picture',
-                        key: 'adharPic',
-                        render: (data: Partial<DriverMaster>) => <img src={data.adharPic} alt="Aadhar" className="document-pic" />
-                    },
-                    {
-                        label: 'Pancard Picture',
-                        key: 'pancardPic',
-                        render: (data: Partial<DriverMaster>) => <img src={data.pancardPic} alt="Pancard" className="document-pic" />
-                    },
-                    {
-                        label: 'License Picture',
-                        key: 'licensePic',
-                        render: (data: Partial<DriverMaster>) => <img src={data.licensePic} alt="License" className="document-pic" />
-                    }
-                ]}
-                data={
-                    StoreData.filterData.length > 0 ? StoreData.filterData : StoreData.data
-                }
-                pagination={
-                    {
-                        currentPage: StoreData.currentPage,
-                        rowsPerPage: StoreData.rowsPerPage,
-                    }
-                }
-                setPagination={
-                    (data: { currentPage: number, rowsPerPage: number }) => {
-                        dispatch(updatePagination(data));
-                    }
-                }
+            </div> */}
+            <Table<DriverMaster>
+                columns={columns}
+                dataSource={data?.body}
+                loading={isLoading}
+                pagination={{
+                    position: ['bottomRight'],
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '30', '40', '50'],
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    total: data?.itemCount,
+                }}
+                size="small"
+                scroll={{ x: 1400, y: 500 }}
             />
+
             <Drawer.Root direction="right" open={open} onOpenChange={setOpen}
                 dismissible={false}
-
             >
                 {/* <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
                     Open Drawer
@@ -228,22 +307,24 @@ const DriverListPage = () => {
                         // The gap between the edge of the screen and the drawer is 8px in this case.
                         style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
                     >
-                        <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px]">
+                        <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto">
                             <div className="w-full">
                                 {/* 
                                     exit button
                                 */}
                                 <Expand className='absolute top-2 left-2 w-5 cursor-pointer' onClick={() => {
-
                                     navigate({
                                         pathname: `/warehouse/1`
                                     });
                                 }} />
-                                <X className='absolute top-2 right-2 cursor-pointer' onClick={() => setOpen(false)} />
-
                                 <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
-                                    Add Warehouse
+                                    {isEdit ? 'Edit' : 'Add'} Driver Details
                                 </Drawer.Title>
+                                <X className='absolute top-2 right-2 cursor-pointer' onClick={() => {
+                                    setOpen(false)
+                                    setIsEdit(false);
+                                }} />
+
                                 <Drawer.Description className="text-zinc-600 mb-2">
                                     {/* The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left. */}
                                     <FormComponentV2
@@ -257,15 +338,27 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: true,
+                                                    pattern: z.string().min(3).max(30)
+                                                }
+                                            },
+                                            {
+                                                label: 'Customer ID',
+                                                name: 'customerid',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Customer ID'
+                                                },
+                                                validation: {
+                                                    required: true,
                                                     pattern: z.string().min(3).max(20)
                                                 }
                                             },
                                             {
-                                                label: 'Code',
-                                                name: 'code',
+                                                label: 'License Number',
+                                                name: 'license_number',
                                                 type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Code'
+                                                    placeholder: 'Enter License Number'
                                                 },
                                                 validation: {
                                                     required: true,
@@ -273,80 +366,155 @@ const DriverListPage = () => {
                                                 }
                                             },
                                             {
-                                                label: 'Type',
-                                                name: 'type',
-                                                type: 'select',
-                                                isInputProps: {
-                                                    placeholder: 'Select Type'
-                                                },
-                                                options: ['Warehouse', 'Office', 'Factory'],
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string()
-                                                        .trim().min(1, {
-                                                            message: 'This field is required'
-                                                        })
-
-                                                }
-                                            },
-                                            {
-                                                label: 'City',
-                                                name: 'city',
+                                                label: 'License Expiry Date',
+                                                name: 'license_expiry_date',
                                                 type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Enter City'
+                                                    placeholder: 'Enter License Expiry Date'
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().trim().min(2, {
-                                                        message: 'This field is required'
-                                                    })
+                                                    pattern: z.string().min(3).max(20)
                                                 }
                                             },
                                             {
-                                                label: 'Space Available',
-                                                name: 'space_available',
-                                                type: 'number',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Space Available'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().trim().min(1, {
-                                                        message: 'This field is required'
-                                                    })
-                                                }
-                                            },
-                                            {
-                                                label: 'Cluster',
-                                                name: 'cluster',
+                                                label: 'Phone Number',
+                                                name: 'phone_number',
                                                 type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Cluster'
+                                                    placeholder: 'Enter Phone Number'
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().trim().min(2, {
-                                                        message: 'This field is required'
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Address',
+                                                name: 'address',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Address'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Date of Birth',
+                                                name: 'date_of_birth',
+                                                type: 'date',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Date of Birth'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().refine((val) => {
+                                                        const date = new Date(val);
+                                                        return date >= new Date('1900-01-01') && date <= new Date();
+                                                    }, {
+                                                        message: "Date must be between 01-01-1900 and today"
                                                     })
+                                                }
+                                            },
+                                            {
+                                                label: 'Date of Joining',
+                                                name: 'date_of_joining',
+                                                type: 'date',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Date of Joining'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().refine((val) => {
+                                                        const date = new Date(val);
+                                                        return date >= new Date('1900-01-01') && date <= new Date();
+                                                    }, {
+                                                        message: "Date must be between 01-01-1900 and today"
+                                                    })
+                                                }
+                                            },
+                                            {
+                                                label: 'Emergency Contact',
+                                                name: 'emergency_contact',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Emergency Contact'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
                                                 }
                                             },
                                             {
                                                 label: 'Status',
-                                                name: 'is_live',
-                                                type: 'select',
+                                                name: 'status',
+                                                type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Select Status'
+                                                    placeholder: 'Enter Status'
                                                 },
-                                                options: ['Live', 'Not Live'],
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().trim().min(1, {
-                                                        message: 'This field is required'
-                                                    })
+                                                    pattern: z.string().min(3).max(20)
                                                 }
                                             },
+                                            {
+                                                label: 'Aadhaar Pic',
+                                                name: 'aadhaar_pic',
+                                                type: 'upload',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Aadhaar Pic'
+                                                },
+                                                validation: {
+                                                    // required: false,
+                                                    // pattern: z
+                                                    //     .instanceof(FileList)
+                                                    //     .refine((file) => file?.length == 1, 'File is required.')
+                                                }
+                                            },
+                                            {
+                                                label: 'Pancard Pic',
+                                                name: 'pancard_pic',
+                                                type: 'upload',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Pancard Pic'
+                                                },
+                                                validation: {
+                                                    // required: false,
+                                                    // pattern: z
+                                                    //     .instanceof(FileList)
+                                                    //     .refine((file) => file?.length == 1, 'File is required.')
+                                                }
+                                            },
+                                            {
+                                                label: 'License Pic',
+                                                name: 'license_pic',
+                                                type: 'upload',
+                                                isInputProps: {
+                                                    placeholder: 'Enter License Pic'
+                                                },
+                                                validation: {
+                                                    // required: false,
+                                                    // pattern: z
+                                                    //     .instanceof(FileList)
+                                                    //     .refine((file) => file?.length == 1, 'File is required.')
+                                                }
+                                            },
+                                            {
+                                                label: 'Email',
+                                                name: 'email',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Email'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            }
                                         ]}
+                                        isUpdate={isEdit}
                                         onSubmit={(data) => {
                                             dispatch(addDriver({
                                                 ...data,
@@ -357,114 +525,6 @@ const DriverListPage = () => {
                                             alert('Warehouse Added Successfully 🎉');
                                             setOpen(false);
                                         }}
-                                        // buttonComponent={
-                                        //     <></>
-                                        // }
-
-                                        // AdditionalButton={
-                                        //     // <Button onClick={() => setOpen(false)} className='bg-[#629eec] text-white px-4 py-2 rounded-md
-                                        //     // hover:bg-[#629eec] hover:text-white w-2/6
-                                        //     // '>
-                                        //     //     Copy
-                                        //     // </Button>
-                                        //     <>
-                                        //     </>
-                                        // }
-
-                                        CutomRender={
-                                            (fields, renderField, { formState }) => {
-                                                return (
-                                                    <div className="grid grid-cols-3 gap-4">
-                                                        {
-                                                            (
-                                                                <>
-                                                                    <div className="col-span-2">
-                                                                        <label htmlFor={fields[0].name} className="text-sm" >{fields[0].label}
-                                                                            {fields[0]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[0])}
-                                                                        {formState?.errors[fields[0].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[0].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-1">
-                                                                        <label htmlFor={fields[1].name} className="text-sm" >{fields[1].label}
-                                                                            {fields[1]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[1])}
-                                                                        {formState?.errors[fields[1].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[1].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-1">
-                                                                        <label htmlFor={fields[2].name} className="text-sm" >{fields[2].label}
-                                                                            {fields[2]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[2])}
-                                                                        {formState?.errors[fields[2].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[2].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-1">
-                                                                        <label htmlFor={fields[3].name} className="text-sm" >{fields[3].label}
-                                                                            {fields[3]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[3])}
-                                                                        {formState?.errors[fields[3].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[3].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-1">
-                                                                    </div>
-                                                                    <div className="col-span-3">
-                                                                        <label htmlFor={fields[4].name} className="text-sm" >{fields[4].label}
-                                                                            {fields[4]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[4])}
-                                                                        {formState?.errors[fields[4].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[4].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-3">
-                                                                        <label htmlFor={fields[5].name} className="text-sm" >{fields[5].label}
-                                                                            {fields[5]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[5])}
-                                                                        {formState?.errors[fields[5].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[5].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="col-span-3">
-                                                                        <label htmlFor={fields[6].name} className="text-sm" >{fields[6].label}
-                                                                            {fields[6]?.validation?.required && <span className="text-red-500">*</span>}
-                                                                        </label>
-                                                                        {renderField(fields[6])}
-                                                                        {formState?.errors[fields[6].name] && (
-                                                                            <p className=' text-red-500 text-xs mt-1'>{
-                                                                                formState?.errors[fields[6].name]?.message?.toString() ?? 'This field is required'
-                                                                            }</p>
-                                                                        )}
-                                                                    </div>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                    </div>
-                                                );
-                                            }
-                                        }
                                     />
                                 </Drawer.Description>
                             </div>
@@ -506,104 +566,6 @@ const DriverListPage = () => {
                     </Drawer.Content>
                 </Drawer.Portal>
             </Drawer.Root>
-            {/* <FormComponentV2
-                fields={[
-                    {
-                        label: 'Name',
-                        name: 'name',
-                        type: 'text',
-                        isInputProps: {
-                            placeholder: 'Enter Name'
-                        },
-                        validation: {
-                            required: true,
-                            pattern: z.string().min(3).max(20)
-                        }
-                    },
-                    {
-                        label: 'Code',
-                        name: 'code',
-                        type: 'text',
-                        isInputProps: {
-                            placeholder: 'Enter Code'
-                        },
-                        validation: {
-                            required: true,
-                            pattern: z.string().min(3).max(20)
-                        }
-                    },
-                    {
-                        label: 'Type',
-                        name: 'type',
-                        type: 'select',
-                        isInputProps: {
-                            placeholder: 'Select Type'
-                        },
-                        options: ['Warehouse', 'Office', 'Factory'],
-                        validation: {
-                            required: true,
-                            pattern: z.string()
-                        }
-                    },
-                    {
-                        label: 'City',
-                        name: 'city',
-                        type: 'text',
-                        isInputProps: {
-                            placeholder: 'Enter City'
-                        },
-                        validation: {
-                            required: true
-                        }
-                    },
-                    {
-                        label: 'Space Available',
-                        name: 'space_available',
-                        type: 'number',
-                        isInputProps: {
-                            placeholder: 'Enter Space Available'
-                        },
-                        validation: {
-                            required: true
-                        }
-                    },
-                    {
-                        label: 'Cluster',
-                        name: 'cluster',
-                        type: 'text',
-                        isInputProps: {
-                            placeholder: 'Enter Cluster'
-                        },
-                        validation: {
-                            required: true
-                        }
-                    },
-                    {
-                        label: 'Status',
-                        name: 'is_live',
-                        type: 'select',
-                        isInputProps: {
-                            placeholder: 'Select Status'
-                        },
-                        options: ['Live', 'Not Live'],
-                        validation: {
-                            required: true
-                        }
-                    },
-                ]}
-                onSubmit={(data) => {
-                    console.log(data);
-                }}
-                AdditionalButton={
-                    <Button onClick={() => setOpen(false)} className='bg-[#629eec] text-white px-4 py-2 rounded-md
-                                            hover:bg-[#629eec] hover:text-white w-2/6
-                                            '>
-                        Copy
-                    </Button>
-                }
-                layoutConfig={layoutConfig}
-            /> */}
-
         </div >
 
     );
