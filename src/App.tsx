@@ -11,7 +11,10 @@ import NotFound from "./pages/NotFound";
 import WarehouseListPage from "./pages/WareHouse/WarehouseListPage";
 import WarehouseDetailPage from "./pages/WareHouse/WarehouseDetailPage";
 import Dashboard from "./pages/Dashboard";
-
+import DriverListPage from "./pages/Driver/Driver";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from "./hooks/queryClient";
 
 const router = createBrowserRouter([
     {
@@ -50,6 +53,10 @@ const router = createBrowserRouter([
                 path: "billing",
                 element: <NotFound />,
             },
+            {
+                path: "driver",
+                element: <DriverListPage />
+            }
         ],
     },
     {
@@ -61,9 +68,12 @@ const router = createBrowserRouter([
 const App = () => {
     return (
         <>
-            <Provider store={store}>
-                <RouterProvider router={router} />
-            </Provider>
+            <QueryClientProvider client={queryClient}>
+                <ReactQueryDevtools initialIsOpen={false} />
+                <Provider store={store}>
+                    <RouterProvider router={router} />
+                </Provider>
+            </QueryClientProvider>
         </>
     )
 }

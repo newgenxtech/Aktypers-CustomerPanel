@@ -1,21 +1,21 @@
 import { InputField } from "@/components/FormComponent"
 
 export interface WareHouseData {
-    name : string,
-    code : string,
-    id : number
+    name: string,
+    code: string,
+    id: number
     city: string,
     space_available: number,
-    type : string,
-    cluster : string,
-    is_registered : boolean,
-    is_live : boolean
+    type: string,
+    cluster: string,
+    is_registered: boolean,
+    is_live: boolean
     customItems: InputField[]
 }
 
 export interface WarehouseDataStoreInterface {
     data: WareHouseData[],
-    columns:InputField[]
+    columns: InputField[]
     sortDirection: "asc" | "desc",
     sortColumn: string | null,
     currentPage: number,
@@ -32,4 +32,21 @@ export interface WarehouseDataStoreInterface {
         is_live: string,
         customItems: InputField[]
     }
+}
+
+
+export interface CommonTableEntity {
+    id?: number
+}
+
+export interface GetApiResponse<T> {
+    itemCount: number,
+    body: T[]
+}
+
+export interface PostApiResponse {
+    message: string,
+}
+export interface PutApiResponse {
+    message: string,
 }
