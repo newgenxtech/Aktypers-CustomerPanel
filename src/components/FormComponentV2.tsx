@@ -2,11 +2,14 @@ import React from 'react';
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SquareCheck, SquareX } from 'lucide-react';
+import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
-import { DatePicker, message, Radio } from 'antd';
+import { Button, DatePicker, message, Radio, Upload } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
+import dayjs from 'dayjs';
+//import dayjs from 'dayjs' // ES 2015
+dayjs().format()
 // import { SquareCheck } from 'lucide-react';
 
 type FieldType = 'text' | 'email' | 'number' | 'password' | 'checkbox' | 'select' | 'textarea' | 'radio' | 'date' | 'upload';
@@ -30,7 +33,7 @@ export interface CustomField {
     className?: string;
 }
 
-interface ReusableFormProps {
+interface ReusableFormProps<T> {
     fields: CustomField[];
     onSubmit: SubmitHandler<FieldValues>;
     buttonComponent?: React.ReactNode;
@@ -51,10 +54,11 @@ interface ReusableFormProps {
             }>
         }
     ) => React.ReactNode;
+    initialValues?: T
 }
 
 
-const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, CutomRender }) => {
+const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, CutomRender, initialValues }: ReusableFormProps<T>) => {
 
     const SchemaObject = Object.fromEntries(
         fields.map((field) => [
@@ -95,7 +99,8 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                 field.name,
                 setDefaultValues(field)
             ])
-        )
+        ),
+        values: initialValues as FieldValues
     });
 
 
@@ -108,6 +113,8 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
             }]);
             console.log(response.data);
             setValue(field.name, response.data[0].location);
+            console.log('getValues', getValues());
+
             return file;
         } catch (error) {
             console.error(error);
@@ -116,13 +123,20 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
         }
     };
 
-    const constructImageURL = (field: CustomField) => {
-        const value = getValues(field.name);
-        if (value) {
-            return routes.backend.file.download
-        }
-    }
+    // const constructImageURL = (field: CustomField) => {
+    //     const value = getValues(field.name);
+    //     if (value) {
+    //         return routes.backend.file.download
+    //     }
+    // }
+
+
     const renderField = (field: CustomField) => {
+        if (field.type === 'date') {
+            console.log('field', field?.isInputProps?.defaultValue);
+            console.log(dayjs(field?.isInputProps?.defaultValue));
+        }
+
         switch (field.type) {
             case 'text':
                 return (
@@ -207,29 +221,43 @@ const ReusableForm: React.FC<ReusableFormProps> = ({ fields, onSubmit, buttonCom
                         {...register(field.name)}
                         placeholder={field?.isInputProps?.placeholder}
                         className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
+                        onChange={(_, dateString) => {
+                            setValue(field.name, dateString as string);
+                        }}
+                        defaultValue={getValues(field.name) ? dayjs(getValues(field.name)) : undefined}
                     />
                 );
             case 'upload':
                 return (
                     <>
-                        <input
-                            type="file"
-                            {...register(field.name)}
-                            onChange={(e) => handleFileUpload(e.target.files![0], field)
-                                .then((file) => {
-                                    if (file) {
+                        <Upload
+                            name={field.name}
+                            customRequest={async ({ file, onSuccess, onError }) => {
+                                try {
+                                    const uploadedFile = await handleFileUpload(file as File, field);
+                                    if (uploadedFile) {
+                                        if (onSuccess) {
+                                            onSuccess("ok");
+                                        }
                                         message.success('File uploaded successfully');
-                                        return file;
+                                    } else {
+                                        if (onError) {
+                                            onError(new Error('Failed to upload file'));
+                                        }
                                     }
-                                })
-                                .catch((error) => {
+                                } catch (error) {
                                     console.error(error);
+                                    if (onError) {
+                                        onError(new Error('Failed to upload file'));
+                                    }
                                     message.error('Failed to upload file');
-                                    return null;
-                                })
-                            }
-                            className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                        />
+                                }
+                            }}
+                            showUploadList={true}
+                            maxCount={1}
+                        >
+                            <Button icon={<LucideUpload />}>Click to Upload</Button>
+                        </Upload>
                     </>
 
                 );

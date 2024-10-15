@@ -1,26 +1,29 @@
 // import '@/styles/DriverListPage.css';
 import SearchComponent from "@/components/SearchComponent";
 import { useNavigate } from "react-router-dom";
-import FilterIcon from '@/assets/icons8-filter-96.png';
 import { useCallback, useMemo, useState } from 'react';
 // import { trimAndConvertToNumber } from '@/utils/utils';
 import { Drawer } from 'vaul';
 import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
-import { Expand, FileImage, Plus, Search, X } from 'lucide-react';
+import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DriverDataStoreInterface, DriverMaster } from './Driver.Interface';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Space, Table, Tag, Image, Tooltip } from 'antd';
+import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useGetDriverData } from "@/hooks/GetHooks";
 import { routes } from "@/routes/routes";
-import { addDriver, updateSearchColumn } from "@/services/Driver/Driver";
+import { updateSearchColumn } from "@/services/Driver/Driver";
+import axios from "axios";
+import { queryClient } from "@/hooks/queryClient";
 
 
 const DriverListPage = () => {
     const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
     const dispatch = useDispatch();
+
+    const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
 
     const [isEdit, setIsEdit] = useState(false);
 
@@ -52,6 +55,7 @@ const DriverListPage = () => {
                 onClick={() => {
                     setOpen(true);
                     setIsEdit(true);
+                    setCurrentDriver(data as DriverMaster);
                 }}
             >{data.name}</span>,
             sorter: (a, b) => a.name.localeCompare(b.name),
@@ -209,6 +213,53 @@ const DriverListPage = () => {
     ], [
         StoreData.searchColumn.name
     ])
+
+
+    const handleCreateDriver = async (data: DriverMaster) => {
+        try {
+            const response = await axios.post(routes.backend.driver.create, data);
+            console.log(response);
+            const { data: responseData } = response;
+
+            if (responseData?.status === 201) {
+                alert(responseData?.data?.message);
+                message.success(responseData?.data?.message);
+            }
+            await queryClient.invalidateQueries({
+                queryKey: ['drivers'],
+                exact: true
+            });
+            setOpen(false);
+        } catch (error) {
+            console.error(error);
+            message.error('Failed to add driver');
+        }
+    };
+
+    const handleUpdateDriver = async (data: DriverMaster) => {
+        try {
+            const response = await axios.post(routes.backend.driver.update, {
+                ...data,
+                id: CurrentDriver?.id
+            });
+            console.log(response);
+            const { data: responseData } = response;
+
+            if (responseData?.status === 200) {
+                alert(responseData?.data?.message);
+                message.success(responseData?.data?.message);
+            }
+            await queryClient.invalidateQueries({
+                queryKey: ['drivers'],
+                exact: true
+            });
+            setOpen(false);
+        } catch (error) {
+            console.error(error);
+            message.error('Failed to update driver');
+        }
+    }
+
 
     return (
         <div className='warehouse'>
@@ -370,13 +421,17 @@ const DriverListPage = () => {
                                             {
                                                 label: 'License Expiry Date',
                                                 name: 'license_expiry_date',
-                                                type: 'text',
+                                                type: 'date',
                                                 isInputProps: {
-                                                    placeholder: 'Enter License Expiry Date'
+                                                    placeholder: 'Enter License Expiry Date',
+                                                    defaultValue: isEdit ? CurrentDriver?.license_expiry_date : ''
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().min(3).max(20)
+                                                    pattern: z.string().refine((val) => {
+                                                        const date = new Date(val);
+                                                        return date >= new Date();
+                                                    })
                                                 }
                                             },
                                             {
@@ -400,7 +455,7 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().min(3).max(20)
+                                                    pattern: z.string().min(3).max(120)
                                                 }
                                             },
                                             {
@@ -408,16 +463,18 @@ const DriverListPage = () => {
                                                 name: 'date_of_birth',
                                                 type: 'date',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Date of Birth'
+                                                    placeholder: 'Enter Date of Birth',
+                                                    defaultValue: isEdit ? CurrentDriver?.date_of_birth : ''
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().refine((val) => {
-                                                        const date = new Date(val);
-                                                        return date >= new Date('1900-01-01') && date <= new Date();
-                                                    }, {
-                                                        message: "Date must be between 01-01-1900 and today"
-                                                    })
+                                                    pattern: z
+                                                        .string().refine((val) => {
+                                                            const date = new Date(val);
+                                                            return date >= new Date('1900-01-01') && date <= new Date();
+                                                        }, {
+                                                            message: "Date must be between 01-01-1900 and today"
+                                                        })
                                                 }
                                             },
                                             {
@@ -425,7 +482,8 @@ const DriverListPage = () => {
                                                 name: 'date_of_joining',
                                                 type: 'date',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Date of Joining'
+                                                    placeholder: 'Enter Date of Joining',
+                                                    defaultValue: isEdit ? CurrentDriver?.date_of_joining : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -452,14 +510,15 @@ const DriverListPage = () => {
                                             {
                                                 label: 'Status',
                                                 name: 'status',
-                                                type: 'text',
+                                                type: 'select',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Status'
+                                                    placeholder: 'Select Status'
                                                 },
                                                 validation: {
                                                     required: true,
                                                     pattern: z.string().min(3).max(20)
-                                                }
+                                                },
+                                                options: ['Active', 'Inactive']
                                             },
                                             {
                                                 label: 'Aadhaar Pic',
@@ -469,10 +528,9 @@ const DriverListPage = () => {
                                                     placeholder: 'Enter Aadhaar Pic'
                                                 },
                                                 validation: {
-                                                    // required: false,
-                                                    // pattern: z
-                                                    //     .instanceof(FileList)
-                                                    //     .refine((file) => file?.length == 1, 'File is required.')
+                                                    required: false,
+                                                    pattern: z.null()
+
                                                 }
                                             },
                                             {
@@ -483,10 +541,10 @@ const DriverListPage = () => {
                                                     placeholder: 'Enter Pancard Pic'
                                                 },
                                                 validation: {
-                                                    // required: false,
-                                                    // pattern: z
-                                                    //     .instanceof(FileList)
-                                                    //     .refine((file) => file?.length == 1, 'File is required.')
+                                                    required: false,
+                                                    pattern: z.null()
+                                                    // .instanceof(FileList)
+                                                    // .refine((file) => file?.length == 1, 'File is required.')
                                                 }
                                             },
                                             {
@@ -497,8 +555,8 @@ const DriverListPage = () => {
                                                     placeholder: 'Enter License Pic'
                                                 },
                                                 validation: {
-                                                    // required: false,
-                                                    // pattern: z
+                                                    required: false,
+                                                    pattern: z.null()
                                                     //     .instanceof(FileList)
                                                     //     .refine((file) => file?.length == 1, 'File is required.')
                                                 }
@@ -512,21 +570,20 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().min(3).max(20)
+                                                    pattern: z.string().min(3).max(40)
                                                 }
                                             }
                                         ]}
                                         isUpdate={isEdit}
                                         onSubmit={(data) => {
-                                            dispatch(addDriver({
-                                                ...data,
-                                                // is_live: data.is_live === 'Live' ? true : false,
-                                                // is_registered: true,
-                                                id: StoreData.data.length + 1,
-                                            }))
-                                            alert('Warehouse Added Successfully 🎉');
-                                            setOpen(false);
+                                            if (isEdit) {
+                                                handleUpdateDriver(data as DriverMaster);
+                                            } else {
+                                                handleCreateDriver(data as DriverMaster);
+                                            }
                                         }}
+                                        initialValues={CurrentDriver}
+
                                     />
                                 </Drawer.Description>
                             </div>
