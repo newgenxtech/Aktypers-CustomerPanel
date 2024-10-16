@@ -529,7 +529,7 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: false,
-                                                    pattern: z.null()
+                                                    pattern: z.string().nullable()
 
                                                 }
                                             },
@@ -542,7 +542,7 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: false,
-                                                    pattern: z.null()
+                                                    pattern: z.string().nullable()
                                                     // .instanceof(FileList)
                                                     // .refine((file) => file?.length == 1, 'File is required.')
                                                 }
@@ -556,7 +556,7 @@ const DriverListPage = () => {
                                                 },
                                                 validation: {
                                                     required: false,
-                                                    pattern: z.null()
+                                                    pattern: z.string().nullable()
                                                     //     .instanceof(FileList)
                                                     //     .refine((file) => file?.length == 1, 'File is required.')
                                                 }

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
-import { Button, DatePicker, message, Radio, Upload } from 'antd';
+import { Button, DatePicker, message, Radio, Upload, Image } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -258,6 +258,15 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         >
                             <Button icon={<LucideUpload />}>Click to Upload</Button>
                         </Upload>
+                        {
+                            getValues(field.name) && (
+                                <Image
+                                    width={30}
+                                    src={`${routes.backend.file.upload}/${getValues(field.name)}`}
+                                    alt={'License'}
+                                />
+                            )
+                        }
                     </>
 
                 );
