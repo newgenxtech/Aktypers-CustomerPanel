@@ -8,7 +8,7 @@ import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
 import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DriverDataStoreInterface, DriverMaster } from './Driver.Interface';
+import { DriverDataStoreInterface, DriverMaster } from './Alloy.Interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
 import type { TableProps } from 'antd';
@@ -196,6 +196,8 @@ const DriverListPage = () => {
                                                 data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'
                                             }
                                         />
+
+
                                         <Image
                                             width={
                                                 data?.license_pic ? 30 : 100

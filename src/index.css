@@ -85,3 +85,16 @@ body{
     @apply bg-background text-foreground;
   }
 }
+/* 
+.ant-table-tbody .ant-table-cell:nth-child(even) {
+  background-color: #fafafa;
+} */
+
+table tr:nth-child(2n) td {
+  background-color: #FAFAFA;
+}
+
+table tr:nth-child(2n+1) td {
+  background-color: #FFFFFF;
+}
+
