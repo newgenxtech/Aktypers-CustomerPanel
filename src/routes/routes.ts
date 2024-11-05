@@ -46,6 +46,9 @@ export const routes = {
         file: {
             upload: `${base}`,
             download: `${base}`,
+        },
+        alloy: {
+            getAll: `${base}?route=getAlloyByCustomer&customer_id=`,
         }
     },
 };

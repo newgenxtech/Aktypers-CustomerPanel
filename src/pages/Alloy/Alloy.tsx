@@ -1,4 +1,4 @@
-// import '@/styles/DriverListPage.css';
+// import '@/styles/AlloyListPage.css';
 import SearchComponent from "@/components/SearchComponent";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useMemo, useState } from 'react';
@@ -8,26 +8,24 @@ import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
 import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DriverDataStoreInterface, DriverMaster } from './Alloy.Interface';
+import { AlloyMasterStoreInterface, AlloyMaster } from './Alloy.Interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
 import type { TableProps } from 'antd';
-import { useGetDriverData } from "@/hooks/GetHooks";
+import { useGetAlloyData } from "@/hooks/GetHooks";
 import { routes } from "@/routes/routes";
-import { updateSearchColumn } from "@/services/Driver/Driver";
+// import { updateSearchColumn } from "@/services/Alloy/Alloy";
 import axios from "axios";
 import { queryClient } from "@/hooks/queryClient";
 
 
-const DriverListPage = () => {
-    const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
-    const dispatch = useDispatch();
+const AlloyListPage = () => {
 
-    const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
+    const [CurrentAlloy, setCurrentAlloy] = useState<AlloyMaster | null>(null);
 
     const [isEdit, setIsEdit] = useState(false);
 
-    const { data, isLoading } = useGetDriverData('1001');
+    const { data, isLoading } = useGetAlloyData('1001');
 
 
     const [open, setOpen] = useState(false);
@@ -37,28 +35,28 @@ const DriverListPage = () => {
         console.log(data);
         const searchTerm = data.toLowerCase();
 
-        dispatch(updateSearchColumn({
-            name: searchTerm,
-        }))
-    }, [dispatch]);
+        // dispatch(updateSearchColumn({
+        //     name: searchTerm,
+        // }))
+    }, []);
 
 
-    console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
+    // console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
 
-    const columns: TableProps<DriverMaster>['columns'] = useMemo(() => [
+    const columns: TableProps<AlloyMaster>['columns'] = useMemo(() => [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: (_, data: Partial<DriverMaster>) => <span
+            title: 'Vehicle',
+            dataIndex: 'vehicle',
+            key: 'vehicle',
+            render: (_, data: Partial<AlloyMaster>) => <span
                 className="text-[#00008B] font-semibold cursor-pointer text-base "
                 onClick={() => {
                     setOpen(true);
                     setIsEdit(true);
-                    setCurrentDriver(data as DriverMaster);
+                    setCurrentAlloy(data as AlloyMaster);
                 }}
-            >{data.name}</span>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            >{data.vehicle}</span>,
+            sorter: (a, b) => a.vehicle.localeCompare(b.vehicle),
             width: 100,
             // filterSearch: true,
             // onFilter: (value, record) => record.address.includes(value as string),
@@ -88,7 +86,7 @@ const DriverListPage = () => {
             //         </div>
             //     );
             // },
-            filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
+            // filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
 
         },
         {
@@ -96,174 +94,84 @@ const DriverListPage = () => {
             dataIndex: 'customerid',
             key: 'customerid',
             width: 50,
-            render: (_, data: Partial<DriverMaster>) => <span
+            render: (_, data: Partial<AlloyMaster>) => <span
                 className="text-base"
             >{data.customerid}</span>
         },
         {
-            title: 'License Number',
-            dataIndex: 'license_number',
-            key: 'license_number',
-            width: 100
-        },
-        {
-            title: 'License Expiry Date',
-            dataIndex: 'license_expiry_date',
-            key: 'license_expiry_date',
-            width: 100
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone_number',
-            key: 'phone_number',
-            width: 100
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'Before PDF',
+            dataIndex: 'before',
+            key: 'before',
             width: 100,
-            render: (_, data: Partial<DriverMaster>) => (
-                <Tooltip
-                    title={data?.address}
-                    key={data?.address}
+            render: (_, data: Partial<AlloyMaster>) => (
+                <a
+                    href={data?.before}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500"
                 >
-                    <span>{(data?.address?.trim().length ?? 0) > 20 ? `${data?.address?.slice(0, 20)}...` : data?.address ?? ''
-                    }</span>
-                </Tooltip>
-            ),
+                    Before PDF
+                </a>
+            )
         },
+
         {
-            title: 'Date of Birth',
-            dataIndex: 'date_of_birth',
-            key: 'date_of_birth',
-            width: 80
-        },
-        {
-            title: 'Date of Joining',
-            dataIndex: 'date_of_joining',
-            key: 'date_of_joining',
-            width: 80
-        },
-        {
-            title: 'Emergency Contact',
-            dataIndex: 'emergency_contact',
-            key: 'emergency_contact',
-            width: 150
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 50
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 100
-        },
-        {
-            title: "Documents",
-            dataIndex: 'documents',
-            key: 'documents',
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date',
             width: 80,
-            render: (_, data: Partial<DriverMaster>) => (
-                <div className="flex justify-center items-center">
-                    <FileImage
-                        className="cursor-pointer hover:text-blue-500"
-                        onClick={() => {
-                            Modal.info({
-                                title: "Documents",
-                                width: 500,
-                                content: <>
-                                    <Space className="my-2">
-                                        <Image
-                                            width={
-                                                data?.aadhaar_pic ? 30 : 100
-                                            }
-                                            src={`${routes.backend.file.upload}/${data.aadhaar_pic}`}
-                                            alt={
-                                                data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'
-                                            }
-                                        />
-                                        <Image
-                                            width={
-                                                data?.pancard_pic ? 30 : 100
-                                            }
-                                            src={`${routes.backend.file.upload}/${data.pancard_pic}`}
-                                            alt={
-                                                data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'
-                                            }
-                                        />
-
-
-                                        <Image
-                                            width={
-                                                data?.license_pic ? 30 : 100
-                                            }
-                                            src={`${routes.backend.file.upload}/${data.license_pic}`}
-                                            alt={
-                                                data?.license_pic ? 'License' : 'License Not Uploaded'
-                                            }
-                                        />
-                                    </Space>
-                                </>
-                            });
-                        }}
-                    />
-                </div>
-            ),
-        }
+            render: (_, data: Partial<AlloyMaster>) => <span
+                className="text-base" >{data.date}</span>
+        },
     ], [
-        StoreData.searchColumn.name
+
     ])
 
 
-    const handleCreateDriver = async (data: DriverMaster) => {
-        try {
-            const response = await axios.post(routes.backend.driver.create, data);
-            console.log(response);
-            const { data: responseData } = response;
+    // const handleCreateAlloy = async (data: AlloyMaster) => {
+    //     try {
+    //         const response = await axios.post(routes.backend.alloy.create, data);
+    //         console.log(response);
+    //         const { data: responseData } = response;
 
-            if (responseData?.status === 201) {
-                alert(responseData?.data?.message);
-                message.success(responseData?.data?.message);
-            }
-            await queryClient.invalidateQueries({
-                queryKey: ['drivers'],
-                exact: true
-            });
-            setOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error('Failed to add driver');
-        }
-    };
+    //         if (responseData?.status === 201) {
+    //             alert(responseData?.data?.message);
+    //             message.success(responseData?.data?.message);
+    //         }
+    //         await queryClient.invalidateQueries({
+    //             queryKey: ['alloys'],
+    //             exact: true
+    //         });
+    //         setOpen(false);
+    //     } catch (error) {
+    //         console.error(error);
+    //         message.error('Failed to add alloy');
+    //     }
+    // };
 
-    const handleUpdateDriver = async (data: DriverMaster) => {
-        try {
-            const response = await axios.post(routes.backend.driver.update, {
-                ...data,
-                id: CurrentDriver?.id
-            });
-            console.log(response);
-            const { data: responseData } = response;
+    // const handleUpdateAlloy = async (data: AlloyMaster) => {
+    //     try {
+    //         const response = await axios.post(routes.backend.alloy.update, {
+    //             ...data,
+    //             id: CurrentAlloy?.id
+    //         });
+    //         console.log(response);
+    //         const { data: responseData } = response;
 
-            if (responseData?.status === 200) {
-                alert(responseData?.data?.message);
-                message.success(responseData?.data?.message);
-            }
-            await queryClient.invalidateQueries({
-                queryKey: ['drivers'],
-                exact: true
-            });
-            setOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error('Failed to update driver');
-        }
-    }
+    //         if (responseData?.status === 200) {
+    //             alert(responseData?.data?.message);
+    //             message.success(responseData?.data?.message);
+    //         }
+    //         await queryClient.invalidateQueries({
+    //             queryKey: ['alloys'],
+    //             exact: true
+    //         });
+    //         setOpen(false);
+    //     } catch (error) {
+    //         console.error(error);
+    //         message.error('Failed to update alloy');
+    //     }
+    // }
 
 
     return (
@@ -275,7 +183,7 @@ const DriverListPage = () => {
                     gap-8
                     w-full
                 '>
-                    <label className="font-bold text-xl">Driver Master</label>
+                    <label className="font-bold text-xl">Alloy Master</label>
                     <SearchComponent
                         className="search-component"
                         placeholder="Search WareHouse"
@@ -290,11 +198,11 @@ const DriverListPage = () => {
                     '
                 >
                     <Plus className='mr-1' />
-                    Add Driver
+                    Add Alloy
                 </Button>
 
             </div>
-            <Table<DriverMaster>
+            <Table<AlloyMaster>
                 columns={columns}
                 dataSource={data?.body}
                 loading={isLoading}
@@ -309,25 +217,18 @@ const DriverListPage = () => {
                 scroll={{ x: 'auto', y: '60vh' }}
             />
 
-            <Drawer.Root direction="right" open={open} onOpenChange={setOpen}
+            {/* <Drawer.Root direction="right" open={open} onOpenChange={setOpen}
                 dismissible={false}
             >
-                {/* <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
-                    Open Drawer
-                </Drawer.Trigger> */}
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                     <Drawer.Content
                         className="right-2 top-2 bottom-2 fixed z-10 outline-none 
                          flex lg:w-96 md:w-80 w-72"
-                        // The gap between the edge of the screen and the drawer is 8px in this case.
                         style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
                     >
                         <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto">
                             <div className="w-full">
-                                {/* 
-                                    exit button
-                                */}
                                 <div className="flex justify-between">
                                     <Expand className=' w-5 cursor-pointer' onClick={() => {
                                         navigate({
@@ -340,11 +241,10 @@ const DriverListPage = () => {
                                     }} />
                                 </div>
                                 <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
-                                    {isEdit ? 'Edit' : 'Add'} Driver Details
+                                    {isEdit ? 'Edit' : 'Add'} Alloy Details
                                 </Drawer.Title>
 
                                 <Drawer.Description className="text-zinc-600 mb-2">
-                                    {/* The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left. */}
                                     <FormComponentV2
                                         fields={[
                                             {
@@ -389,7 +289,7 @@ const DriverListPage = () => {
                                                 type: 'date',
                                                 isInputProps: {
                                                     placeholder: 'Enter License Expiry Date',
-                                                    defaultValue: isEdit ? CurrentDriver?.license_expiry_date : ''
+                                                    defaultValue: isEdit ? CurrentAlloy?.license_expiry_date : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -429,7 +329,7 @@ const DriverListPage = () => {
                                                 type: 'date',
                                                 isInputProps: {
                                                     placeholder: 'Enter Date of Birth',
-                                                    defaultValue: isEdit ? CurrentDriver?.date_of_birth : ''
+                                                    defaultValue: isEdit ? CurrentAlloy?.date_of_birth : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -448,7 +348,7 @@ const DriverListPage = () => {
                                                 type: 'date',
                                                 isInputProps: {
                                                     placeholder: 'Enter Date of Joining',
-                                                    defaultValue: isEdit ? CurrentDriver?.date_of_joining : ''
+                                                    defaultValue: isEdit ? CurrentAlloy?.date_of_joining : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -542,57 +442,22 @@ const DriverListPage = () => {
                                         isUpdate={isEdit}
                                         onSubmit={(data) => {
                                             if (isEdit) {
-                                                handleUpdateDriver(data as DriverMaster);
+                                                handleUpdateAlloy(data as AlloyMaster);
                                             } else {
-                                                handleCreateDriver(data as DriverMaster);
+                                                handleCreateAlloy(data as AlloyMaster);
                                             }
                                         }}
-                                        initialValues={CurrentDriver}
-
+                                        initialValues={CurrentAlloy}
                                     />
                                 </Drawer.Description>
                             </div>
-                            {/* <Drawer.Description >
-                                <div className='flex gap-2'>
-                                    <button
-                                        onClick={() => {
-                                            alert('Submit');
-                                            setOpen(false);
-                                            // handleSubmit()
-                                        }}
-                                        className="bg-primary text-white px-4 py-2 rounded-md"
-                                    >
-                                        Submit
-                                    </button>
-                                    <button
-                                        onClick={() => setOpen(false)}
-                                        className="clear-filter-button"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </Drawer.Description> */}
-
                         </div>
-                        {/* <Drawer.Root>
-                            <Drawer.Trigger />
-                            <Drawer.Portal>
-                                <Drawer.Overlay />
-                                <Drawer.Content>
-                                    <Drawer.Handle />
-                                    <Drawer.Title />
-                                    <Drawer.Description />
-                                    <Drawer.Close />
-                                </Drawer.Content>
-                            </Drawer.Portal>
-                        </Drawer.Root> */}
-
                     </Drawer.Content>
                 </Drawer.Portal>
-            </Drawer.Root>
+            </Drawer.Root> */}
         </div >
 
     );
 };
 
-export default DriverListPage;
+export default AlloyListPage;

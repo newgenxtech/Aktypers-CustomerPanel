@@ -1,25 +1,22 @@
 import { CommonTableEntity } from "@/Interfaces/interface";
 
-export interface DriverMaster extends CommonTableEntity {
-    name: string;
+export interface AlloyMaster extends CommonTableEntity {
+    // "id": "7",
+    date: string;
+    before: string;
+    after: string;
+    vehicle: string;
     customerid: string;
-    license_number: string;
-    license_expiry_date: string;
-    phone_number: string;
-    address: string;
-    date_of_birth: string;
-    date_of_joining: string;
-    emergency_contact: string;
-    status: string;
-    aadhaar_pic: string;
-    pancard_pic: string;
-    license_pic: string;
-    email: string;
+    // "date": "2024-11-13",
+    // "before": "https://aktyres-in.stackstaging.com/php-truck/class/uploads/1729001382_Water-Testing-Service-Report-H1024-19938-KIAN.pdf",
+    // "after": "https://aktyres-in.stackstaging.com/php-truck/class/uploads/1729001468_Print.pdf",
+    // "vehicle": "ABC1234",
+    // "customerid": "1001"
 }
 
 
-export interface DriverDataStoreInterface {
-    data: DriverMaster[],
+export interface AlloyMasterStoreInterface {
+    data: AlloyMaster[],
     columns: [],
     filterData: [],
     sortDirection: "asc",
@@ -27,20 +24,11 @@ export interface DriverDataStoreInterface {
     currentPage: 1,
     rowsPerPage: 10,
     searchColumn: {
-        name: string;
+        date: string;
+        before: string;
+        after: string;
+        vehicle: string;
         customerid: string;
-        license_number: string;
-        license_expiry_date: string;
-        phone_number: string;
-        address: string;
-        date_of_birth: string;
-        date_of_joining: string;
-        emergency_contact: string;
-        status: string;
-        aadhaar_pic: string;
-        pancard_pic: string;
-        license_pic: string;
-        email: string;
         customItems: []
     }
 }
