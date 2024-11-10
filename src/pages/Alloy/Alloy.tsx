@@ -1,18 +1,64 @@
 import SearchComponent from "@/components/SearchComponent";
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FileImage, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlloyMaster } from './Alloy.Interface';
-import { DatePicker, Table } from 'antd';
+import { DatePicker, message, Table } from 'antd';
 import type { TableProps } from 'antd';
-import { useGetAlloyData } from "@/hooks/GetHooks";
+// import { useGetAlloyData } from "@/hooks/GetHooks";
+import axios from "axios";
+import { routes } from "@/routes/routes";
+import { useQuery } from "@tanstack/react-query";
 
 const AlloyListPage = () => {
 
 
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
-    const { data, isLoading } = useGetAlloyData('1001', fromDate, toDate);
+    // const { data, isLoading } = useGetAlloyData('1001', fromDate, toDate);
+    const { data, isLoading } = useQuery(
+        {
+            queryKey: ['alloyData', fromDate, toDate],
+            queryFn: async () => {
+                try {
+                    const res = await axios.post(routes.backend.alloy.getAll + '1001', {
+                        from_date: fromDate,
+                        to_date: toDate
+                    });
+                    const result = res.data;
+                    return result;
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    message.error("Error fetching data");
+                }
+            },
+            refetchOnWindowFocus: false,
+        }
+    );
+
+
+    // const [data, setData] = useState<AlloyMaster[]>([]);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     async function fetchData() {
+    //         try {
+    //             const res = await axios.post(routes.backend.alloy.getAll + '1001', {
+    //                 from_date: fromDate,
+    //                 to_date: toDate
+    //             });
+    //             const result = res.data;
+    //             setData(result);
+    //             console.log(result);
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //             message.error("Error fetching data");
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     }
+    //     fetchData();
+    // }, [fromDate, toDate]);
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
@@ -72,8 +118,7 @@ const AlloyListPage = () => {
                     href={data?.before}
                     target="_blank"
                     rel="noreferrer"
-                // className="text-blue-500"
-                >
+                    className="" >
                     <FileImage />
                 </a>
             )
@@ -94,7 +139,7 @@ const AlloyListPage = () => {
                     <label className="font-bold text-xl">Alloy Master</label>
                     <SearchComponent
                         className="search-component"
-                        placeholder="Search WareHouse"
+                        placeholder="Search Vehicle"
                         onHandleChange={handleSearch}
                         postfix={<i className="fa fa-search" />}
                     />
@@ -106,6 +151,7 @@ const AlloyListPage = () => {
                     className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md
                     hover:bg-[#D64848] hover:text-white
                     '
+                    disabled={true}
                 >
                     <Plus className='mr-1' />
                     Add Alloy
