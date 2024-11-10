@@ -5,7 +5,7 @@ import path from "path";
 export default defineConfig({
   base: '/',
   server: {
-    port: 4200,
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://aktyres-in.stackstaging.com/php-truck/class',

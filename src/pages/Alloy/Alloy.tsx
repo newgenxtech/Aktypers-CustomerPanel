@@ -1,5 +1,5 @@
 import SearchComponent from "@/components/SearchComponent";
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FileImage, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlloyMaster } from './Alloy.Interface';
@@ -37,28 +37,6 @@ const AlloyListPage = () => {
     );
 
 
-    // const [data, setData] = useState<AlloyMaster[]>([]);
-    // const [isLoading, setIsLoading] = useState<boolean>(true);
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     async function fetchData() {
-    //         try {
-    //             const res = await axios.post(routes.backend.alloy.getAll + '1001', {
-    //                 from_date: fromDate,
-    //                 to_date: toDate
-    //             });
-    //             const result = res.data;
-    //             setData(result);
-    //             console.log(result);
-    //         } catch (error) {
-    //             console.error("Error fetching data:", error);
-    //             message.error("Error fetching data");
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     }
-    //     fetchData();
-    // }, [fromDate, toDate]);
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
