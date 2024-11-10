@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Package, Warehouse, ShoppingCart, CreditCard, Truck, Forklift } from "lucide-react";
+import { Home, Package, Warehouse, ShoppingCart, CreditCard, Forklift, TruckIcon, Car } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -28,8 +28,13 @@ const menuItems: MenuItem[] = [
     { label: 'Order', path: '/order', icon: <ShoppingCart /> },
     // { label: 'Work Order', path: '/work-order' },
     { label: 'Billing', path: '/billing', icon: <CreditCard /> },
-    { label: 'Drvier', path: '/driver', icon: <Truck /> },
+    { label: 'Drvier', path: '/driver', icon: <Car /> },
     { label: 'Alloy', path: '/alloy', icon: <Forklift /> },
+    {
+        label: 'Truck',
+        path: '/truck',
+        icon: <TruckIcon />
+    },
     {
         label: 'Type Pressure',
         path: '/type-pressure',

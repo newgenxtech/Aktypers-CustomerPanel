@@ -2,7 +2,7 @@ import SearchComponent from "@/components/SearchComponent";
 import { useCallback, useMemo, useState } from 'react';
 import { FileImage, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AlloyMaster } from './Alloy.Interface';
+import { AlloyMaster } from './Alloy.d';
 import { DatePicker, message, Table } from 'antd';
 import type { TableProps } from 'antd';
 // import { useGetAlloyData } from "@/hooks/GetHooks";

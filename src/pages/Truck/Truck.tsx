@@ -8,26 +8,25 @@ import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
 import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DriverDataStoreInterface, DriverMaster } from './Driver.Interface';
-import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
 import type { TableProps } from 'antd';
-import { useGetDriverData } from "@/hooks/GetHooks";
+import { useGetTruckData } from "@/hooks/GetHooks";
 import { routes } from "@/routes/routes";
-import { updateSearchColumn } from "@/services/Driver/Driver";
 import axios from "axios";
 import { queryClient } from "@/hooks/queryClient";
 
+import { ITruckData } from "./Truck.d";
 
-const DriverListPage = () => {
-    const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
-    const dispatch = useDispatch();
 
-    const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
+const TruckListPage = () => {
+
+
+
+    const [CurrentTruck, setCurrentTruck] = useState<ITruckData | null>(null);
 
     const [isEdit, setIsEdit] = useState(false);
 
-    const { data, isLoading } = useGetDriverData('1001');
+    const { data, isLoading } = useGetTruckData('1001');
 
 
     const [open, setOpen] = useState(false);
@@ -35,140 +34,147 @@ const DriverListPage = () => {
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
-        const searchTerm = data.toLowerCase();
+        // const searchTerm = data.toLowerCase();
 
-        dispatch(updateSearchColumn({
-            name: searchTerm,
-        }))
-    }, [dispatch]);
+        // dispatch(updateSearchColumn({
+        //     name: searchTerm,
+        // }))
+    }, []);
 
 
-    console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
+    // console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
 
-    const columns: TableProps<DriverMaster>['columns'] = useMemo(() => [
+    const columns: TableProps<ITruckData>['columns'] = useMemo(() => [
+        // {
+        //     title: 'Customer ID',
+        //     dataIndex: 'customerid',
+        //     key: 'customerid',
+        //     width: 100,
+        //     render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.customerid}</span>
+        // },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: (_, data: Partial<DriverMaster>) => <span
-                className="text-[#00008B] font-semibold cursor-pointer text-base "
-                onClick={() => {
-                    setOpen(true);
-                    setIsEdit(true);
-                    setCurrentDriver(data as DriverMaster);
-                }}
-            >{data.name}</span>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'S.N',
+            dataIndex: 'id',
+            key: 'id',
+            render: (_, __, index) => <span>{index + 1}</span>,
+            width: 80,
+        },
+        {
+            title: 'Registration Number',
+            dataIndex: 'registration_number',
+            key: 'registration_number',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) =>
+                <span
+                    className="text-[#00008B] font-semibold cursor-pointer text-base "
+                    onClick={() => {
+                        setOpen(true);
+                        setIsEdit(true);
+                        setCurrentTruck(data as ITruckData);
+                    }}
+                >{data.registration_number}</span>,
+        },
+        {
+            title: 'Chassis Number',
+            dataIndex: 'chassis_number',
+            key: 'chassis_number',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.chassis_number}</span>
+        },
+        {
+            title: 'Engine Number',
+            dataIndex: 'engine_number',
+            key: 'engine_number',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.engine_number}</span>
+        },
+        {
+            title: 'Make',
+            dataIndex: 'make',
+            key: 'make',
             width: 100,
-            // filterSearch: true,
-            // onFilter: (value, record) => record.address.includes(value as string),
-            // filtered: true,
-            // filterIcon: () =>
-            //     <Search
-            //         className={`cursor-pointer text-black w-4`}
-            //     />,
-            // filterDropdown(props) {
-            //     let debounceTimeout: NodeJS.Timeout;
-            //     return (
-            //         <div className="p-2">
-            //             <input
-            //                 className="w-full p-2 border border-gray-300 rounded-md"
-            //                 placeholder="Search Name"
-            //                 onChange={(e) => {
-            //                     const value = e.target.value;
-            //                     if (debounceTimeout) {
-            //                         clearTimeout(debounceTimeout);
-            //                     }
-            //                     debounceTimeout = setTimeout(() => {
-            //                         props.setSelectedKeys(value ? [value] : []);
-            //                         props.confirm();
-            //                     }, 300); // Adjust the debounce delay as needed
-            //                 }}
-            //             />
-            //         </div>
-            //     );
-            // },
-            filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
-
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.make}</span>
         },
         {
-            title: 'Cus ID',
-            dataIndex: 'customerid',
-            key: 'customerid',
-            width: 50,
-            render: (_, data: Partial<DriverMaster>) => <span
-                className="text-base"
-            >{data.customerid}</span>
-        },
-        {
-            title: 'License Number',
-            dataIndex: 'license_number',
-            key: 'license_number',
-            width: 100
-        },
-        {
-            title: 'License Expiry Date',
-            dataIndex: 'license_expiry_date',
-            key: 'license_expiry_date',
-            width: 100
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone_number',
-            key: 'phone_number',
-            width: 100
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'Model',
+            dataIndex: 'model',
+            key: 'model',
             width: 100,
-            render: (_, data: Partial<DriverMaster>) => (
-                <Tooltip
-                    title={data?.address}
-                    key={data?.address}
-                >
-                    <span>{(data?.address?.trim().length ?? 0) > 20 ? `${data?.address?.slice(0, 20)}...` : data?.address ?? ''
-                    }</span>
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.model}</span>
+        },
+        {
+            title: 'Year of Manufacture',
+            dataIndex: 'year_of_manufacture',
+            key: 'year_of_manufacture',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.year_of_manufacture}</span>
+        },
+        {
+            title: 'Wheels',
+            dataIndex: 'wheels',
+            key: 'wheels',
+            width: 100,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.wheels}</span>
+        },
+        {
+            title: 'Tyre Type',
+            dataIndex: 'tyre_type',
+            key: 'tyre_type',
+            width: 100,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.tyre_type}</span>
+        },
+        {
+            title: 'Load Capacity',
+            dataIndex: 'load_capacity',
+            key: 'load_capacity',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.load_capacity}</span>
+        },
+        {
+            title: 'Fuel Type',
+            dataIndex: 'fuel_type',
+            key: 'fuel_type',
+            width: 100,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.fuel_type}</span>
+        },
+        {
+            title: 'Insurance Number',
+            dataIndex: 'insurance_number',
+            key: 'insurance_number',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.insurance_number}</span>
+        },
+        {
+            title: 'Insurance Expiry Date',
+            dataIndex: 'insurance_expiry_date',
+            key: 'insurance_expiry_date',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.insurance_expiry_date}</span>
+        },
+        {
+            title: 'Last Service Date',
+            dataIndex: 'last_service_date',
+            key: 'last_service_date',
+            width: 150,
+            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.last_service_date}</span>
+        },
+        {
+            title: 'Remarks',
+            dataIndex: 'remarks',
+            key: 'remarks',
+            width: 200,
+            render: (_, data: Partial<ITruckData>) => (
+                <Tooltip title={data?.remarks} key={data?.remarks}>
+                    <span>{(data?.remarks?.trim().length ?? 0) > 20 ? `${data?.remarks?.slice(0, 20)}...` : data?.remarks ?? ''}</span>
                 </Tooltip>
             ),
-        },
-        {
-            title: 'Date of Birth',
-            dataIndex: 'date_of_birth',
-            key: 'date_of_birth',
-            width: 80
-        },
-        {
-            title: 'Date of Joining',
-            dataIndex: 'date_of_joining',
-            key: 'date_of_joining',
-            width: 80
-        },
-        {
-            title: 'Emergency Contact',
-            dataIndex: 'emergency_contact',
-            key: 'emergency_contact',
-            width: 150
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 50
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 100
         },
         {
             title: "Documents",
             dataIndex: 'documents',
             key: 'documents',
             width: 80,
-            render: (_, data: Partial<DriverMaster>) => (
+            render: (_, data: Partial<ITruckData>) => (
                 <div className="flex justify-center items-center">
                     <FileImage
                         className="cursor-pointer hover:text-blue-500"
@@ -180,30 +186,24 @@ const DriverListPage = () => {
                                     <Space className="my-2">
                                         <Image
                                             width={
-                                                data?.aadhaar_pic ? 30 : 100
+                                                data?.rc_book ? 30 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.aadhaar_pic}`}
-                                            alt={
-                                                data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'
-                                            }
+                                            src={`${routes.backend.file.upload}/${data.rc_book}`}
+                                            alt={data?.rc_book ? 'RC Book' : 'RC Book Not Uploaded'}
                                         />
                                         <Image
                                             width={
-                                                data?.pancard_pic ? 30 : 100
+                                                data?.insurance ? 30 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.pancard_pic}`}
-                                            alt={
-                                                data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'
-                                            }
+                                            src={`${routes.backend.file.upload}/${data.insurance}`}
+                                            alt={data?.insurance ? 'Insurance' : 'Insurance Not Uploaded'}
                                         />
                                         <Image
                                             width={
-                                                data?.license_pic ? 30 : 100
+                                                data?.pic ? 30 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.license_pic}`}
-                                            alt={
-                                                data?.license_pic ? 'License' : 'License Not Uploaded'
-                                            }
+                                            src={`${routes.backend.file.upload}/${data.pic}`}
+                                            alt={data?.pic ? 'Picture' : 'Picture Not Uploaded'}
                                         />
                                     </Space>
                                 </>
@@ -213,12 +213,10 @@ const DriverListPage = () => {
                 </div>
             ),
         }
-    ], [
-        StoreData.searchColumn.name
-    ])
+    ], []);
 
 
-    const handleCreateDriver = async (data: DriverMaster) => {
+    const handleCreateTruck = async (data: ITruckData) => {
         try {
             const response = await axios.post(routes.backend.driver.create, data);
             console.log(response);
@@ -239,11 +237,11 @@ const DriverListPage = () => {
         }
     };
 
-    const handleUpdateDriver = async (data: DriverMaster) => {
+    const handleUpdateTruck = async (data: ITruckData) => {
         try {
             const response = await axios.post(routes.backend.driver.update, {
                 ...data,
-                id: CurrentDriver?.id
+                id: CurrentTruck?.id
             });
             console.log(response);
             const { data: responseData } = response;
@@ -273,7 +271,7 @@ const DriverListPage = () => {
                     gap-8
                     w-full
                 '>
-                    <label className="font-bold text-xl">Driver Master</label>
+                    <label className="font-bold text-xl">Truck Master</label>
                     <SearchComponent
                         className="search-component"
                         placeholder="Search WareHouse"
@@ -288,11 +286,11 @@ const DriverListPage = () => {
                     '
                 >
                     <Plus className='mr-1' />
-                    Add Driver
+                    Add Truck
                 </Button>
 
             </div>
-            <Table<DriverMaster>
+            <Table<ITruckData>
                 columns={columns}
                 dataSource={data?.body}
                 loading={isLoading}
@@ -338,25 +336,13 @@ const DriverListPage = () => {
                                     }} />
                                 </div>
                                 <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
-                                    {isEdit ? 'Edit' : 'Add'} Driver Details
+                                    {isEdit ? 'Edit' : 'Add'} Truck Details
                                 </Drawer.Title>
 
                                 <Drawer.Description className="text-zinc-600 mb-2">
                                     {/* The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left. */}
                                     <FormComponentV2
                                         fields={[
-                                            {
-                                                label: 'Name',
-                                                name: 'name',
-                                                type: 'text',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Name'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().min(3).max(30)
-                                                }
-                                            },
                                             {
                                                 label: 'Customer ID',
                                                 name: 'customerid',
@@ -370,11 +356,11 @@ const DriverListPage = () => {
                                                 }
                                             },
                                             {
-                                                label: 'License Number',
-                                                name: 'license_number',
+                                                label: 'Registration Number',
+                                                name: 'registration_number',
                                                 type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Enter License Number'
+                                                    placeholder: 'Enter Registration Number'
                                                 },
                                                 validation: {
                                                     required: true,
@@ -382,12 +368,132 @@ const DriverListPage = () => {
                                                 }
                                             },
                                             {
-                                                label: 'License Expiry Date',
-                                                name: 'license_expiry_date',
+                                                label: 'Chassis Number',
+                                                name: 'chassis_number',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Chassis Number'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Engine Number',
+                                                name: 'engine_number',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Engine Number'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Make',
+                                                name: 'make',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Make'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Model',
+                                                name: 'model',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Model'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Year of Manufacture',
+                                                name: 'year_of_manufacture',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Year of Manufacture'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(4).max(4)
+                                                }
+                                            },
+                                            {
+                                                label: 'Wheels',
+                                                name: 'wheels',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Wheels'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(1).max(2)
+                                                }
+                                            },
+                                            {
+                                                label: 'Tyre Type',
+                                                name: 'tyre_type',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Tyre Type'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Load Capacity',
+                                                name: 'load_capacity',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Load Capacity'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(1).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Fuel Type',
+                                                name: 'fuel_type',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Fuel Type'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Insurance Number',
+                                                name: 'insurance_number',
+                                                type: 'text',
+                                                isInputProps: {
+                                                    placeholder: 'Enter Insurance Number'
+                                                },
+                                                validation: {
+                                                    required: true,
+                                                    pattern: z.string().min(3).max(20)
+                                                }
+                                            },
+                                            {
+                                                label: 'Insurance Expiry Date',
+                                                name: 'insurance_expiry_date',
                                                 type: 'date',
                                                 isInputProps: {
-                                                    placeholder: 'Enter License Expiry Date',
-                                                    defaultValue: isEdit ? CurrentDriver?.license_expiry_date : ''
+                                                    placeholder: 'Enter Insurance Expiry Date',
+                                                    defaultValue: isEdit ? CurrentTruck?.insurance_expiry_date : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -398,55 +504,12 @@ const DriverListPage = () => {
                                                 }
                                             },
                                             {
-                                                label: 'Phone Number',
-                                                name: 'phone_number',
-                                                type: 'text',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Phone Number'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().min(3).max(20)
-                                                }
-                                            },
-                                            {
-                                                label: 'Address',
-                                                name: 'address',
-                                                type: 'text',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Address'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().min(3).max(120)
-                                                }
-                                            },
-                                            {
-                                                label: 'Date of Birth',
-                                                name: 'date_of_birth',
+                                                label: 'Last Service Date',
+                                                name: 'last_service_date',
                                                 type: 'date',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Date of Birth',
-                                                    defaultValue: isEdit ? CurrentDriver?.date_of_birth : ''
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z
-                                                        .string().refine((val) => {
-                                                            const date = new Date(val);
-                                                            return date >= new Date('1900-01-01') && date <= new Date();
-                                                        }, {
-                                                            message: "Date must be between 01-01-1900 and today"
-                                                        })
-                                                }
-                                            },
-                                            {
-                                                label: 'Date of Joining',
-                                                name: 'date_of_joining',
-                                                type: 'date',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Date of Joining',
-                                                    defaultValue: isEdit ? CurrentDriver?.date_of_joining : ''
+                                                    placeholder: 'Enter Last Service Date',
+                                                    defaultValue: isEdit ? CurrentTruck?.last_service_date : ''
                                                 },
                                                 validation: {
                                                     required: true,
@@ -459,94 +522,63 @@ const DriverListPage = () => {
                                                 }
                                             },
                                             {
-                                                label: 'Emergency Contact',
-                                                name: 'emergency_contact',
+                                                label: 'Remarks',
+                                                name: 'remarks',
                                                 type: 'text',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Emergency Contact'
+                                                    placeholder: 'Enter Remarks'
                                                 },
                                                 validation: {
                                                     required: true,
-                                                    pattern: z.string().min(3).max(20)
+                                                    pattern: z.string().min(3).max(120)
                                                 }
                                             },
                                             {
-                                                label: 'Status',
-                                                name: 'status',
-                                                type: 'select',
-                                                isInputProps: {
-                                                    placeholder: 'Select Status'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().min(3).max(20)
-                                                },
-                                                options: ['Active', 'Inactive']
-                                            },
-                                            {
-                                                label: 'Aadhaar Pic',
-                                                name: 'aadhaar_pic',
+                                                label: 'RC Book',
+                                                name: 'rc_book',
                                                 type: 'upload',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Aadhaar Pic'
+                                                    placeholder: 'Upload RC Book'
                                                 },
                                                 validation: {
                                                     required: false,
                                                     pattern: z.string().nullable()
-
                                                 }
                                             },
                                             {
-                                                label: 'Pancard Pic',
-                                                name: 'pancard_pic',
+                                                label: 'Insurance',
+                                                name: 'insurance',
                                                 type: 'upload',
                                                 isInputProps: {
-                                                    placeholder: 'Enter Pancard Pic'
+                                                    placeholder: 'Upload Insurance'
                                                 },
                                                 validation: {
                                                     required: false,
                                                     pattern: z.string().nullable()
-                                                    // .instanceof(FileList)
-                                                    // .refine((file) => file?.length == 1, 'File is required.')
                                                 }
                                             },
                                             {
-                                                label: 'License Pic',
-                                                name: 'license_pic',
+                                                label: 'Picture',
+                                                name: 'pic',
                                                 type: 'upload',
                                                 isInputProps: {
-                                                    placeholder: 'Enter License Pic'
+                                                    placeholder: 'Upload Picture'
                                                 },
                                                 validation: {
                                                     required: false,
                                                     pattern: z.string().nullable()
-                                                    //     .instanceof(FileList)
-                                                    //     .refine((file) => file?.length == 1, 'File is required.')
-                                                }
-                                            },
-                                            {
-                                                label: 'Email',
-                                                name: 'email',
-                                                type: 'text',
-                                                isInputProps: {
-                                                    placeholder: 'Enter Email'
-                                                },
-                                                validation: {
-                                                    required: true,
-                                                    pattern: z.string().min(3).max(40)
                                                 }
                                             }
                                         ]}
                                         isUpdate={isEdit}
                                         onSubmit={(data) => {
                                             if (isEdit) {
-                                                handleUpdateDriver(data as DriverMaster);
+                                                handleUpdateTruck(data as ITruckData);
                                             } else {
-                                                handleCreateDriver(data as DriverMaster);
+                                                handleCreateTruck(data as ITruckData);
                                             }
                                         }}
-                                        initialValues={CurrentDriver}
-
+                                        initialValues={CurrentTruck}
                                     />
                                 </Drawer.Description>
                             </div>
@@ -593,4 +625,4 @@ const DriverListPage = () => {
     );
 };
 
-export default DriverListPage;
+export default TruckListPage;

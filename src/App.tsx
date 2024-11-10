@@ -17,6 +17,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from "./hooks/queryClient";
 import AlloyListPage from "./pages/Alloy/Alloy";
 import TyrePressure from "./pages/TyprePressure/TyrePressure";
+import Truck from "./pages/Truck/Truck";
 
 const router = createBrowserRouter([
     {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
             {
                 path: 'alloy',
                 element: <AlloyListPage />
+            },
+            {
+                path: 'truck',
+                element: <Truck />,
             },
             {
                 path: 'type-pressure',

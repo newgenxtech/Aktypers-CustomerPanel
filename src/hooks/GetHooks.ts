@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetApiCustomerRoutes, PostApiCustomerRoutes } from "./ApiCustomHook";
-import { DriverMaster } from "@/pages/Driver/Driver.Interface";
+
 import { GetApiResponse } from "@/Interfaces/interface";
 import { routes } from "@/routes/routes";
-import { AlloyMaster } from "@/pages/Alloy/Alloy.Interface";
-import { ITyrePressure } from "@/pages/TyprePressure/Interface.Tyre";
+
+import { ITyrePressure } from "@/pages/TyprePressure/Tyre";
+import { DriverMaster } from "@/pages/Driver/Driver.d"; // Add this line to import DriverMaster
+import { AlloyMaster } from "@/pages/Alloy/Alloy.d";
+import { ITruckData } from "@/pages/Truck/Truck.d";
 
 export const useGetDriverData = (customer_id: string) => {
     return useQuery<GetApiResponse<DriverMaster>>({
@@ -32,6 +35,18 @@ export const useGetAlloyData = (customer_id: string,
         
     });
 };
+
+// getTruckData
+export const useGetTruckData = (customer_id: string) => {
+    return useQuery<GetApiResponse<ITruckData>>({
+        queryKey: ['trucks'],
+        queryFn: () => GetApiCustomerRoutes(
+            routes.backend.truck.getAll + customer_id,
+            'DummyToken'
+        ).then((res) => res as GetApiResponse<ITruckData>),
+    });
+}
+
 
 // getLatestTyrePressureDetails
 export const useGetTyrePressureData = (truck_id: string) => {
