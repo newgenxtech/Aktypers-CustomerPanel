@@ -49,6 +49,9 @@ export const routes = {
         },
         alloy: {
             getAll: `${base}?route=getAlloyByCustomer&customer_id=`,
+        },
+        tyre: {
+            getLatestTyrePressureDetails: `${base}?route=getLatestTyrePressureDetails&truck_id=`,
         }
     },
 };

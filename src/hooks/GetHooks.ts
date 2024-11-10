@@ -4,6 +4,7 @@ import { DriverMaster } from "@/pages/Driver/Driver.Interface";
 import { GetApiResponse } from "@/Interfaces/interface";
 import { routes } from "@/routes/routes";
 import { AlloyMaster } from "@/pages/Alloy/Alloy.Interface";
+import { ITyrePressure } from "@/pages/TyprePressure/Interface.Tyre";
 
 export const useGetDriverData = (customer_id: string) => {
     return useQuery<GetApiResponse<DriverMaster>>({
@@ -31,3 +32,14 @@ export const useGetAlloyData = (customer_id: string,
         
     });
 };
+
+// getLatestTyrePressureDetails
+export const useGetTyrePressureData = (truck_id: string) => {
+    return useQuery<GetApiResponse<ITyrePressure>>({
+        queryKey: ['tyre'],
+        queryFn: () => GetApiCustomerRoutes(
+            routes.backend.tyre.getLatestTyrePressureDetails + truck_id,
+            'DummyToken'
+        ).then((res) => res as GetApiResponse<ITyrePressure>),
+    });
+}

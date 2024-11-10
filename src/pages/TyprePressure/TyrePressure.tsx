@@ -1,30 +1,35 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Box, Cylinder, Line, OrbitControls } from '@react-three/drei';
+import { Box, Cylinder, OrbitControls } from '@react-three/drei';
 
-const Truck: React.FC = () => {
-    // Truck dimensions and spacing based on your layout
-    const cabWidth = 2;
-    const cabLength = 3;
-    const trailerWidth = 2.7;
-    const trailerLength = 9.5;
-    const wheelRadius = 0.4;
-    const wheelWidth = .2;
+type IAxcelsData = {
+    axlePositions: Array<[number, number, number]>;
+    axleRadius: number;
+    axleLength: number;
+    rotation?: [number, number, number];
+}
 
-    // Positions for each set of wheels based on image layout
-    const wheelPositions: Array<[number, number, number]> = [
-        // Front Cab
-        [-1, 0, 4.7], [1, 0, 4.7], // Wheels 1 and 2
-        // x, y, z
-        [-1.2, 0, 3.3], [-0.9, 0, 3.3], [0.9, 0, 3.3,], [1.2, 0, 3.3], // Wheels 3 and 4
-        [-1.2, 0, 2.3], [-0.9, 0, 2.3], [0.9, 0, 2.3], [1.2, 0, 2.3], // Wheels 7, 8, 9, 10
+interface TruckProps {
+    cabWidth: number;
+    cabLength: number;
+    trailerWidth: number;
+    trailerLength: number;
+    wheelRadius: number;
+    wheelWidth: number;
+    wheelPositions: Array<[number, number, number]>;
+    axlesData: IAxcelsData[];
+}
 
-        // Trailer Wheels
-        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], // Wheels 11-14
-        [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4], // Wheels 15-18
-        [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5], // Wheels 19-22
-    ];
-
+const Truck: React.FC<TruckProps> = ({
+    cabWidth,
+    cabLength,
+    trailerWidth,
+    trailerLength,
+    wheelRadius,
+    wheelWidth,
+    wheelPositions,
+    axlesData
+}) => {
     const renderWheels = () => {
         return wheelPositions.map((position, index) => (
             <group key={index} position={position}>
@@ -46,31 +51,21 @@ const Truck: React.FC = () => {
         ));
     };
 
-    const renderAxles = () => {
-        const axleRadius = 0.05;
-        const axleLength = 2;
-
-        const axlePositions: Array<[number, number, number]> = [
-            [0, -0, 4.7],
-            [0, -0, 3.3],
-            [0, -0, 2.3],
-            [0, -0, -3],
-            [0, -0, -4],
-            [0, -0, -5],
-        ];
-
-        return axlePositions.map((position, index) => (
-            <Cylinder
-                key={index}
-
-                args={[axleRadius, axleRadius, axleLength, 32]}
-                position={position}
-                rotation={[0, 0, Math.PI / 2]}
-            >
-                <meshStandardMaterial color="#71B9FF" />
-            </Cylinder>
-        ));
+    const renderAxles = (truckData: IAxcelsData[]) => {
+        return truckData.map(({ axlePositions, axleRadius, axleLength, rotation }) => {
+            return axlePositions.map((position, index) => (
+                <Cylinder
+                    key={index}
+                    args={[axleRadius, axleRadius, axleLength, 32]}
+                    position={position}
+                    rotation={rotation}
+                >
+                    <meshStandardMaterial color="#71B9FF" />
+                </Cylinder>
+            ));
+        });
     };
+
     return (
         <group>
             {/* Front Cab */}
@@ -84,7 +79,7 @@ const Truck: React.FC = () => {
             </Box>
 
             {/* Axles */}
-            {renderAxles()}
+            {renderAxles(axlesData)}
 
             {/* Wheels */}
             {renderWheels()}
@@ -93,11 +88,60 @@ const Truck: React.FC = () => {
 };
 
 const TyrePressure: React.FC = () => {
+
+    // const []
+
+    const cabWidth = React.useMemo(() => 2, []);
+    const cabLength = React.useMemo(() => 3, []);
+    const trailerWidth = React.useMemo(() => 2.7, []);
+    const trailerLength = React.useMemo(() => 9.5, []);
+    const wheelRadius = React.useMemo(() => 0.4, []);
+    const wheelWidth = React.useMemo(() => 0.2, []);
+
+    const wheelPositions: Array<[number, number, number]> = React.useMemo(() => [
+        // Front Cab
+        [-1, 0, 4.7], [1, 0, 4.7], // Wheels 1 and 2
+        [-1.2, 0, 3.3], [-0.9, 0, 3.3], [0.9, 0, 3.3], [1.2, 0, 3.3], // Wheels 3 and 4
+        [-1.2, 0, 2.3], [-0.9, 0, 2.3], [0.9, 0, 2.3], [1.2, 0, 2.3], // Wheels 7, 8, 9, 10
+        // Trailer Wheels
+        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], // Wheels 11-14
+        [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4], // Wheels 15-18
+        [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5], // Wheels 19-22
+    ], []);
+
+    const axlesData: IAxcelsData[] = React.useMemo(() => [
+        { axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        { axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        { axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        { axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
+        { axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+    ], []);
+
+
+    // const HowManyAxelPresentHelperFunc = () => {
+
+    // }
+
     return (
-        <Canvas camera={{ position: [10, 10, 20], fov: 60 }}>
+        <Canvas camera={{
+            position: [0, -90, 20],
+            // position: [10, 10, 20]
+            fov: 10
+        }}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1} />
-            <Truck />
+            <Truck
+                cabWidth={cabWidth}
+                cabLength={cabLength}
+                trailerWidth={trailerWidth}
+                trailerLength={trailerLength}
+                wheelRadius={wheelRadius}
+                wheelWidth={wheelWidth}
+                wheelPositions={wheelPositions}
+                axlesData={axlesData}
+            />
             <OrbitControls />
         </Canvas>
     );
