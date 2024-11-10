@@ -8,20 +8,20 @@ import FormComponentV2 from '@/components/FormComponentV2';
 import { z } from 'zod';
 import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DriverDataStoreInterface, DriverMaster } from './Driver.d';
-import { useDispatch, useSelector } from 'react-redux';
+import { DriverMaster } from './Driver.d';
+
 import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useGetDriverData } from "@/hooks/GetHooks";
 import { routes } from "@/routes/routes";
-import { updateSearchColumn } from "@/services/Driver/Driver";
+// import { updateSearchColumn } from "@/services/Driver/Driver";
 import axios from "axios";
 import { queryClient } from "@/hooks/queryClient";
 
 
 const DriverListPage = () => {
-    const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
-    const dispatch = useDispatch();
+    // const StoreData = useSelector((state: { driver: DriverDataStoreInterface }) => state.driver);
+
 
     const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
 
@@ -35,15 +35,15 @@ const DriverListPage = () => {
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
-        const searchTerm = data.toLowerCase();
+        // const searchTerm = data.toLowerCase();
 
-        dispatch(updateSearchColumn({
-            name: searchTerm,
-        }))
-    }, [dispatch]);
+        // dispatch(updateSearchColumn({
+        //     name: searchTerm,
+        // }))
+    }, []);
 
 
-    console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
+    // console.log(StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined);
 
     const columns: TableProps<DriverMaster>['columns'] = useMemo(() => [
         {
@@ -88,7 +88,7 @@ const DriverListPage = () => {
             //         </div>
             //     );
             // },
-            filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
+            // filteredValue: StoreData.searchColumn.name ? [StoreData.searchColumn.name] : undefined,
 
         },
         {
@@ -214,7 +214,7 @@ const DriverListPage = () => {
             ),
         }
     ], [
-        StoreData.searchColumn.name
+        // StoreData.searchColumn.name
     ])
 
 

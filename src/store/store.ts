@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import WareHouseSlice from "../services/warehouse/WarehouseSlice";
 import tableReducer from "../services/TableSlice";
-import DriverStore from "../services/Driver/Driver";
+// import DriverStore from "../services/Driver/Driver";
 
 
 export const store = configureStore({
     reducer: {
         warehouse: WareHouseSlice,
-        driver: DriverStore,
+        // driver: DriverStore,
         table: tableReducer,
 
     }
