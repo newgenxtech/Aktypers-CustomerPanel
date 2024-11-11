@@ -1,149 +1,217 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Box, Cylinder, OrbitControls } from '@react-three/drei';
+import SearchComponent from "@/components/SearchComponent";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ITyrePressure } from './Tyre.d';
+import { AutoComplete, DatePicker, message, Table } from 'antd';
+import type { TableProps } from 'antd';
+import axios from "axios";
+import { routes } from "@/routes/routes";
+import { useQuery } from "@tanstack/react-query";
+import { useGetTruckData } from "@/hooks/GetHooks";
+import { GetApiResponse } from "@/Interfaces/interface";
+import TruckCanvas from "./TruckCanvas";
 
-type IAxcelsData = {
-    axlePositions: Array<[number, number, number]>;
-    axleRadius: number;
-    axleLength: number;
-    rotation?: [number, number, number];
+function getTyreLayout(totalTyres: number, totalAxles: number, axtyre: string): {
+    position: string;
+}[] {
+    console.log(totalTyres, totalAxles, axtyre);
+    const parsedAxTyre = JSON.parse(axtyre);
+    console.log(parsedAxTyre);
+
+
+    const layout = [];
+    console.log(totalTyres, totalAxles, axtyre);
+
+    for (let axle = 0; axle < totalAxles; axle++) {
+        const axleTyres = parsedAxTyre[axle].tyre; // Number of tyres on this axle
+        for (let side = 0; side < axleTyres; side++) {
+            layout.push(
+                { position: `${axle + 1}L${side}` }, // Left side
+                { position: `${axle + 1}R${side}` }  // Right side
+            );
+        }
+    }
+
+    return layout;
 }
-
-interface TruckProps {
-    cabWidth: number;
-    cabLength: number;
-    trailerWidth: number;
-    trailerLength: number;
-    wheelRadius: number;
-    wheelWidth: number;
-    wheelPositions: Array<[number, number, number]>;
-    axlesData: IAxcelsData[];
-}
-
-const Truck: React.FC<TruckProps> = ({
-    cabWidth,
-    cabLength,
-    trailerWidth,
-    trailerLength,
-    wheelRadius,
-    wheelWidth,
-    wheelPositions,
-    axlesData
-}) => {
-    const renderWheels = () => {
-        return wheelPositions.map((position, index) => (
-            <group key={index} position={position}>
-                {/* Tire */}
-                <Cylinder
-                    args={[wheelRadius, wheelRadius, wheelWidth, 32]}
-                    rotation={[0, 0, Math.PI / 2]}
-                >
-                    <meshStandardMaterial color="black" />
-                </Cylinder>
-                {/* Rim */}
-                <Cylinder
-                    args={[wheelRadius * 0.6, wheelRadius * 0.6, wheelWidth * 1.1, 32]}
-                    rotation={[0, 0, Math.PI / 2]}
-                >
-                    <meshStandardMaterial color="gray" />
-                </Cylinder>
-            </group>
-        ));
-    };
-
-    const renderAxles = (truckData: IAxcelsData[]) => {
-        return truckData.map(({ axlePositions, axleRadius, axleLength, rotation }) => {
-            return axlePositions.map((position, index) => (
-                <Cylinder
-                    key={index}
-                    args={[axleRadius, axleRadius, axleLength, 32]}
-                    position={position}
-                    rotation={rotation}
-                >
-                    <meshStandardMaterial color="#71B9FF" />
-                </Cylinder>
-            ));
-        });
-    };
-
-    return (
-        <group>
-            {/* Front Cab */}
-            <Box args={[cabWidth, 1, cabLength]} position={[0, 0.6, 4]}>
-                <meshStandardMaterial color="red" />
-            </Box>
-
-            {/* Trailer */}
-            <Box args={[trailerWidth, 1.5, trailerLength]} position={[0, 0.8, -0.9]}>
-                <meshStandardMaterial color="#D9D9D9" />
-            </Box>
-
-            {/* Axles */}
-            {renderAxles(axlesData)}
-
-            {/* Wheels */}
-            {renderWheels()}
-        </group>
-    );
-};
 
 const TyrePressure: React.FC = () => {
+    const [fromDate, setFromDate] = useState<string>('');
+    const [toDate, setToDate] = useState<string>('');
+    const { data: TruckListData } = useGetTruckData('1001');
+    const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
+    const [SelectedTruck, setSelectedTruck] = useState<{ value: string, label: string } | undefined>();
+    const [SelectedTyre, setSelectedTyre] = useState<ITyrePressure | undefined>();
 
-    // const []
 
-    const cabWidth = React.useMemo(() => 2, []);
-    const cabLength = React.useMemo(() => 3, []);
-    const trailerWidth = React.useMemo(() => 2.7, []);
-    const trailerLength = React.useMemo(() => 9.5, []);
-    const wheelRadius = React.useMemo(() => 0.4, []);
-    const wheelWidth = React.useMemo(() => 0.2, []);
 
-    const wheelPositions: Array<[number, number, number]> = React.useMemo(() => [
-        // Front Cab
-        [-1, 0, 4.7], [1, 0, 4.7], // Wheels 1 and 2
-        [-1.2, 0, 3.3], [-0.9, 0, 3.3], [0.9, 0, 3.3], [1.2, 0, 3.3], // Wheels 3 and 4
-        [-1.2, 0, 2.3], [-0.9, 0, 2.3], [0.9, 0, 2.3], [1.2, 0, 2.3], // Wheels 7, 8, 9, 10
-        // Trailer Wheels
-        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], // Wheels 11-14
-        [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4], // Wheels 15-18
-        [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5], // Wheels 19-22
+
+    const { data: TyrePressureData, isLoading: TyrePressureDataLoading } = useQuery<GetApiResponse<ITyrePressure>>(
+        {
+            queryKey: ['TyrePressure', fromDate, toDate, SelectedTruckId],
+            queryFn: async () => {
+                try {
+                    const res = await axios.post(routes.backend.tyre.getLatestTyrePressureDetails + SelectedTruckId, {
+                        from_date: fromDate,
+                        to_date: toDate
+                    });
+                    const result = res.data;
+                    return result;
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    message.error("Error fetching data");
+                }
+            },
+            refetchOnWindowFocus: false,
+            enabled: !!SelectedTruckId
+        }
+    )
+
+    useEffect(() => {
+        if (TruckListData?.body[0].id) {
+            setSelectedTruckId(TruckListData.body[0].id);
+        }
+    }, [TruckListData]);
+
+    useEffect(() => {
+        if (TyrePressureData && TyrePressureDataLoading === false) {
+            setSelectedTyre(TyrePressureData.body[0]);
+        }
+    }, [TyrePressureData]);
+
+    const handleSearch = useCallback((data: string) => {
+        console.log(data);
+    }, []);
+
+    const columns: TableProps<ITyrePressure>['columns'] = useMemo(() => [
+        {
+            title: 'S.N',
+            dataIndex: 'id',
+            key: 'id',
+            render: (_, __, index) => <span>{index + 1}</span>,
+            width: 'auto',
+        },
+        {
+            title: 'Tyre Position',
+            dataIndex: 'tyre_position',
+            key: 'tyre_position',
+            render: (text: string) => <span>{text}</span>,
+            width: 'auto',
+        },
+        {
+            title: 'Tyre Pressure',
+            dataIndex: 'tyre_pressure',
+            key: 'tyre_pressure',
+            render: (text: string) => <span>{text}</span>,
+            width: 'auto',
+        },
+        {
+            title: 'Recorded At',
+            dataIndex: 'recorded_at',
+            key: 'recorded_at',
+            render: (text: string) => <span>{text}</span>,
+            width: 'auto',
+        },
     ], []);
 
-    const axlesData: IAxcelsData[] = React.useMemo(() => [
-        { axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        { axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        { axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        { axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
-        { axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    ], []);
 
 
-    // const HowManyAxelPresentHelperFunc = () => {
-
-    // }
 
     return (
-        <Canvas camera={{
-            position: [0, -90, 20],
-            // position: [10, 10, 20]
-            fov: 10
-        }}>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
-            <Truck
-                cabWidth={cabWidth}
-                cabLength={cabLength}
-                trailerWidth={trailerWidth}
-                trailerLength={trailerLength}
-                wheelRadius={wheelRadius}
-                wheelWidth={wheelWidth}
-                wheelPositions={wheelPositions}
-                axlesData={axlesData}
+        <div className='warehouse'>
+            <div className="container">
+                <div className='flex items-center gap-8 w-full'>
+                    <label className="font-bold text-xl">Tyre Pressure Master</label>
+                    <SearchComponent
+                        className="search-component"
+                        placeholder="Search TyrePressure"
+                        onHandleChange={handleSearch}
+                        postfix={<i className="fa fa-search" />}
+                    />
+                </div>
+                <Button
+                    onClick={() => {
+                        // setOpen(true)
+                    }}
+                    className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white'
+                    disabled={true}
+                >
+                    <Plus className='mr-1' />
+                    Add Tyre Pressure
+                </Button>
+            </div>
+            <div className='flex justify-center gap-4 my-4'>
+                <div className="flex items-center justify-center gap-2">
+                    <label>Truck</label>
+                    <AutoComplete
+                        options={TruckListData?.body.map((item) => ({ value: JSON.stringify(item), label: item.registration_number }))}
+                        placeholder="Select Truck"
+                        onSelect={(text) => {
+                            const res = JSON.parse(text);
+                            setSelectedTruck({
+                                value: res.id,
+                                label: res.registration_number,
+                            });
+                            setSelectedTruckId(res.id);
+                        }}
+                        className="w-64"
+                        value={SelectedTruck?.label}
+                    />
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <label>From Date</label>
+                    <DatePicker
+                        onChange={(date, dateString) => {
+                            setFromDate(dateString as string);
+                        }}
+                    />
+                </div>
+                <div className="flex justify-center items-center gap-2">
+                    <label>To Date</label>
+                    <DatePicker
+                        onChange={(date, dateString) => {
+                            setToDate(dateString as string);
+                        }}
+                    />
+                </div>
+            </div>
+            <Table<ITyrePressure>
+                columns={columns}
+                dataSource={
+                    TyrePressureData?.body.map((item, index) => ({
+                        ...item,
+                        key: index,
+                    })) ?? []
+                }
+                loading={TyrePressureDataLoading}
+                pagination={{
+                    position: ['bottomRight'],
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '30', '40', '50'],
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                }}
+                size="middle"
+                scroll={{ x: 'auto', y: '60vh' }}
             />
-            <OrbitControls />
-        </Canvas>
+            {
+                TyrePressureDataLoading ?
+                    <div className="loader">
+                        Loading...
+                    </div> :
+                    (
+                        SelectedTyre && (
+                            <TruckCanvas
+                                TyreData={getTyreLayout(
+                                    Number(SelectedTyre.total_tyres),
+                                    Number(SelectedTyre.total_axles),
+                                    SelectedTyre.axtyre
+                                )}
+                            />
+                        )
+                    )
+            }
+        </div>
     );
 };
 

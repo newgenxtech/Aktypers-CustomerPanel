@@ -9,6 +9,7 @@ import type { TableProps } from 'antd';
 import axios from "axios";
 import { routes } from "@/routes/routes";
 import { useQuery } from "@tanstack/react-query";
+import { GetApiResponse } from "@/Interfaces/interface";
 
 const AlloyListPage = () => {
 
@@ -16,7 +17,7 @@ const AlloyListPage = () => {
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
     // const { data, isLoading } = useGetAlloyData('1001', fromDate, toDate);
-    const { data, isLoading } = useQuery(
+    const { data, isLoading } = useQuery<AlloyMaster[]>(
         {
             queryKey: ['alloyData', fromDate, toDate],
             queryFn: async () => {
@@ -172,7 +173,7 @@ const AlloyListPage = () => {
             </div>
             <Table<AlloyMaster>
                 columns={columns}
-                dataSource={data}
+                dataSource={data?.map((item, index) => ({ ...item, key: index })) ?? []}
                 loading={isLoading}
                 pagination={{
                     position: ['bottomRight'],
