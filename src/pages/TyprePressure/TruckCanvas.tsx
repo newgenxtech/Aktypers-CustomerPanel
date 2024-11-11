@@ -59,6 +59,7 @@ const Truck: React.FC<TruckProps> = ({
                     args={[axleRadius, axleRadius, axleLength, 32]}
                     position={position}
                     rotation={rotation}
+
                 >
                     <meshStandardMaterial color="#71B9FF" />
                 </Cylinder>
@@ -87,6 +88,9 @@ const Truck: React.FC<TruckProps> = ({
     );
 };
 interface Position {
+    // left: string;
+    // right: string;
+    // EachSideWheelCount: number;
     position: string;
 }
 interface TruckCanvasProps {
@@ -134,9 +138,10 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
 
     return (
         <Canvas camera={{
-            position: [0, -90, 20],
-            // position: [10, 10, 20]
-            fov: 10
+            // position: [90, -90, 0],
+            position: [90, -90, 0],
+            fov: 2,
+            // scale: [-10, -10, -10]
         }}
         >
             <ambientLight intensity={0.5} />

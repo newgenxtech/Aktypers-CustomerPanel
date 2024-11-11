@@ -13,8 +13,12 @@ import { GetApiResponse } from "@/Interfaces/interface";
 import TruckCanvas from "./TruckCanvas";
 
 function getTyreLayout(totalTyres: number, totalAxles: number, axtyre: string): {
+    // left: string;
+    // right: string;
+    // EachSideWheelCount: number;
     position: string;
 }[] {
+
     console.log(totalTyres, totalAxles, axtyre);
     const parsedAxTyre = JSON.parse(axtyre);
     console.log(parsedAxTyre);
@@ -29,6 +33,11 @@ function getTyreLayout(totalTyres: number, totalAxles: number, axtyre: string): 
             layout.push(
                 { position: `${axle + 1}L${side}` }, // Left side
                 { position: `${axle + 1}R${side}` }  // Right side
+                // {
+                //     left: `${axle + 1}L${side}`,
+                //     right: `${axle + 1}R${side}`,
+                //     EachSideWheelCount: axleTyres
+                // }
             );
         }
     }
