@@ -21,7 +21,7 @@ export const useGetDriverData = (customer_id: string) => {
 
 
 
-export const useGetAlloyData = (customer_id: string, 
+export const useGetAlloyData = (customer_id: string,
     fromDate: string, toDate: string) => {
     return useQuery<AlloyMaster[]>({
         queryKey: ['alloy'],
@@ -32,7 +32,7 @@ export const useGetAlloyData = (customer_id: string,
                 to_date: toDate
             }
         ).then((res) => res),
-        
+
     });
 };
 
@@ -48,13 +48,14 @@ export const useGetTruckData = (customer_id: string) => {
 }
 
 
-// getLatestTyrePressureDetails
-export const useGetTyrePressureData = (truck_id: string) => {
-    return useQuery<GetApiResponse<ITyrePressure>>({
-        queryKey: ['tyre'],
-        queryFn: () => GetApiCustomerRoutes(
-            routes.backend.tyre.getLatestTyrePressureDetails + truck_id,
-            'DummyToken'
-        ).then((res) => res as GetApiResponse<ITyrePressure>),
-    });
-}
+// // getTyreDetails
+// export const useGetTyreDetails = (truck_id: string) => {
+//     return useQuery<GetApiResponse<ITyrePressure>>({
+//         queryKey: ['tyreDetails'],
+//         queryFn: () => GetApiCustomerRoutes(
+//             routes.backend.tyre.getTyreDetails + truck_id,
+//             'DummyToken'
+//         ).then((res) => res as GetApiResponse<ITyrePressure>),
+//         enabled: truck_id ? true : false
+//     });
+// }

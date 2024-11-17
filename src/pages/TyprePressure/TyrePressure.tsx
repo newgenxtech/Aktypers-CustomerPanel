@@ -51,7 +51,13 @@ const TyrePressure: React.FC = () => {
     const { data: TruckListData } = useGetTruckData('1001');
     const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
     const [SelectedTruck, setSelectedTruck] = useState<{ value: string, label: string } | undefined>();
-    const [SelectedTyre, setSelectedTyre] = useState<ITyrePressure | undefined>();
+    const [SelectedTyre, setSelectedTyre] = useState<{
+        wheels: string; //!  number and its a count of the wheels
+        axtyre: string; //!  array of objects and its a count of the axles
+        total_tyres: string; //!  number and its a count of the total tyres
+        total_axles: string; //!  number and its a count of the total axles
+        config: string; //!  number and its a count of the total axles
+    }>();
 
 
 
@@ -77,6 +83,34 @@ const TyrePressure: React.FC = () => {
         }
     )
 
+
+    const { data: TruckDemensionDetails, isLoading: TruckDemensionDetailLoading } = useQuery<GetApiResponse<{
+        wheels: string; //!  number and its a count of the wheels
+        axtyre: string; //!  array of objects and its a count of the axles
+        total_tyres: string; //!  number and its a count of the total tyres
+        total_axles: string; //!  number and its a count of the total axles
+        config: string; //!  number and its a count of the total axles
+    }>>(
+        {
+            queryKey: ['TruckDemensionDetails', SelectedTruckId],
+            queryFn: async () => {
+                try {
+                    const res = await axios.get(routes.backend.tyre.getTyreDetails + SelectedTruckId);
+                    const result = res.data;
+                    return result;
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    message.error("Error fetching data");
+                }
+            },
+            refetchOnWindowFocus: false,
+            enabled: !!SelectedTruckId
+        }
+    )
+
+
+
+
     useEffect(() => {
         if (TruckListData?.body[0].id) {
             setSelectedTruckId(TruckListData.body[0].id);
@@ -84,10 +118,10 @@ const TyrePressure: React.FC = () => {
     }, [TruckListData]);
 
     useEffect(() => {
-        if (TyrePressureData && TyrePressureDataLoading === false) {
-            setSelectedTyre(TyrePressureData.body[0]);
+        if (TruckDemensionDetails && TruckDemensionDetailLoading === false) {
+            setSelectedTyre(TruckDemensionDetails.body[0]);
         }
-    }, [TyrePressureData]);
+    }, [TruckDemensionDetails]);
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
@@ -201,7 +235,7 @@ const TyrePressure: React.FC = () => {
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}
                 size="middle"
-                scroll={{ x: 'auto', y: '60vh' }}
+                scroll={{ x: 'auto', y: '50vh' }}
             />
             {
                 TyrePressureDataLoading ?
@@ -209,13 +243,17 @@ const TyrePressure: React.FC = () => {
                         Loading...
                     </div> :
                     (
-                        SelectedTyre && (
+                        TruckDemensionDetails && SelectedTyre && (
                             <TruckCanvas
-                                TyreData={getTyreLayout(
-                                    Number(SelectedTyre.total_tyres),
-                                    Number(SelectedTyre.total_axles),
-                                    SelectedTyre.axtyre
-                                )}
+                                TyreData={
+                                    getTyreLayout(
+                                        Number(SelectedTyre!.total_tyres!),
+                                        Number(SelectedTyre!.total_axles!),
+                                        SelectedTyre!.axtyre!
+                                    )
+                                }
+                                TyreDetailData={SelectedTyre}
+                                TyrePressureData={TyrePressureData?.body!}
                             />
                         )
                     )

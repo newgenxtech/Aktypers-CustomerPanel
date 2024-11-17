@@ -52,6 +52,7 @@ export const routes = {
         },
         tyre: {
             getLatestTyrePressureDetails: `${base}?route=getLatestTyrePressureDetails&truck_id=`,
+            getTyreDetails: `${base}?route=getTyreDetails&truck_id=`,
         }
     },
 };
