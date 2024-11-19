@@ -1,6 +1,6 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Box, Cylinder, OrbitControls } from '@react-three/drei';
+import { Box, Cylinder, Html, OrbitControls } from '@react-three/drei';
 import { ITyrePressure } from './Tyre';
 
 type IAxcelsData = {
@@ -19,6 +19,7 @@ interface TruckProps {
     wheelWidth: number;
     wheelPositions: Array<[number, number, number]>;
     axlesData: IAxcelsData[];
+    TyrePressureData: ITyrePressure[]
 }
 
 
@@ -41,7 +42,8 @@ const Truck: React.FC<TruckProps> = ({
     wheelRadius,
     wheelWidth,
     wheelPositions,
-    axlesData
+    axlesData,
+    TyrePressureData
 }) => {
     const renderWheels = () => {
         return wheelPositions.map((position, index) => (
@@ -51,7 +53,15 @@ const Truck: React.FC<TruckProps> = ({
                     args={[wheelRadius, wheelRadius, wheelWidth, 32]}
                     rotation={[0, 0, Math.PI / 2]}
                 >
+
                     <meshStandardMaterial color="black" />
+                    <Html>
+                        <div style={{ color: 'white', fontSize: '1rem', marginTop: '2rem' }}>
+                            {
+                                TyrePressureData[index].tyre_position
+                            }
+                        </div>
+                    </Html>
                 </Cylinder>
                 {/* Rim */}
                 <Cylinder
@@ -60,6 +70,26 @@ const Truck: React.FC<TruckProps> = ({
                 >
                     <meshStandardMaterial color="gray" />
                 </Cylinder>
+                {
+                    TyrePressureData[index].tyre_position.includes('L0') ?
+                        <Html>
+                            <div style={{
+                                color: 'white', fontSize: '1rem'
+                            }}>
+                                {
+                                    TyrePressureData[index].tyre_pressure
+                                }
+                            </div>
+                        </Html>
+                        :
+                        <Html>
+                            <div style={{ color: 'red', fontSize: '1rem' }}>
+                                {
+                                    TyrePressureData[index].tyre_pressure
+                                }
+                            </div>
+                        </Html>
+                }
             </group>
         ));
     };
@@ -83,7 +113,7 @@ const Truck: React.FC<TruckProps> = ({
     return (
         <group>
             {/* Front Cab */}
-            <Box args={[cabWidth, 1, cabLength]} position={[0, 0.6, 4]}>
+            <Box args={[cabWidth, 1, cabLength]} position={[0, 0.7, 4]}>
                 <meshStandardMaterial color="red" />
             </Box>
 
@@ -192,13 +222,13 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
 
         return result
         // [
-        //     { axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     { axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     { axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     { axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
-        //     { axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
+        //     {axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     {axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
         // ]
     }, [
         WheelPositionData[0].axlesData
@@ -210,11 +240,8 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
             // position: [90, -90, 0],
             position: [90, -90, 0],
             fov: 2,
-            // scale: [-10, -10, -10]
+            // scale: [1, 1, 1]
         }}
-            style={{
-                height: '20vh',
-            }}
         >
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1} />
@@ -227,6 +254,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
                 wheelWidth={wheelWidth}
                 wheelPositions={wheelPositions}
                 axlesData={axlesData}
+                TyrePressureData={TyrePressureData}
             />
             <OrbitControls />
         </Canvas>

@@ -184,80 +184,85 @@ const TyrePressure: React.FC = () => {
                     Add Tyre Pressure
                 </Button>
             </div>
-            <div className='flex justify-center gap-4 my-4'>
-                <div className="flex items-center justify-center gap-2">
-                    <label>Truck</label>
-                    <AutoComplete
-                        options={TruckListData?.body.map((item) => ({ value: JSON.stringify(item), label: item.registration_number }))}
-                        placeholder="Select Truck"
-                        onSelect={(text) => {
-                            const res = JSON.parse(text);
-                            setSelectedTruck({
-                                value: res.id,
-                                label: res.registration_number,
-                            });
-                            setSelectedTruckId(res.id);
+            <div className="flex flex-col md:flex-row">
+                <div className="w-full md:w-1/2">
+                    <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
+                        <div className="flex items-center justify-center gap-2">
+                            <label>Truck</label>
+                            <AutoComplete
+                                options={TruckListData?.body.map((item) => ({
+                                    value: JSON.stringify(item),
+                                    label: item.registration_number,
+                                }))}
+                                placeholder="Select Truck"
+                                onSelect={(text) => {
+                                    const res = JSON.parse(text);
+                                    setSelectedTruck({
+                                        value: res.id,
+                                        label: res.registration_number,
+                                    });
+                                    setSelectedTruckId(res.id);
+                                }}
+                                className="w-64"
+                                value={SelectedTruck?.label}
+                            />
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                            <label>From Date</label>
+                            <DatePicker
+                                onChange={(date, dateString) => {
+                                    setFromDate(dateString as string);
+                                }}
+                            />
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                            <label>To Date</label>
+                            <DatePicker
+                                onChange={(date, dateString) => {
+                                    setToDate(dateString as string);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <Table<ITyrePressure>
+                        columns={columns}
+                        dataSource={
+                            TyrePressureData?.body.map((item, index) => ({
+                                ...item,
+                                key: index,
+                            })) ?? []
+                        }
+                        loading={TyrePressureDataLoading}
+                        pagination={{
+                            position: ['bottomRight'],
+                            showSizeChanger: true,
+                            pageSizeOptions: ['10', '20', '30', '40', '50'],
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         }}
-                        className="w-64"
-                        value={SelectedTruck?.label}
+                        size="middle"
+                        scroll={{ x: 'auto', y: '100%' }}
+                        className="w-full"
                     />
                 </div>
-                <div className="flex items-center justify-center gap-2">
-                    <label>From Date</label>
-                    <DatePicker
-                        onChange={(date, dateString) => {
-                            setFromDate(dateString as string);
-                        }}
-                    />
-                </div>
-                <div className="flex justify-center items-center gap-2">
-                    <label>To Date</label>
-                    <DatePicker
-                        onChange={(date, dateString) => {
-                            setToDate(dateString as string);
-                        }}
-                    />
-                </div>
-            </div>
-            <Table<ITyrePressure>
-                columns={columns}
-                dataSource={
-                    TyrePressureData?.body.map((item, index) => ({
-                        ...item,
-                        key: index,
-                    })) ?? []
-                }
-                loading={TyrePressureDataLoading}
-                pagination={{
-                    position: ['bottomRight'],
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '30', '40', '50'],
-                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                }}
-                size="middle"
-                scroll={{ x: 'auto', y: '50vh' }}
-            />
-            {
-                TyrePressureDataLoading ?
-                    <div className="loader">
-                        Loading...
-                    </div> :
-                    (
-                        TruckDemensionDetails && SelectedTyre && (
+                <div className="w-full md:w-1/2 flex justify-center items-center">
+                    {TyrePressureDataLoading ? (
+                        <div className="loader">Loading...</div>
+                    ) : (
+                        TruckDemensionDetails &&
+                        SelectedTyre && (
                             <TruckCanvas
-                                TyreData={
-                                    getTyreLayout(
-                                        Number(SelectedTyre!.total_tyres!),
-                                        Number(SelectedTyre!.total_axles!),
-                                        SelectedTyre!.axtyre!
-                                    )
-                                }
+                                TyreData={getTyreLayout(
+                                    Number(SelectedTyre!.total_tyres!),
+                                    Number(SelectedTyre!.total_axles!),
+                                    SelectedTyre!.axtyre!
+                                )}
                                 TyreDetailData={SelectedTyre}
                                 TyrePressureData={TyrePressureData?.body!}
                             />
                         )
-                    )
-            }
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
