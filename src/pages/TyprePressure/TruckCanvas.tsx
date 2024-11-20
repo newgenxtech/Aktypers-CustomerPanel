@@ -221,14 +221,14 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
         console.log(result);
 
         return result
-        // [
-        //     {axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     {axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     {axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     {axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
-        //     {axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     {axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-        //     {axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        // return [
+        //     { axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     { axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     { axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     { axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
+        //     { axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
+        //     { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
         // ]
     }, [
         WheelPositionData[0].axlesData
