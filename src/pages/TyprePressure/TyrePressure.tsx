@@ -257,7 +257,7 @@ const TyrePressure: React.FC = () => {
                                     SelectedTyre!.axtyre!
                                 )}
                                 TyreDetailData={SelectedTyre}
-                                TyrePressureData={TyrePressureData?.body!}
+                                TyrePressureData={TyrePressureData!.body!}
                             />
                         )
                     )}

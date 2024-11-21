@@ -34,6 +34,8 @@ const WheelAxelConstant = [
     { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
 ]
 
+
+
 const Truck: React.FC<TruckProps> = ({
     cabWidth,
     cabLength,
@@ -53,13 +55,19 @@ const Truck: React.FC<TruckProps> = ({
                     args={[wheelRadius, wheelRadius, wheelWidth, 32]}
                     rotation={[0, 0, Math.PI / 2]}
                 >
-
                     <meshStandardMaterial color="black" />
                     <Html>
-                        <div style={{ color: 'white', fontSize: '1rem', marginTop: '2rem' }}>
-                            {
-                                TyrePressureData[index].tyre_position
-                            }
+                        <div style={{
+                            color: 'white', fontSize: '1rem', textAlign: 'center',
+                            position: TyrePressureData[index].tyre_position.includes('L') ? 'fixed' : 'absolute',
+                            left: TyrePressureData[index].tyre_position.includes('L') ? '-40px' : '0',
+
+
+                        }}>
+                            {TyrePressureData[index].tyre_position}
+                            <div style={{ color: TyrePressureData[index].tyre_position.includes('L') ? 'white' : 'white', fontSize: '1rem' }}>
+                                {TyrePressureData[index].tyre_pressure}
+                            </div>
                         </div>
                     </Html>
                 </Cylinder>
@@ -70,26 +78,6 @@ const Truck: React.FC<TruckProps> = ({
                 >
                     <meshStandardMaterial color="gray" />
                 </Cylinder>
-                {
-                    TyrePressureData[index].tyre_position.includes('L0') ?
-                        <Html>
-                            <div style={{
-                                color: 'white', fontSize: '1rem'
-                            }}>
-                                {
-                                    TyrePressureData[index].tyre_pressure
-                                }
-                            </div>
-                        </Html>
-                        :
-                        <Html>
-                            <div style={{ color: 'red', fontSize: '1rem' }}>
-                                {
-                                    TyrePressureData[index].tyre_pressure
-                                }
-                            </div>
-                        </Html>
-                }
             </group>
         ));
     };
@@ -153,9 +141,50 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
     TyreDetailData,
     TyrePressureData
 }) => {
-    console.log(TyreData);
-    console.log(TyreDetailData);
-    console.log(TyrePressureData);
+    console.table(TyreData);
+    const data = [
+        {
+            "position": "1L0"
+        },
+        {
+            "position": "1R0"
+        },
+        {
+            "position": "2L0"
+        },
+        {
+            "position": "2R0"
+        },
+        {
+            "position": "3L0"
+        },
+        {
+            "position": "3R0"
+        },
+        {
+            "position": "3L1"
+        },
+        {
+            "position": "3R1"
+        },
+        {
+            "position": "4L0"
+        },
+        {
+            "position": "4R0"
+        },
+        {
+            "position": "4L1"
+        },
+        {
+            "position": "4R1"
+        }
+    ]
+
+
+    // loop through the data and shift the position when the EachSideWheelCount is 4 then shift L1 and R0 Position
+    console.table(TyreDetailData);
+    console.table(TyrePressureData);
 
 
     // {
@@ -212,6 +241,13 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
         WheelPositionData[0].wheelPositions
     ]);
 
+
+    const wheelPositionTagIds = React.useMemo(() => {
+        return [
+
+        ]
+    }, []);
+
     const axlesData: IAxcelsData[] = React.useMemo(() => {
         const result = WheelPositionData[0].axlesData.map((isAxlePresent: boolean, index: number) => {
             if (isAxlePresent) {
@@ -239,10 +275,9 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
         <Canvas camera={{
             // position: [90, -90, 0],
             position: [90, -90, 0],
-            fov: 2,
+            fov: 8,
             // scale: [1, 1, 1]
-        }}
-        >
+        }}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1} />
             <Truck
