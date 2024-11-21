@@ -58,14 +58,13 @@ const Truck: React.FC<TruckProps> = ({
                     <meshStandardMaterial color="black" />
                     <Html>
                         <div style={{
-                            color: 'white', fontSize: '1rem', textAlign: 'center',
-                            position: TyrePressureData[index].tyre_position.includes('L') ? 'fixed' : 'absolute',
-                            left: TyrePressureData[index].tyre_position.includes('L') ? '-40px' : '0',
-
-
+                            color: 'white', fontSize: '0.5rem', textAlign: 'center',
+                            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'
                         }}>
-                            {TyrePressureData[index].tyre_position}
-                            <div style={{ color: TyrePressureData[index].tyre_position.includes('L') ? 'white' : 'white', fontSize: '1rem' }}>
+                            <div style={{ marginBottom: '0.2rem' }}>
+                                {TyrePressureData[index].tyre_position}
+                            </div>
+                            <div style={{ color: 'white' }}>
                                 {TyrePressureData[index].tyre_pressure}
                             </div>
                         </div>
