@@ -292,7 +292,7 @@ const TruckListPage = () => {
             </div>
             <Table<ITruckData>
                 columns={columns}
-                dataSource={data?.body}
+                dataSource={data?.body.map((item, index) => ({ ...item, key: index })) ?? []}
                 loading={isLoading}
                 pagination={{
                     position: ['bottomRight'],

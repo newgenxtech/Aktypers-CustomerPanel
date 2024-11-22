@@ -1,10 +1,10 @@
 import React from 'react';
-import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState, Controller, ControllerRenderProps } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
-import { Button, DatePicker, message, Radio, Upload, Image, Select, Input } from 'antd';
+import { Button, DatePicker, message, Radio, Upload, Image, Select, Input, Checkbox } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 dayjs().format()
 // import { SquareCheck } from 'lucide-react';
 
-type FieldType = 'text' | 'email' | 'number' | 'password' | 'checkbox' | 'select' | 'textarea' | 'radio' | 'date' | 'upload';
+type FieldType = 'text' | 'email' | 'number' | 'password' | 'checkbox' | 'select' | 'textarea' | 'radio' | 'date' | 'upload' | 'checkboxGroup';
 
 export interface CustomField {
     name: string;
@@ -92,7 +92,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         }
     }
 
-    const { register, handleSubmit, formState, setValue, getValues } = useForm({
+    const { register, handleSubmit, formState, setValue, getValues, control } = useForm({
         resolver: zodResolver(schema),
         defaultValues: Object.fromEntries(
             fields.map((field) => [
@@ -101,6 +101,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
             ])
         ),
         values: initialValues as FieldValues
+
     });
 
 
@@ -131,7 +132,9 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
     // }
 
 
-    const renderField = (field: CustomField) => {
+    const renderField = (field: CustomField, controllerField:
+        ControllerRenderProps<FieldValues, string>
+    ) => {
         if (field.type === 'date') {
             console.log('field', field?.isInputProps?.defaultValue);
             console.log(dayjs(field?.isInputProps?.defaultValue));
@@ -146,44 +149,73 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     //     placeholder={field?.isInputProps?.placeholder}
                     //     className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800, shadow-md")}
                     // />
-                    <Input {...register(field.name)}
+                    <Input
+                        type={field.type}
+                        {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
+                        status={
+                            formState.errors[field.name] ? 'error' : undefined
+                        }
                     />
                 )
             case 'email':
                 return (
-                    <input
-                        type={field.type}
-                        {...register(field.name)}
+                    // <input
+                    //     type={field.type}
+                    //     {...register(field.name)}
+                    //     placeholder={field?.isInputProps?.placeholder}
+                    //     className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
+                    // />
+                    <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
+                        status={
+                            formState.errors[field.name] ? 'error' : undefined
+                        }
+                        type='email'
                     />
-
                 )
             case 'number':
                 return (
-                    <input
-                        type={field.type}
-                        {...register(field.name)}
+                    // <input
+                    //     type={field.type}
+                    //     {...register(field.name)}
+                    //     placeholder={field?.isInputProps?.placeholder}
+                    //     className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
+                    // />
+                    <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
+                        status={
+                            formState.errors[field.name] ? 'error' : undefined
+                        }
+                        type='number'
                     />
                 )
             case 'password':
                 return (
-                    <input
-                        type={field.type}
-                        {...register(field.name)}
+                    // <input
+                    //     type={field.type}
+                    //     {...register(field.name)}
+                    //     placeholder={field.label}
+                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    // />
+                    <Input {...controllerField}
                         placeholder={field.label}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                        status={
+                            formState.errors[field.name] ? 'error' : undefined
+                        }
+                        type='password'
                     />
                 );
             case 'checkbox':
                 return (
-                    <input
-                        type="checkbox"
-                        {...register(field.name)}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    // <input
+                    //     type="checkbox"
+                    //     {...register(field.name)}
+                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    // />
+                    <Checkbox
+                        {...controllerField}
+                        defaultChecked={field?.isInputProps?.defaultChecked}
                     />
                 );
             case 'select':
@@ -205,7 +237,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     // </select>
 
                     <Select
-                        {...register(field.name)}
+                        {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         options={field.options?.map((option) => ({
                             value: option,
@@ -220,30 +252,66 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 );
             case 'textarea':
                 return (
-                    <textarea
-                        {...register(field.name)}
+                    // <textarea
+                    //     {...register(field.name)}
+                    //     placeholder={field.label}
+                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    // />
+                    <Input.TextArea
+                        {...controllerField}
                         placeholder={field.label}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                        status={
+                            formState.errors[field.name] ? 'error' : undefined
+                        }
                     />
                 );
             case 'radio':
                 return (
                     <Radio
-                        {...register(field.name)}
+                        {...controllerField}
                         className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    />
+                );
+            case 'checkboxGroup':
+                return (
+                    <Checkbox.Group
+                        {...controllerField}
+                        options={field.options?.map((option) => ({
+                            label: option,
+                            value: option
+                        }))}
+
+                        onChange={(value) => {
+                            setValue(field.name, value);
+                        }}
+
+
                     />
                 );
             case 'date':
                 return (
                     <DatePicker
-                        {...register(field.name)}
+                        // {...field}
+                        // {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
+                        // className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
                         onChange={(_, dateString) => {
                             setValue(field.name, dateString as string);
                         }}
                         defaultValue={getValues(field.name) ? dayjs(getValues(field.name)) : undefined}
                     />
+
+
+                    //     <DatePicker
+                    //     // {...field}
+                    //     {...controllerField}
+                    //     placeholder={field?.isInputProps?.placeholder}
+                    //     // className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
+                    //     onChange={(_, dateString) => {
+                    //         setValue(field.name, dateString as string);
+                    //     }}
+                    // // defaultValue={getValues(field.name) ? dayjs(getValues(field.name)) : undefined}
+                    // />
                 );
             case 'upload':
                 return (
@@ -274,7 +342,8 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             showUploadList={true}
                             maxCount={1}
                         >
-                            <Button icon={<LucideUpload />}>Click to Upload</Button>
+                            <Button
+                                icon={<LucideUpload />}>Click to Upload</Button>
                         </Upload>
                         {
                             getValues(field.name) && (
@@ -289,7 +358,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
 
                 );
             default:
-                return null;
+                return <></>;
         }
     };
 
@@ -313,11 +382,20 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             <label htmlFor={field.name} className="text-sm" >{field.label}
                                 {field?.validation?.required && <span className="text-red-500">*</span>}
                             </label>
-                            {renderField(field)}
+
+                            <Controller
+                                name={field.name}
+                                control={control}
+                                render={({ field: controllerField }) => renderField(field, controllerField)}
+
+                            />
+
                             {formState.errors[field.name] && (
-                                <p style={{ color: 'red' }}>{
-                                    formState.errors[field.name]?.message?.toString() ?? 'This field is required'
-                                }</p>
+                                <p
+                                    className='text-red-500 text-xs'
+                                >{
+                                        formState.errors[field.name]?.message?.toString() ?? 'This field is required'
+                                    }</p>
                             )}
                         </div>
                     ))
@@ -337,7 +415,20 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             }
                         </button>
                         <button
-                            type="reset"
+                            onClick={() => {
+                                console.log('Clearing form');
+                                //  Check if the Form already cleared
+
+                                if (Object.keys(getValues()).every((key) => getValues()[key] === '')) {
+                                    message.info('Form already cleared');
+                                    return;
+                                }
+
+                                Object.keys(getValues()).forEach((key) => {
+                                    setValue(key, '');
+                                });
+
+                            }}
                             className="bg-[#A61C1C] text-white px-2 py-2 rounded-md w-24 flex items-center justify-center gap-2"
                         >
                             <SquareX className="h-4 w-4" />

@@ -202,7 +202,7 @@ const TyresMasterListPage = () => {
         try {
             const response = await axios.post(routes.backend.tyre.updateTyre, {
                 ...data,
-                id: CurrentTyres?.id
+                id: CurrentTyres?.registration_number
             });
             console.log(response);
             const { data: responseData } = response;
