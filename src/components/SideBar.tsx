@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Package, Warehouse, ShoppingCart, CreditCard, Forklift, TruckIcon, Car } from "lucide-react";
+import { Home, Package, Warehouse, ShoppingCart, CreditCard, Forklift, TruckIcon, Car, LifeBuoy } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -54,6 +54,11 @@ const menuItems: MenuItem[] = [
             <line x1="12" y1="8" x2="12" y2="8"></line>
         </svg>
 
+    },
+    {
+        label: 'Tyres',
+        path: '/tyres',
+        icon: <LifeBuoy />
     }
 ];
 
@@ -61,8 +66,12 @@ const Sidebar = () => {
     const [parent] = useAutoAnimate();
     const naviagte = useNavigate();
 
+
+
     const [active, setActive] = useState<string>('home');
-    const [activeItem, setActiveItem] = useState<string>('/warehouse');
+    const [activeItem, setActiveItem] = useState<string>(
+        window.location.pathname === '/' ? '/dashboard' : `/${window.location.pathname.split('/')[1]}`
+    );
 
     const [showMobileSidebar, setMobileSidebar] = useState<boolean>(false);
     const [showChildSidebar, setChildSidebar] = useState<boolean>(true);

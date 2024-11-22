@@ -1,10 +1,10 @@
 import React from 'react';
-import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState } from 'react-hook-form';
+import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
-import { Button, DatePicker, message, Radio, Upload, Image } from 'antd';
+import { Button, DatePicker, message, Radio, Upload, Image, Select, Input } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -140,11 +140,14 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         switch (field.type) {
             case 'text':
                 return (
-                    <input
-                        type={field.type}
-                        {...register(field.name)}
+                    // <input
+                    //     type={field.type}
+                    //     {...register(field.name)}
+                    //     placeholder={field?.isInputProps?.placeholder}
+                    //     className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800, shadow-md")}
+                    // />
+                    <Input {...register(field.name)}
                         placeholder={field?.isInputProps?.placeholder}
-                        className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800, shadow-md")}
                     />
                 )
             case 'email':
@@ -155,6 +158,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         placeholder={field?.isInputProps?.placeholder}
                         className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
                     />
+
                 )
             case 'number':
                 return (
@@ -184,21 +188,35 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 );
             case 'select':
                 return (
-                    <select {...register(field.name)}
-                        className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                        multiple={
-                            field?.isInputProps?.multiple ?? false
+                    // <select {...register(field.name)}
+                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                    //     multiple={
+                    //         field?.isInputProps?.multiple ?? false
+                    //     }
+                    // >
+                    //     <option value="" selected disabled hidden>{field?.isInputProps?.placeholder}</option>
+                    //     {field.options?.map((option) => (
+                    //         <option key={option} value={option}
+                    //             className='p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md'
+                    //         >
+                    //             {option}
+                    //         </option>
+                    //     ))}
+                    // </select>
+
+                    <Select
+                        {...register(field.name)}
+                        placeholder={field?.isInputProps?.placeholder}
+                        options={field.options?.map((option) => ({
+                            value: option,
+                            label: option
+                        }))}
+                        allowClear
+                        filterOption={(input, option) =>
+                            (option?.label?.toLowerCase().indexOf(input.toLowerCase()) ?? -1) >= 0
                         }
-                    >
-                        <option value="" selected disabled hidden>{field?.isInputProps?.placeholder}</option>
-                        {field.options?.map((option) => (
-                            <option key={option} value={option}
-                                className='p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md'
-                            >
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                        getPopupContainer={(trigger) => trigger.parentElement}
+                    />
                 );
             case 'textarea':
                 return (

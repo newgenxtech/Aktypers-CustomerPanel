@@ -11,38 +11,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetTruckData } from "@/hooks/GetHooks";
 import { GetApiResponse } from "@/Interfaces/interface";
 import TruckCanvas from "./TruckCanvas";
+import { getTyreLayout } from "@/lib/utils";
 
-function getTyreLayout(totalTyres: number, totalAxles: number, axtyre: string): {
-    // left: string;
-    // right: string;
-    // EachSideWheelCount: number;
-    position: string;
-}[] {
+export interface TyrePressureProps {
 
-    console.log(totalTyres, totalAxles, axtyre);
-    const parsedAxTyre = JSON.parse(axtyre);
-    console.log(parsedAxTyre);
+    wheels: string; //!  number and its a count of the wheels
+    axtyre: string; //!  array of objects and its a count of the axles
+    total_tyres: string; //!  number and its a count of the total tyres
+    total_axles: string; //!  number and its a count of the total axles
+    config: string; //!  number and its a count of the total axles
 
-
-    const layout = [];
-    console.log(totalTyres, totalAxles, axtyre);
-
-    for (let axle = 0; axle < totalAxles; axle++) {
-        const axleTyres = parsedAxTyre[axle].tyre; // Number of tyres on this axle
-        for (let side = 0; side < axleTyres; side++) {
-            layout.push(
-                { position: `${axle + 1}L${side}` }, // Left side
-                { position: `${axle + 1}R${side}` }  // Right side
-                // {
-                //     left: `${axle + 1}L${side}`,
-                //     right: `${axle + 1}R${side}`,
-                //     EachSideWheelCount: axleTyres
-                // }
-            );
-        }
-    }
-
-    return layout;
 }
 
 const TyrePressure: React.FC = () => {
@@ -51,13 +29,7 @@ const TyrePressure: React.FC = () => {
     const { data: TruckListData } = useGetTruckData('1001');
     const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
     const [SelectedTruck, setSelectedTruck] = useState<{ value: string, label: string } | undefined>();
-    const [SelectedTyre, setSelectedTyre] = useState<{
-        wheels: string; //!  number and its a count of the wheels
-        axtyre: string; //!  array of objects and its a count of the axles
-        total_tyres: string; //!  number and its a count of the total tyres
-        total_axles: string; //!  number and its a count of the total axles
-        config: string; //!  number and its a count of the total axles
-    }>();
+    const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps>();
 
 
 

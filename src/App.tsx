@@ -18,6 +18,7 @@ import { queryClient } from "./hooks/queryClient";
 import AlloyListPage from "./pages/Alloy/Alloy";
 import TyrePressure from "./pages/TyprePressure/TyrePressure";
 import Truck from "./pages/Truck/Truck";
+import TyresMasterListPage from "./pages/Tyres/TyresMaster";
 
 const router = createBrowserRouter([
     {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
             {
                 path: 'type-pressure',
                 element: <TyrePressure />,
+            },
+            {
+                path: "/tyres",
+                element: <TyresMasterListPage />
             }
         ],
     },

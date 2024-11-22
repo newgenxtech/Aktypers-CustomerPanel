@@ -4,7 +4,6 @@ import { GetApiCustomerRoutes, PostApiCustomerRoutes } from "./ApiCustomHook";
 import { GetApiResponse } from "@/Interfaces/interface";
 import { routes } from "@/routes/routes";
 
-import { ITyrePressure } from "@/pages/TyprePressure/Tyre";
 import { DriverMaster } from "@/pages/Driver/Driver.d"; // Add this line to import DriverMaster
 import { AlloyMaster } from "@/pages/Alloy/Alloy.d";
 import { ITruckData } from "@/pages/Truck/Truck.d";
@@ -48,14 +47,26 @@ export const useGetTruckData = (customer_id: string) => {
 }
 
 
-// // getTyreDetails
-// export const useGetTyreDetails = (truck_id: string) => {
-//     return useQuery<GetApiResponse<ITyrePressure>>({
-//         queryKey: ['tyreDetails'],
-//         queryFn: () => GetApiCustomerRoutes(
-//             routes.backend.tyre.getTyreDetails + truck_id,
-//             'DummyToken'
-//         ).then((res) => res as GetApiResponse<ITyrePressure>),
-//         enabled: truck_id ? true : false
-//     });
-// }
+export const useGetTruckDemensionDetails = (SelectedTruckId: string | undefined) => {
+    return useQuery<GetApiResponse<{
+        wheels: string; //!  number and its a count of the wheels
+        axtyre: string; //!  array of objects and its a count of the axles
+        total_tyres: string; //!  number and its a count of the total tyres
+        total_axles: string; //!  number and its a count of the total axles
+        config: string; //!  number and its a count of the total axles
+    }>>({
+        queryKey: ['TruckDemensionDetails', SelectedTruckId],
+        queryFn: () => GetApiCustomerRoutes(
+            routes.backend.tyre.getTyreDetails + SelectedTruckId,
+            'DummyToken'
+        ).then((res) => res as GetApiResponse<{
+            wheels: string; //!  number and its a count of the wheels
+            axtyre: string; //!  array of objects and its a count of the axles
+            total_tyres: string; //!  number and its a count of the total tyres
+            total_axles: string; //!  number and its a count of the total axles
+            config: string; //!  number and its a count of the total axles
+        }>),
+        refetchOnWindowFocus: false,
+        enabled: !!SelectedTruckId
+    });
+}
