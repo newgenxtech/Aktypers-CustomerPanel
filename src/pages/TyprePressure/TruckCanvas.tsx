@@ -277,7 +277,10 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
             position: [0, -90, 0],
             fov: 7
             // scale: [1, 1, 1]
-        }}>
+        }}
+            className='bg-[#1F2324] rounded-lg mx-3'
+
+        >
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1} />
             <Truck

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ITyrePressure } from './Tyre.d';
-import { AutoComplete, DatePicker, message, Table } from 'antd';
+import { DatePicker, message, Select, Table } from 'antd';
 import type { TableProps } from 'antd';
 import axios from "axios";
 import { routes } from "@/routes/routes";
@@ -28,7 +28,6 @@ const TyrePressure: React.FC = () => {
     const [toDate, setToDate] = useState<string>('');
     const { data: TruckListData } = useGetTruckData('1001');
     const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
-    const [SelectedTruck, setSelectedTruck] = useState<{ value: string, label: string } | undefined>();
     const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps>();
 
 
@@ -161,22 +160,23 @@ const TyrePressure: React.FC = () => {
                     <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
                         <div className="flex items-center justify-center gap-2">
                             <label>Truck</label>
-                            <AutoComplete
+                            <Select
+
+                                className="w-64"
+                                onChange={(value) => {
+                                    setSelectedTruckId(value);
+                                }}
                                 options={TruckListData?.body.map((item) => ({
-                                    value: JSON.stringify(item),
+                                    value: item.id,
                                     label: item.registration_number,
                                 }))}
                                 placeholder="Select Truck"
-                                onSelect={(text) => {
-                                    const res = JSON.parse(text);
-                                    setSelectedTruck({
-                                        value: res.id,
-                                        label: res.registration_number,
-                                    });
-                                    setSelectedTruckId(res.id);
-                                }}
-                                className="w-64"
-                                value={SelectedTruck?.label}
+                                allowClear
+                                filterOption={(inputValue, option) =>
+                                    option!.label!.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                                showSearch
+
                             />
                         </div>
                         <div className="flex items-center justify-center gap-2">

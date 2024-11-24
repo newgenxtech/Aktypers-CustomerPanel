@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { Expand, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TyresMaster } from './Tyres';
-import { Table, message, AutoComplete, DatePicker } from 'antd';
+import { Table, message, DatePicker, Select } from 'antd';
 import type { TableProps } from 'antd';
 import { routes } from "@/routes/routes";
 import axios from "axios";
@@ -26,7 +26,6 @@ const TyresMasterListPage = () => {
     const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps | null>(null);
     const [SelectedTruckId, setSelectedTruckId] = useState<string>('');
     const [Position, setPosition] = useState<string[]>([]);
-    const [SelectedTruckRegistrationNumber, setSelectedTruckRegistrationNumber] = useState<string>('');
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
 
@@ -413,7 +412,7 @@ const TyresMasterListPage = () => {
                 </div>
                 <Button
                     onClick={() => {
-                        if (SelectedTruckId === '' && SelectedTruckRegistrationNumber === '' && Position.length === 0) {
+                        if (SelectedTruckId === '' && Position.length === 0) {
                             message.error('Please select a truck');
                         } else {
                             setOpen(true)
@@ -459,32 +458,25 @@ const TyresMasterListPage = () => {
                                 }
                             }
                         /> */}
-                        <AutoComplete
+                        <Select
+
+                            className="w-64"
+                            onChange={(value) => {
+                                setSelectedTruckId(value);
+                            }}
                             options={TruckListData?.body.map((item) => ({
-                                value: `${item.registration_number}/&/${item.id}`,
+                                value: item.id,
                                 label: item.registration_number,
                             }))}
                             placeholder="Select Truck"
-                            onSelect={(text) => {
-                                setSelectedTruckId(text.split('/&/')[1]);
-                                setSelectedTruckRegistrationNumber(text.split('/&/')[0]);
-                            }}
-                            filterOption={(inputValue, option) =>
-                                // option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                option!.value.split('/&/')[0].toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                            }
-                            className="w-64"
-                            value={SelectedTruckRegistrationNumber}
                             allowClear
-                            onClear={
-                                () => {
-                                    setSelectedTyre(null);
-                                    setSelectedTruckId('');
-                                    setSelectedTruckRegistrationNumber('');
-                                    setPosition([]);
-                                }
+                            filterOption={(inputValue, option) =>
+                                option!.label!.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                             }
+                            showSearch
+
                         />
+
                     </div>
                     <div className="flex items-center justify-center gap-2">
                         <label>From Date</label>
