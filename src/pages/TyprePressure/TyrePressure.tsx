@@ -182,7 +182,7 @@ const TyrePressure: React.FC = () => {
                         <div className="flex items-center justify-center gap-2">
                             <label>From Date</label>
                             <DatePicker
-                                onChange={(date, dateString) => {
+                                onChange={(_date, dateString) => {
                                     setFromDate(dateString as string);
                                 }}
                             />
@@ -190,7 +190,7 @@ const TyrePressure: React.FC = () => {
                         <div className="flex items-center justify-center gap-2">
                             <label>To Date</label>
                             <DatePicker
-                                onChange={(date, dateString) => {
+                                onChange={(_date, dateString) => {
                                     setToDate(dateString as string);
                                 }}
                             />

@@ -58,7 +58,7 @@ interface ReusableFormProps<T> {
 }
 
 
-const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, CutomRender, initialValues }: ReusableFormProps<T>) => {
+const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, initialValues }: ReusableFormProps<T>) => {
 
     const SchemaObject = Object.fromEntries(
         fields.map((field) => [
@@ -92,7 +92,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         }
     }
 
-    const { register, handleSubmit, formState, setValue, getValues, control } = useForm({
+    const { handleSubmit, formState, setValue, getValues, control } = useForm({
         resolver: zodResolver(schema),
         defaultValues: Object.fromEntries(
             fields.map((field) => [

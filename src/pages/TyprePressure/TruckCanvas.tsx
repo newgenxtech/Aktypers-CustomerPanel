@@ -142,44 +142,44 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
     TyrePressureData
 }) => {
     console.table(TyreData);
-    const data = [
-        {
-            "position": "1L0"
-        },
-        {
-            "position": "1R0"
-        },
-        {
-            "position": "2L0"
-        },
-        {
-            "position": "2R0"
-        },
-        {
-            "position": "3L0"
-        },
-        {
-            "position": "3R0"
-        },
-        {
-            "position": "3L1"
-        },
-        {
-            "position": "3R1"
-        },
-        {
-            "position": "4L0"
-        },
-        {
-            "position": "4R0"
-        },
-        {
-            "position": "4L1"
-        },
-        {
-            "position": "4R1"
-        }
-    ]
+    // const data = [
+    //     {
+    //         "position": "1L0"
+    //     },
+    //     {
+    //         "position": "1R0"
+    //     },
+    //     {
+    //         "position": "2L0"
+    //     },
+    //     {
+    //         "position": "2R0"
+    //     },
+    //     {
+    //         "position": "3L0"
+    //     },
+    //     {
+    //         "position": "3R0"
+    //     },
+    //     {
+    //         "position": "3L1"
+    //     },
+    //     {
+    //         "position": "3R1"
+    //     },
+    //     {
+    //         "position": "4L0"
+    //     },
+    //     {
+    //         "position": "4R0"
+    //     },
+    //     {
+    //         "position": "4L1"
+    //     },
+    //     {
+    //         "position": "4R1"
+    //     }
+    // ]
 
 
     // loop through the data and shift the position when the EachSideWheelCount is 4 then shift L1 and R0 Position
@@ -242,11 +242,11 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
     ]);
 
 
-    const wheelPositionTagIds = React.useMemo(() => {
-        return [
+    // const wheelPositionTagIds = React.useMemo(() => {
+    //     return [
 
-        ]
-    }, []);
+    //     ]
+    // }, []);
 
     const axlesData: IAxcelsData[] = React.useMemo(() => {
         const result = WheelPositionData[0].axlesData.map((isAxlePresent: boolean, index: number) => {
@@ -292,7 +292,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
                 TyrePressureData={TyrePressureData}
 
             />
-            {/* <OrbitControls /> */}
+            <OrbitControls />
         </Canvas>
     );
 };

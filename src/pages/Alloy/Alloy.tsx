@@ -9,7 +9,6 @@ import type { TableProps } from 'antd';
 import axios from "axios";
 import { routes } from "@/routes/routes";
 import { useQuery } from "@tanstack/react-query";
-import { GetApiResponse } from "@/Interfaces/interface";
 
 const AlloyListPage = () => {
 
