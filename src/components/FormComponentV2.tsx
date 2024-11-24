@@ -348,9 +348,10 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         {
                             getValues(field.name) && (
                                 <Image
-                                    width={30}
-                                    src={`${routes.backend.file.upload}/${getValues(field.name)}`}
+                                    width={100}
+                                    src={`${routes.backend.file.download}/${getValues(field.name)}`}
                                     alt={'License'}
+
                                 />
                             )
                         }
@@ -375,30 +376,30 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         >
 
             {
-                CutomRender ?
-                    CutomRender!(fields, renderField, { register, handleSubmit, formState }) :
-                    fields.map((field) => (
-                        <div key={field.name} className="flex flex-col gap-1">
-                            <label htmlFor={field.name} className="text-sm" >{field.label}
-                                {field?.validation?.required && <span className="text-red-500">*</span>}
-                            </label>
+                // CutomRender ?
+                //     CutomRender!(fields, renderField, { register, handleSubmit, formState }) :
+                fields.map((field) => (
+                    <div key={field.name} className="flex flex-col gap-1">
+                        <label htmlFor={field.name} className="text-sm" >{field.label}
+                            {field?.validation?.required && <span className="text-red-500">*</span>}
+                        </label>
 
-                            <Controller
-                                name={field.name}
-                                control={control}
-                                render={({ field: controllerField }) => renderField(field, controllerField)}
+                        <Controller
+                            name={field.name}
+                            control={control}
+                            render={({ field: controllerField }) => renderField(field, controllerField)}
 
-                            />
+                        />
 
-                            {formState.errors[field.name] && (
-                                <p
-                                    className='text-red-500 text-xs'
-                                >{
-                                        formState.errors[field.name]?.message?.toString() ?? 'This field is required'
-                                    }</p>
-                            )}
-                        </div>
-                    ))
+                        {formState.errors[field.name] && (
+                            <p
+                                className='text-red-500 text-xs'
+                            >{
+                                    formState.errors[field.name]?.message?.toString() ?? 'This field is required'
+                                }</p>
+                        )}
+                    </div>
+                ))
             }
             {
                 buttonComponent ? buttonComponent : (

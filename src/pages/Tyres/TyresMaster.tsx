@@ -60,7 +60,8 @@ const TyresMasterListPage = () => {
 
 
     useEffect(() => {
-        if (TruckDemensionDetails && TruckDemensionDetailLoading === false) {
+        if (TruckDemensionDetails && TruckDemensionDetailLoading === false && TruckDemensionDetails.body.length > 0
+        ) {
             setSelectedTyre(TruckDemensionDetails.body[0]);
             const res = TruckDemensionDetails.body[0];
             setPosition(getTyreLayout(
@@ -87,6 +88,13 @@ const TyresMasterListPage = () => {
 
 
     const columns: TableProps<TyresMaster>['columns'] = useMemo(() => [
+        {
+            title: 'S.No',
+            dataIndex: 'key',
+            key: 'key',
+            render: (_, __, index) => <span>{index + 1}</span>,
+            width: 50
+        },
         {
             title: 'Serial Number',
             dataIndex: 'Tyre_Serial_Number',
@@ -179,7 +187,10 @@ const TyresMasterListPage = () => {
 
     const handleCreateTyres = async (data: TyresMaster) => {
         try {
-            const response = await axios.post(routes.backend.tyre.createTyre, data);
+            const response = await axios.post(routes.backend.tyre.createTyre, {
+                ...data,
+                Vehicle_Registration_Number: SelectedTruckId
+            });
             console.log(response);
             const { data: responseData } = response;
 
@@ -202,7 +213,7 @@ const TyresMasterListPage = () => {
         try {
             const response = await axios.post(routes.backend.tyre.updateTyre, {
                 ...data,
-                id: CurrentTyres?.registration_number
+                id: CurrentTyres?.id
             });
             console.log(response);
             const { data: responseData } = response;

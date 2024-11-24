@@ -27,6 +27,7 @@ export interface TyresMaster extends CommonTableEntity {
     Date: string;
     position: string;
     registration_number: string;
+    Vehicle_Registration_Number?: string;
 }
 
 
@@ -51,6 +52,7 @@ export interface TyresMasterDataStoreInterface {
         Date: string;
         position: string;
         registration_number: string;
+        Vehicle_Registration_Number: string;
         customItems: []
     }
 }

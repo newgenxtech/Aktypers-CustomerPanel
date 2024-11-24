@@ -180,27 +180,27 @@ const DriverListPage = () => {
                                     <Space className="my-2">
                                         <Image
                                             width={
-                                                data?.aadhaar_pic ? 30 : 100
+                                                data?.aadhaar_pic ? 100 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.aadhaar_pic}`}
+                                            src={`${routes.backend.file.download}/${data.aadhaar_pic}`}
                                             alt={
                                                 data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'
                                             }
                                         />
                                         <Image
                                             width={
-                                                data?.pancard_pic ? 30 : 100
+                                                data?.pancard_pic ? 100 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.pancard_pic}`}
+                                            src={`${routes.backend.file.download}/${data.pancard_pic}`}
                                             alt={
                                                 data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'
                                             }
                                         />
                                         <Image
                                             width={
-                                                data?.license_pic ? 30 : 100
+                                                data?.license_pic ? 100 : 100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.license_pic}`}
+                                            src={`${routes.backend.file.download}/${data.license_pic}`}
                                             alt={
                                                 data?.license_pic ? 'License' : 'License Not Uploaded'
                                             }

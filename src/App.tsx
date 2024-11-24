@@ -1,5 +1,6 @@
 import {
     createBrowserRouter,
+    Outlet,
     RouterProvider,
 } from "react-router-dom";
 import { Provider } from 'react-redux'
@@ -19,6 +20,7 @@ import AlloyListPage from "./pages/Alloy/Alloy";
 import TyrePressure from "./pages/TyprePressure/TyrePressure";
 import Truck from "./pages/Truck/Truck";
 import TyresMasterListPage from "./pages/Tyres/TyresMaster";
+import Login from "./pages/Auth/Login";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
         element: (
             <BaseLayout />
         ),
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
@@ -79,7 +82,37 @@ const router = createBrowserRouter([
             }
         ],
     },
+
     {
+        path: "/auth",
+        element: <Outlet />,
+        children: [
+            {
+                path: "login",
+                element: <Login />,
+            },
+            // {
+            //     path: "signup",
+            //     element: <SignUpPage />,
+            // },
+            // {
+            //     path: "forgot-password",
+            //     element: <ForgetPassword />,
+            // },
+            {
+                path: "*",
+                element: <h1 className=" flex
+                justify-center
+                items-center
+                h-screen
+                text-4xl
+                font-bold">Not Found</h1>
+            }
+        ]
+    },
+    {
+
+
         path: "*",
         element: <ErrorPage />,
 

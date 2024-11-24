@@ -1,13 +1,17 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Package, Warehouse, ShoppingCart, CreditCard, Forklift, TruckIcon, Car, LifeBuoy } from "lucide-react";
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
-import DocsIcon from '@/assets/icons8-open-book-96.png';
+// import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
-import Logo from '@/assets/logo.png';
+// import Logo from '@/assets/logo.png';
+import Logo from '@/assets/logo_for_my_company_name_ak_tyres_with_red_accent_color_in_a_realistic_style.png';
+
 import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+// import { NavUser } from './nav-user';
+import { message } from 'antd';
 // import { motion, AnimatePresence } from "framer-motion"
 
 type MenuItem = {
@@ -18,16 +22,16 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: <Home /> },
-    { label: 'Product', path: '/product', icon: <Package /> },
-    { label: 'Warehouse', path: '/warehouse', icon: <Warehouse /> },
+    // { label: 'Product', path: '/product', icon: <Package /> },
+    // { label: 'Warehouse', path: '/warehouse', icon: <Warehouse /> },
     // { label: 'Purchaser', path: '/purchaser' },
     // { label: 'Contracts', path: '/contracts' },
     // { label: 'RFP', path: '/rfp' },
     // { label: 'WRO', path: '/wro' },
     // { label: 'Inventory', path: '/inventory' },
-    { label: 'Order', path: '/order', icon: <ShoppingCart /> },
+    // { label: 'Order', path: '/order', icon: <ShoppingCart /> },
     // { label: 'Work Order', path: '/work-order' },
-    { label: 'Billing', path: '/billing', icon: <CreditCard /> },
+    // { label: 'Billing', path: '/billing', icon: <CreditCard /> },
     { label: 'Drvier', path: '/driver', icon: <Car /> },
     { label: 'Alloy', path: '/alloy', icon: <Forklift /> },
     {
@@ -125,29 +129,53 @@ const Sidebar = () => {
                                 </div>
                             </header>
                             <footer className='sidebar-footer'>
-                                <a href='https://stockarea.io/quick-guides' target="_blank">
+                                {/* <a href='https://stockarea.io/quick-guides' target="_blank">
                                     <img src={DocsIcon} alt="docs" className="icon" style={{
                                         width: '30px',
                                         height: '30px',
                                         marginBottom: '1rem',
                                         marginLeft: '1.2rem',
                                     }} />
-                                </a>
-                                <a href='https://stockarea.io' target="_blank">
+                                </a> */}
+                                {/* <a href='https://stockarea.io' target="_blank">
                                     <img src={AccountIcon} alt="docs" className="icon" style={{
                                         width: '30px',
                                         height: '30px',
                                         marginBottom: '1rem',
                                         marginLeft: '1.2rem',
                                     }} />
-                                </a>
-
+                                </a> */}
+                                {/* <NavUser
+                                    user={{
+                                        name: 'John Doe',
+                                        email: '',
+                                        avatar: 'https://avatars.dicebear.com/api/avataaars/john-doe.svg'
+                                    }}
+                                /> */}
+                                <LogOut
+                                    style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        marginBottom: '1rem',
+                                        marginLeft: '1.2rem',
+                                        cursor: 'pointer',
+                                        color: 'white',
+                                    }}
+                                    onClick={
+                                        () => {
+                                            message.success("Logout Successful");
+                                            localStorage.removeItem("VlimsToken")
+                                            // window.location.href = "/auth/login"
+                                            naviagte('/auth/login');
+                                        }
+                                    }
+                                />
                             </footer>
                         </div>
                     </div>
                     {showChildSidebar && (
                         <div className={`sidebar`}>
-                            <p className="sidebar-title">Digital Warehouse</p>
+                            <p className="sidebar-title">Digital Garage</p>
                             <ul className="menu-list">
                                 {menuItems.map((item) => (
                                     <li

@@ -1,14 +1,13 @@
 
-import { PostApiResponse } from "@/Interfaces/interface";
 import { routes } from "@/routes/routes";
 import axios from "axios";
-import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { message } from "antd";
+import LoginForm from "@/components/ui/loginForm";
 
 interface LoginProps {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -39,17 +38,6 @@ export default function Login() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
-    const showToast = (variant: "default" | "destructive", title: string, description: string) => {
-        // toast({
-        //     variant,
-        //     duration: 2000,
-        //     title,
-        //     description,
-        //     className: cn('top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'),
-        // });
-        messageApi.success(description);
-
-    };
 
     const handleLoginPromise = async (data: LoginProps) => {
         setLoading(true);
@@ -57,24 +45,36 @@ export default function Login() {
             const response = await axios.post(routes.backend.auth.login, data);
             const responseJson: LoginResponse = response.data;
 
-            if (responseJson.statusCode === 200) {
-                const responseData = Array.isArray(responseJson.data) ? responseJson.data[0] : responseJson.data;
-                localStorage.setItem('Fl_AccessToken', responseData.accessToken);
-                localStorage.setItem('Fl_RefreshToken', responseData.refreshToken);
-                localStorage.setItem('Fl_User', JSON.stringify(responseData.userdetials));
-
-                showToast("default", "Login Successful", responseJson.message);
-
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1000);
-            } else {
-                showToast("destructive", "Login Failed", responseJson.message);
+            if (responseJson.jwt.jwt) {
+                messageApi.success("Login Successful");
+                localStorage.setItem('jwt', responseJson.jwt.jwt);
+                localStorage.setItem('customer_id', responseJson.jwt.customer_id);
+                localStorage.setItem('role', responseJson.jwt.role);
+                localStorage.setItem('login_id', responseJson.jwt.login_id);
+                if (responseJson.jwt.driver !== null) {
+                    localStorage.setItem('driver', responseJson.jwt.driver);
+                }
+                navigate('/dashboard');
             }
+            // if (responseJson.statusCode === 200) {
+            //     //     const responseData = Array.isArray(responseJson.data) ? responseJson.data[0] : responseJson.data;
+            //     //     localStorage.setItem('Fl_AccessToken', responseData.accessToken);
+            //     //     localStorage.setItem('Fl_RefreshToken', responseData.refreshToken);
+            //     //     localStorage.setItem('Fl_User', JSON.stringify(responseData.userdetials));
+
+            //     //     showToast("default", "Login Successful", responseJson.message);
+
+            //     //     setTimeout(() => {
+            //     //         navigate('/dashboard');
+            //     //     }, 1000);
+            // } else {
+            //     // showToast("destructive", "Login Failed", responseJson.message);
+            // }
         } catch (error) {
             console.error('Error:', error);
             if (axios.isAxiosError(error) && error.response) {
-                showToast("destructive", "Login Failed", error.response.data.message);
+                // showToast("destructive", "Login Failed", error.response.data.message);
+                messageApi.error(error.response.data.message);
             }
         } finally {
             setLoading(false);

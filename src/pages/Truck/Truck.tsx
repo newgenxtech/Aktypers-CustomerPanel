@@ -186,23 +186,26 @@ const TruckListPage = () => {
                                     <Space className="my-2">
                                         <Image
                                             width={
-                                                data?.rc_book ? 30 : 100
+                                                // data?.rc_book ? 30 : 
+                                                100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.rc_book}`}
+                                            src={`${routes.backend.file.download}/${data.rc_book}`}
                                             alt={data?.rc_book ? 'RC Book' : 'RC Book Not Uploaded'}
                                         />
                                         <Image
                                             width={
-                                                data?.insurance ? 30 : 100
+                                                // data?.insurance ? 30 : 
+                                                100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.insurance}`}
+                                            src={`${routes.backend.file.download}/${data.insurance}`}
                                             alt={data?.insurance ? 'Insurance' : 'Insurance Not Uploaded'}
                                         />
                                         <Image
                                             width={
-                                                data?.pic ? 30 : 100
+                                                // data?.pic ? 30 : 
+                                                100
                                             }
-                                            src={`${routes.backend.file.upload}/${data.pic}`}
+                                            src={`${routes.backend.file.download}/${data.pic}`}
                                             alt={data?.pic ? 'Picture' : 'Picture Not Uploaded'}
                                         />
                                     </Space>
@@ -218,7 +221,7 @@ const TruckListPage = () => {
 
     const handleCreateTruck = async (data: ITruckData) => {
         try {
-            const response = await axios.post(routes.backend.driver.create, data);
+            const response = await axios.post(routes.backend.truck.create, data);
             console.log(response);
             const { data: responseData } = response;
 
@@ -239,7 +242,7 @@ const TruckListPage = () => {
 
     const handleUpdateTruck = async (data: ITruckData) => {
         try {
-            const response = await axios.post(routes.backend.driver.update, {
+            const response = await axios.post(routes.backend.truck.update, {
                 ...data,
                 id: CurrentTruck?.id
             });
