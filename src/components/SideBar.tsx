@@ -164,8 +164,19 @@ const Sidebar = () => {
                                     onClick={
                                         () => {
                                             message.success("Logout Successful");
-                                            localStorage.removeItem("VlimsToken")
-                                            // window.location.href = "/auth/login"
+                                            // jwt: string;
+                                            // customer_id: string;
+                                            // role: string;
+                                            // login_id: string;
+                                            // driver: null;
+
+                                            localStorage.removeItem("jwt");
+                                            localStorage.removeItem("customer_id");
+                                            localStorage.removeItem("role");
+                                            localStorage.removeItem("login_id");
+                                            localStorage.removeItem("driver");
+
+
                                             naviagte('/auth/login');
                                         }
                                     }

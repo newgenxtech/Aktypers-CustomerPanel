@@ -21,6 +21,7 @@ import TyrePressure from "./pages/TyprePressure/TyrePressure";
 import Truck from "./pages/Truck/Truck";
 import TyresMasterListPage from "./pages/Tyres/TyresMaster";
 import Login from "./pages/Auth/Login";
+import AuthLayout from "./layouts/AuthLayout";
 
 const router = createBrowserRouter([
     {
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
 
     {
         path: "/auth",
-        element: <Outlet />,
+        element: <AuthLayout />,
         children: [
             {
                 path: "login",
