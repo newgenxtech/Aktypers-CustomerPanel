@@ -58,8 +58,9 @@ const Truck: React.FC<TruckProps> = ({
                     <meshStandardMaterial color="black" />
                     <Html>
                         <div style={{
-                            color: 'white', fontSize: '0.5rem', textAlign: 'center',
-                            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'
+                            color: 'white', fontSize: '0.8rem', textAlign: 'center',
+                            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                            marginLeft: TyrePressureData[index].tyre_position.includes('L') ? '-2rem' : '2rem'
                         }}>
                             <div style={{ marginBottom: '0.2rem' }}>
                                 {TyrePressureData[index].tyre_position}
@@ -273,8 +274,8 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
     return (
         <Canvas camera={{
             // position: [90, -90, 0],
-            position: [90, -90, 0],
-            fov: 8,
+            position: [0, -90, 0],
+            fov: 7
             // scale: [1, 1, 1]
         }}>
             <ambientLight intensity={0.5} />
@@ -289,8 +290,9 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
                 wheelPositions={wheelPositions}
                 axlesData={axlesData}
                 TyrePressureData={TyrePressureData}
+
             />
-            <OrbitControls />
+            {/* <OrbitControls /> */}
         </Canvas>
     );
 };

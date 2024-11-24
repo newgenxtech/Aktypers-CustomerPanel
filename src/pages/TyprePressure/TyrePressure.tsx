@@ -212,7 +212,7 @@ const TyrePressure: React.FC = () => {
                             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         }}
                         size="middle"
-                        scroll={{ x: 'auto', y: '100%' }}
+                        scroll={{ x: '100%', y: '100%' }}
                         className="w-full"
                     />
                 </div>
