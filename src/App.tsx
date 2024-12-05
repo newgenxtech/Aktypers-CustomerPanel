@@ -37,16 +37,6 @@ const router = createBrowserRouter([
                 path: 'dashboard',
                 element: <Dashboard />,
             },
-            // {
-            //     path: "warehouse",
-            //     element: (
-            //         <WarehouseListPage />
-            //     ),
-            // },
-            // {
-            //     path: "warehouse/:code",
-            //     element: <WarehouseDetailPage />
-            // },
             {
                 path: "product",
                 element: <NotFound />,
@@ -94,10 +84,6 @@ const router = createBrowserRouter([
                 path: "signup",
                 element: <Signup />,
             },
-            // {
-            //     path: "forgot-password",
-            //     element: <ForgetPassword />,
-            // },
             {
                 path: "*",
                 element: <h1 className=" flex

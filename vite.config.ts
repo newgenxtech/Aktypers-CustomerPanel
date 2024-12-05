@@ -36,6 +36,9 @@ export default defineConfig({
     include: [
       'react',
       'react-router-dom',
+      'antd',
+      'axios',
+      'framer-motion',
     ]
   },
   resolve: {

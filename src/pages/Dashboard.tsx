@@ -1,5 +1,5 @@
 // src/components/Dashboard.tsx
-import React, { useMemo } from 'react';
+import React, { useMemo, Suspense } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import '@/styles/Dashboard.css';
@@ -9,7 +9,7 @@ import { useGetTruckData, useGetDriverData } from "@/hooks/GetHooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { routes } from "@/routes/routes";
-import { DatePicker, message } from 'antd';
+import { DatePicker, message, Spin } from 'antd';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -120,10 +120,12 @@ const Dashboard: React.FC = () => {
 
             {/* Metrics Row */}
             <div className="metrics-row">
-                <div className="metric-card">
-                    <h2>Total Drivers</h2>
-                    <p>{totalDrivers}</p>
-                </div>
+                <Suspense fallback={<Spin size="large" />}>
+                    <div className="metric-card">
+                        <h2>Total Drivers</h2>
+                        <p>{totalDrivers}</p>
+                    </div>
+                </Suspense>
                 {/* <div className="metric-card">
                     <h2>Total Space Available</h2>
                     <p>{totalSpaceAvailable} sq. ft.</p>
@@ -136,14 +138,18 @@ const Dashboard: React.FC = () => {
                     <h2>Registered Warehouses</h2>
                     <p>{registeredWarehouses}</p>
                 </div> */}
-                <div className="metric-card">
-                    <h2>Total Trucks</h2>
-                    <p>{totalTrucks}</p>
-                </div>
-                <div className="metric-card">
-                    <h2>Total Alloys</h2>
-                    <p>{totalAlloys}</p>
-                </div>
+                <Suspense fallback={<Spin size="large" />}>
+                    <div className="metric-card">
+                        <h2>Total Trucks</h2>
+                        <p>{totalTrucks}</p>
+                    </div>
+                </Suspense>
+                <Suspense fallback={<Spin size="large" />}>
+                    <div className="metric-card">
+                        <h2>Total Alloys</h2>
+                        <p>{totalAlloys}</p>
+                    </div>
+                </Suspense>
             </div>
 
             {/* Charts and List Section */}
@@ -151,29 +157,33 @@ const Dashboard: React.FC = () => {
                 {/* Bar Chart */}
                 <div className="chart-container">
                     <h3>Space Availability by City</h3>
-                    <Bar
-                        data={barData}
-                        width={window.innerWidth < 768 ? "100%" : undefined}
-                        height={window.innerWidth < 768 ? "100%" : undefined}
-                    />
+                    <Suspense fallback={<Spin size="large" />}>
+                        <Bar
+                            data={barData}
+                            width={window.innerWidth < 768 ? "100%" : undefined}
+                            height={window.innerWidth < 768 ? "100%" : undefined}
+                        />
+                    </Suspense>
                 </div>
 
                 {/* Recent Warehouse Activity */}
                 <div className="recent-activity">
                     <h3>Top Warehouses by Space</h3>
-                    <ul>
-                        {data && data.length > 0 &&
-                            quickSort(data, 'desc').splice(0, 8).
-                                map((warehouse, index) => (
-                                    <li key={index}>
-                                        <div className="warehouse-details">
-                                            <span className="warehouse-name">{warehouse.name}</span>
-                                            <span>{warehouse.city}</span>
-                                        </div>
-                                        <span className="space-available">{warehouse.space_available.toLocaleString()} sq. ft.</span>
-                                    </li>
-                                ))}
-                    </ul>
+                    <Suspense fallback={<Spin size="large" />}>
+                        <ul>
+                            {data && data.length > 0 &&
+                                quickSort(data, 'desc').splice(0, 8).
+                                    map((warehouse, index) => (
+                                        <li key={index}>
+                                            <div className="warehouse-details">
+                                                <span className="warehouse-name">{warehouse.name}</span>
+                                                <span>{warehouse.city}</span>
+                                            </div>
+                                            <span className="space-available">{warehouse.space_available.toLocaleString()} sq. ft.</span>
+                                        </li>
+                                    ))}
+                        </ul>
+                    </Suspense>
                 </div>
             </div>
         </div>
