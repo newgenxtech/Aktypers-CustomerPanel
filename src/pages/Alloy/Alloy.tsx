@@ -1,9 +1,8 @@
-import SearchComponent from "@/components/SearchComponent";
 import { useCallback, useMemo, useState } from 'react';
 import { FileImage, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlloyMaster } from './Alloy.d';
-import { DatePicker, message, Table } from 'antd';
+import { DatePicker, Input, message, Table } from 'antd';
 import type { TableProps } from 'antd';
 // import { useGetAlloyData } from "@/hooks/GetHooks";
 import axios from "axios";
@@ -107,28 +106,20 @@ const AlloyListPage = () => {
 
     return (
         <div className='warehouse'>
-            <div className="container">
-                <div className='
-                    flex
-                    items-center
-                    gap-8
-                    w-full
-                '>
-                    <label className="font-bold text-xl">Alloy Master</label>
-                    <SearchComponent
-                        className="search-component"
-                        placeholder="Search Vehicle"
-                        onHandleChange={handleSearch}
-                        postfix={<i className="fa fa-search" />}
+            <div className="flex flex-col md:flex-row items-center mt-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
+                    <label className="font-bold md:text-xl">Alloy Master</label>
+                    <Input
+                        placeholder="Search Driver"
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="lg:w-1/3 md:w-1/3"
                     />
                 </div>
                 <Button
                     onClick={() => {
                         // setOpen(true)
                     }}
-                    className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md
-                    hover:bg-[#D64848] hover:text-white
-                    '
+                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2"
                     disabled={true}
                 >
                     <Plus className='mr-1' />
@@ -183,6 +174,8 @@ const AlloyListPage = () => {
                 }}
                 size="middle"
                 scroll={{ x: 'auto', y: '60vh' }}
+                className=" p-2 border border-gray-200 rounded-md mx-2"
+
             />
 
         </div >

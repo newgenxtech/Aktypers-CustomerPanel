@@ -12,6 +12,7 @@ import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 // import { NavUser } from './nav-user';
 import { message } from 'antd';
+import { Logout } from '@/lib/utils';
 // import { motion, AnimatePresence } from "framer-motion"
 
 type MenuItem = {
@@ -68,7 +69,7 @@ const menuItems: MenuItem[] = [
 
 const Sidebar = () => {
     const [parent] = useAutoAnimate();
-    const naviagte = useNavigate();
+    const navigate = useNavigate();
 
 
 
@@ -82,7 +83,7 @@ const Sidebar = () => {
 
     const handleItemClick = (path: string) => {
         setActiveItem(path);
-        naviagte(path);
+        navigate(path);
         setMobileSidebar(false)
     };
 
@@ -163,21 +164,7 @@ const Sidebar = () => {
                                     }}
                                     onClick={
                                         () => {
-                                            message.success("Logout Successful");
-                                            // jwt: string;
-                                            // customer_id: string;
-                                            // role: string;
-                                            // login_id: string;
-                                            // driver: null;
-
-                                            localStorage.removeItem("jwt");
-                                            localStorage.removeItem("customer_id");
-                                            localStorage.removeItem("role");
-                                            localStorage.removeItem("login_id");
-                                            localStorage.removeItem("driver");
-
-
-                                            naviagte('/auth/login');
+                                            Logout({ navigate, message })
                                         }
                                     }
                                 />
@@ -202,71 +189,45 @@ const Sidebar = () => {
 
                         </div>
                     )}
-                    {/* <AnimatePresence >
-                        {showChildSidebar && (
-                            <motion.nav className={`sidebar`}
-                                initial={{ x: -300, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                exit={{ x: -300, opacity: 0 }}
-                                transition={
-                                    {
-                                        ease: "easeInOut",
-
-                                    }
-                                }
-                            >
-                                <p className="sidebar-title">Digital Warehouse</p>
-                                <ul className="menu-list">
-                                    {menuItems.map((item) => (
-                                        <li
-                                            key={item.path}
-                                            className={`menu-item ${activeItem === item.path ? 'active' : ''}`}
-                                            onClick={() => handleItemClick(item.path)}
-                                        >
-                                            {item.icon && <span className="menu-icon">{item.icon}</span>}
-                                            <span>{item.label}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                            </motion.nav>
-                        )}
-                    </AnimatePresence> */}
                 </div>
-                <div className='mobile-navbar'>
-                    <div className='mobile-navbar-left'>
-                        <div className='mobile-navbar-icon '>
-                            <img src={HamburgerIcon} alt="dashboard" style={{
-                                width: '25px',
-                                height: '25px',
-                                cursor: 'pointer',
-                            }} className="mobile-navbar-logo" onClick={() => setMobileSidebar(!showMobileSidebar)} />
+                <div className="lg:hidden md:hidden flex justify-between items-center p-2 bg-[#0B182A] text-white">
+                    <div className="flex gap-2">
+                        <div className="cursor-pointer">
+                            <img
+                                src={HamburgerIcon}
+                                alt="dashboard"
+                                className="w-6 h-6"
+                                onClick={() => setMobileSidebar(!showMobileSidebar)}
+                            />
                         </div>
                     </div>
-                    <div className='mobile-navbar-icon '>
-                        <img src={Logo} alt="dashboard" className="mobile-navbar-logo"
-                            onClick={
-                                () => {
-                                    handleItemClick('/warehouse');
-                                    setActiveItem('/warehouse');
-                                }
-                            }
-
+                    <div className="cursor-pointer">
+                        <img
+                            src={Logo}
+                            alt="Company Logo"
+                            className="w-10 h-10"
+                            onClick={() => {
+                                handleItemClick('/dashboard');
+                                setActiveItem('/dashboard');
+                            }}
                         />
                     </div>
-                    <div className='mobile-navbar-right'>
-                        <div className='mobile-navbar-icon '>
-                            <img src={AccountIcon} alt="docs" className="mobile-navbar-logo" style={{
-                                width: '30px',
-                                height: '30px',
-                                cursor: 'pointer',
-                            }} />
+                    <div className="flex gap-2">
+                        <div className="cursor-pointer">
+                            <img
+                                src={AccountIcon}
+                                alt="docs"
+                                className="w-8 h-8"
+                                onClick={() => {
+                                    Logout({ navigate, message });
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
                 {
                     showMobileSidebar && (
-                        <div className='mobile-sidebar'>
+                        <div className='mobile-sidebar lg:hidden md:hidden'>
                             <ul className="menu-list">
                                 {menuItems.map((item) => (
                                     <li

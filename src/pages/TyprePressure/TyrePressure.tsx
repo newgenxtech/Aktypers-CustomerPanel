@@ -1,9 +1,8 @@
-import SearchComponent from "@/components/SearchComponent";
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ITyrePressure } from './Tyre.d';
-import { DatePicker, message, Select, Table } from 'antd';
+import { DatePicker, Input, message, Select, Table } from 'antd';
 import type { TableProps } from 'antd';
 import axios from "axios";
 import { routes } from "@/routes/routes";
@@ -92,7 +91,7 @@ const TyrePressure: React.FC = () => {
         if (TruckDemensionDetails && TruckDemensionDetailLoading === false) {
             setSelectedTyre(TruckDemensionDetails.body[0]);
         }
-    }, [TruckDemensionDetails]);
+    }, [TruckDemensionDetailLoading, TruckDemensionDetails]);
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
@@ -134,30 +133,29 @@ const TyrePressure: React.FC = () => {
 
     return (
         <div className='warehouse'>
-            <div className="container">
-                <div className='flex items-center gap-8 w-full'>
-                    <label className="font-bold text-xl">Tyre Pressure Master</label>
-                    <SearchComponent
-                        className="search-component"
-                        placeholder="Search TyrePressure"
-                        onHandleChange={handleSearch}
-                        postfix={<i className="fa fa-search" />}
+            <div className="flex flex-col md:flex-row items-center mt-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
+                    <label className="font-bold text-lg md:text-xl">Tyre Pressure Master</label>
+                    <Input
+                        placeholder="Search Driver"
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="w-full md:w-1/3"
                     />
                 </div>
                 <Button
                     onClick={() => {
                         // setOpen(true)
                     }}
-                    className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white'
+                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0"
                     disabled={true}
                 >
-                    <Plus className='mr-1' />
+                    <Plus className="mr-1" />
                     Add Tyre Pressure
                 </Button>
             </div>
             <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/2">
-                    <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
+                    <div className="flex flex-col md:flex-row justify-center gap-4 my-4 mx-2">
                         <div className="flex items-center justify-center gap-2">
                             <label>Truck</label>
                             <Select
@@ -213,10 +211,15 @@ const TyrePressure: React.FC = () => {
                         }}
                         size="middle"
                         scroll={{ x: '100%', y: '100%' }}
-                        className="w-full"
+                        className=" p-2 border border-gray-200 rounded-md mx-2"
+
                     />
                 </div>
-                <div className="w-full md:w-1/2 flex justify-center items-center">
+                <div className="w-full md:w-1/2 flex justify-center items-center"
+                    style={{
+                        height: "70vh"
+                    }}
+                >
                     {TyrePressureDataLoading ? (
                         <div className="loader">Loading...</div>
                     ) : (

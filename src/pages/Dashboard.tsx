@@ -9,7 +9,7 @@ import { useGetTruckData, useGetDriverData } from "@/hooks/GetHooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { routes } from "@/routes/routes";
-import { message } from 'antd';
+import { DatePicker, message } from 'antd';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -80,19 +80,19 @@ const Dashboard: React.FC = () => {
     };
 
     // Memoize the calculations
-    const totalWarehouses = useMemo(() => data.length, [data]);
-    const totalSpaceAvailable = useMemo(
-        () => Sum(data),
-        [data]
-    );
-    const liveWarehouses = useMemo(
-        () => data.filter((warehouse) => warehouse.is_live).length,
-        [data]
-    );
-    const registeredWarehouses = useMemo(
-        () => data.filter((warehouse) => warehouse.is_registered).length,
-        [data]
-    );
+    // const totalWarehouses = useMemo(() => data.length, [data]);
+    // const totalSpaceAvailable = useMemo(
+    //     () => Sum(data),
+    //     [data]
+    // );
+    // const liveWarehouses = useMemo(
+    //     () => data.filter((warehouse) => warehouse.is_live).length,
+    //     [data]
+    // );
+    // const registeredWarehouses = useMemo(
+    //     () => data.filter((warehouse) => warehouse.is_registered).length,
+    //     [data]
+    // );
     const totalTrucks = useMemo(() => truckData?.body.length || 0, [truckData]);
     const totalDrivers = useMemo(() => driverData?.body.length || 0, [driverData]);
     const totalAlloys = useMemo(() => alloyData?.length || 0, [alloyData]);
@@ -101,20 +101,29 @@ const Dashboard: React.FC = () => {
         <div className="dashboard">
             {/* Dashboard Header */}
             <header className="dashboard-header">
-                <h1>Dashboard</h1>
-                <div className="date-picker">
-                    <span>Jan 01, 2023 - Sep 23, 2024</span>
-                    <button className="download-button">Download</button>
+                <h1
+                    className='text-2xl font-semibold'
+                >Dashboard</h1>
+                <div className="flex gap-2">
+                    {/* <span>Jan 01, 2023 - Sep 23, 2024</span> */}
+                    <DatePicker.RangePicker
+                        className='py-2 w-full'
+                    />
+                    <button onClick={
+                        () => {
+                            alert("This feature is not available yet");
+                        }
+                    } className="download-button">Download</button>
                 </div>
             </header>
 
             {/* Metrics Row */}
             <div className="metrics-row">
                 <div className="metric-card">
-                    <h2>Total Warehouses</h2>
-                    <p>{totalWarehouses}</p>
+                    <h2>Total Drivers</h2>
+                    <p>{totalDrivers}</p>
                 </div>
-                <div className="metric-card">
+                {/* <div className="metric-card">
                     <h2>Total Space Available</h2>
                     <p>{totalSpaceAvailable} sq. ft.</p>
                 </div>
@@ -125,14 +134,10 @@ const Dashboard: React.FC = () => {
                 <div className="metric-card">
                     <h2>Registered Warehouses</h2>
                     <p>{registeredWarehouses}</p>
-                </div>
+                </div> */}
                 <div className="metric-card">
                     <h2>Total Trucks</h2>
                     <p>{totalTrucks}</p>
-                </div>
-                <div className="metric-card">
-                    <h2>Total Drivers</h2>
-                    <p>{totalDrivers}</p>
                 </div>
                 <div className="metric-card">
                     <h2>Total Alloys</h2>

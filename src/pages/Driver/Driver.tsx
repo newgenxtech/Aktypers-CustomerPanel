@@ -1,5 +1,3 @@
-// import '@/styles/DriverListPage.css';
-import SearchComponent from "@/components/SearchComponent";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useMemo, useState } from 'react';
 // import { trimAndConvertToNumber } from '@/utils/utils';
@@ -10,7 +8,7 @@ import { Expand, FileImage, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DriverMaster } from './Driver.d';
 
-import { Modal, Space, Table, Image, Tooltip, message } from 'antd';
+import { Modal, Space, Table, Image, Tooltip, message, Input } from 'antd';
 import type { TableProps } from 'antd';
 import { useGetDriverData } from "@/hooks/GetHooks";
 import { routes } from "@/routes/routes";
@@ -266,31 +264,22 @@ const DriverListPage = () => {
 
     return (
         <div className='warehouse'>
-            <div className="container">
-                <div className='
-                    flex
-                    items-center
-                    gap-8
-                    w-full
-                '>
-                    <label className="font-bold text-xl">Driver Master</label>
-                    <SearchComponent
-                        className="search-component"
-                        placeholder="Search WareHouse"
-                        onHandleChange={handleSearch}
-                        postfix={<i className="fa fa-search" />}
+            <div className="flex flex-col md:flex-row items-center mt-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
+                    <label className="font-bold text-xl md:text-xl">Driver Master</label>
+                    <Input
+                        placeholder="Search Driver"
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="lg:w-1/3 md:w-1/3"
                     />
                 </div>
                 <Button
                     onClick={() => setOpen(true)}
-                    className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md
-                    hover:bg-[#D64848] hover:text-white
-                    '
+                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2"
                 >
                     <Plus className='mr-1' />
                     Add Driver
                 </Button>
-
             </div>
             <Table<DriverMaster>
                 columns={columns}
@@ -305,6 +294,8 @@ const DriverListPage = () => {
                 }}
                 size="middle"
                 scroll={{ x: 'auto', y: '60vh' }}
+                className=" p-2 border border-gray-200 rounded-md mx-2"
+
             />
 
             <Drawer.Root direction="right" open={open} onOpenChange={setOpen}

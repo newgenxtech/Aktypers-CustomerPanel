@@ -8,8 +8,6 @@ import Home from "./pages/HomePage";
 import ErrorPage from "./pages/ErrorPage";
 import { store } from "./store/store";
 import NotFound from "./pages/NotFound";
-import WarehouseListPage from "./pages/WareHouse/WarehouseListPage";
-import WarehouseDetailPage from "./pages/WareHouse/WarehouseDetailPage";
 import Dashboard from "./pages/Dashboard";
 import DriverListPage from "./pages/Driver/Driver";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -21,6 +19,7 @@ import Truck from "./pages/Truck/Truck";
 import TyresMasterListPage from "./pages/Tyres/TyresMaster";
 import Login from "./pages/Auth/Login";
 import AuthLayout from "./layouts/AuthLayout";
+import Signup from "./pages/Auth/Signup";
 
 const router = createBrowserRouter([
     {
@@ -38,16 +37,16 @@ const router = createBrowserRouter([
                 path: 'dashboard',
                 element: <Dashboard />,
             },
-            {
-                path: "warehouse",
-                element: (
-                    <WarehouseListPage />
-                ),
-            },
-            {
-                path: "warehouse/:code",
-                element: <WarehouseDetailPage />
-            },
+            // {
+            //     path: "warehouse",
+            //     element: (
+            //         <WarehouseListPage />
+            //     ),
+            // },
+            // {
+            //     path: "warehouse/:code",
+            //     element: <WarehouseDetailPage />
+            // },
             {
                 path: "product",
                 element: <NotFound />,
@@ -91,10 +90,10 @@ const router = createBrowserRouter([
                 path: "login",
                 element: <Login />,
             },
-            // {
-            //     path: "signup",
-            //     element: <SignUpPage />,
-            // },
+            {
+                path: "signup",
+                element: <Signup />,
+            },
             // {
             //     path: "forgot-password",
             //     element: <ForgetPassword />,

@@ -24,6 +24,7 @@ export const routes = {
     backend: {
         auth: {
             login: `${base}?route=login`,
+            signup: `${base}?route=signup`,
         },
         driver: {
             getAll: `${base}?route=getDriver&customer_id=`,

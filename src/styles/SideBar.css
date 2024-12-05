@@ -116,7 +116,7 @@
     display: none;
   }
 
-  .mobile-navbar {
+  /* .mobile-navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -138,7 +138,7 @@
   .mobile-navbar-right {
     display: flex;
     gap: 10px;
-  }
+  } */
 
 }
 

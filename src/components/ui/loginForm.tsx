@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import login from "@/assets/img/login.jpg";
 import login from "@/assets/img/realistic_image_the_ideas_is_about_tyres.jpeg";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { Input } from "antd";
 
 export default function LoginForm({ onLogin, loading, setLoading }: { onLogin: (data: { username: string; password: string }) => void, loading: boolean, setLoading: (loading: boolean) => void }) {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -42,6 +42,7 @@ export default function LoginForm({ onLogin, loading, setLoading }: { onLogin: (
                 value={formData.username}
                 onChange={handleChange}
                 required
+                className="w-full py-2"
               />
             </div>
             <div className="grid gap-2">
@@ -54,12 +55,12 @@ export default function LoginForm({ onLogin, loading, setLoading }: { onLogin: (
                   Forgot your password?
                 </Link>
               </div>
-              <Input
+              <Input.Password
                 id="password"
-                type="password"
                 value={formData.password}
                 onChange={handleChange}
                 required
+                className="w-full py-2"
               />
             </div>
             <Button type="submit" className="w-full"

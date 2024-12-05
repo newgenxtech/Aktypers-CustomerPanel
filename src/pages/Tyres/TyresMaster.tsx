@@ -1,5 +1,5 @@
 
-import SearchComponent from "@/components/SearchComponent";
+// import SearchComponent from "@/components/SearchComponent";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Drawer } from 'vaul';
@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { Expand, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TyresMaster } from './Tyres';
-import { Table, message, DatePicker, Select } from 'antd';
+import { Table, message, DatePicker, Select, Input } from 'antd';
 import type { TableProps } from 'antd';
 import { routes } from "@/routes/routes";
 import axios from "axios";
@@ -16,14 +16,14 @@ import { queryClient } from "@/hooks/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { useGetTruckData, useGetTruckDemensionDetails } from "@/hooks/GetHooks";
 import { getTyreLayout } from "@/lib/utils";
-import { TyrePressureProps } from "../TyprePressure/TyrePressure";
+// import { TyrePressureProps } from "../TyprePressure/TyrePressure";
 
 
 const TyresMasterListPage = () => {
 
     const [CurrentTyres, setCurrentTyres] = useState<TyresMaster | null>(null);
 
-    const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps | null>(null);
+    // const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps | null>(null);
     const [SelectedTruckId, setSelectedTruckId] = useState<string>('');
     const [Position, setPosition] = useState<string[]>([]);
     const [fromDate, setFromDate] = useState<string>('');
@@ -61,16 +61,16 @@ const TyresMasterListPage = () => {
     useEffect(() => {
         if (TruckDemensionDetails && TruckDemensionDetailLoading === false && TruckDemensionDetails.body.length > 0
         ) {
-            setSelectedTyre(TruckDemensionDetails.body[0]);
+            // setSelectedTyre(TruckDemensionDetails.body[0]);
             const res = TruckDemensionDetails.body[0];
             setPosition(getTyreLayout(
-                Number(res?.total_tyres!),
-                Number(res?.total_axles!),
-                res?.axtyre!,
+                Number(res?.total_tyres),
+                Number(res?.total_axles),
+                res?.axtyre,
                 true
             ).map((item) => item.value).filter((value): value is string => value !== undefined));
         }
-    }, [TruckDemensionDetails]);
+    }, [TruckDemensionDetailLoading, TruckDemensionDetails]);
 
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
@@ -385,29 +385,18 @@ const TyresMasterListPage = () => {
                 pattern: z.string().min(3).max(30)
             }
         }
-    ], [
-        SelectedTyre,
-        isEdit,
-        CurrentTyres,
-        Position
-    ]);
+    ], [isEdit, CurrentTyres, Position]);
 
 
     return (
         <div className='tyres'>
-            <div className="container">
-                <div className='
-                    flex
-                    items-center
-                    gap-8
-                    w-full
-                '>
-                    <label className="font-bold text-xl">Tyres Master</label>
-                    <SearchComponent
-                        className="search-component"
-                        placeholder="Search Tyres"
-                        onHandleChange={handleSearch}
-                        postfix={<i className="fa fa-search" />}
+            <div className="flex flex-col md:flex-row items-center mt-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
+                    <label className="font-bold text-xl md:text-xl">Tyres Master</label>
+                    <Input
+                        placeholder="Search Driver"
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="w-full md:w-1/3"
                     />
                 </div>
                 <Button
@@ -418,9 +407,7 @@ const TyresMasterListPage = () => {
                             setOpen(true)
                         }
                     }}
-                    className='flex justify-end bg-[#D64848] text-white px-4 py-2 rounded-md
-                    hover:bg-[#D64848] hover:text-white
-                    '
+                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0"
                 >
                     <Plus className='mr-1' />
                     Add Tyres
@@ -431,33 +418,6 @@ const TyresMasterListPage = () => {
                 <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
                     <div className="flex items-center justify-center gap-2">
                         <label>Truck</label>
-                        {/* 
-                        //! This is the old code for selecting truck with Whole item value set
-                        <AutoComplete
-                            options={TruckListData?.body.map((item) => ({
-                                value: JSON.stringify(item),
-                                label: item.registration_number,
-                            }))}
-                            placeholder="Select Truck"
-                            onSelect={(text) => {
-                                const res = JSON.parse(text);
-                                setSelectedTyre({
-                                    value: res.id,
-                                    label: res.registration_number,
-                                });
-                                setSelectedTruckId(res.id);
-                                console.log('Selected Truck:', res);
-                            }}
-                            className="w-64"
-                            value={SelectedTyre?.label}
-                            allowClear
-                            onClear={
-                                () => {
-                                    setSelectedTyre(null);
-                                    setSelectedTruckId('');
-                                }
-                            }
-                        /> */}
                         <Select
 
                             className="w-64"
@@ -497,7 +457,7 @@ const TyresMasterListPage = () => {
                 </div>
                 <Table<TyresMaster>
                     columns={columns}
-                    dataSource={data?.body.map((item: any, index: any) => ({ ...item, key: index })) ?? []
+                    dataSource={data?.body.map((item: TyresMaster, index: number) => ({ ...item, key: index })) ?? []
 
                     }
                     loading={isLoading}
