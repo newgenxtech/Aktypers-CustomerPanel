@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from "path";
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   base: '/',
@@ -49,5 +50,40 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, 'src/styles'),
     }
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      injectRegister: 'auto',
+      registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+      },
+      // add this to cache all the
+      // static assets in the public folder
+      includeAssets: [
+        "**/*",
+      ],
+      manifest: {
+        "theme_color": "#110C23",
+        "background_color": "#110C23",
+        "display": "standalone",
+        "scope": "/",
+        "start_url": "/",
+        "short_name": "AK Tyres",
+        "description": "AK Tyres Customer Portal",
+        "name": "AK Tyres Customer Portal",
+        "icons": [
+          {
+            "src": "/logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          }
+        ]
+      }
+
+    })
+  ],
 })
