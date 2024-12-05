@@ -101,19 +101,20 @@ const Dashboard: React.FC = () => {
         <div className="dashboard">
             {/* Dashboard Header */}
             <header className="dashboard-header">
-                <h1
-                    className='text-2xl font-semibold'
-                >Dashboard</h1>
-                <div className="flex gap-2">
+                <h1 className='text-2xl font-semibold'>Dashboard</h1>
+                <div className="flex flex-col md:flex-row gap-2">
                     {/* <span>Jan 01, 2023 - Sep 23, 2024</span> */}
-                    <DatePicker.RangePicker
-                        className='py-2 w-full'
+                    <DatePicker.RangePicker className='py-2 w-full md:w-auto'
+                        allowClear
                     />
-                    <button onClick={
-                        () => {
+                    <button
+                        onClick={() => {
                             alert("This feature is not available yet");
-                        }
-                    } className="download-button">Download</button>
+                        }}
+                        className="download-button"
+                    >
+                        Download
+                    </button>
                 </div>
             </header>
 
