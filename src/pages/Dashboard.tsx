@@ -5,6 +5,11 @@ import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from '
 import '@/styles/Dashboard.css';
 import { useSelector } from 'react-redux';
 import { WareHouseData } from '@/Interfaces/interface';
+import { useGetTruckData, useGetDriverData } from "@/hooks/GetHooks";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { routes } from "@/routes/routes";
+import { DatePicker, message } from 'antd';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -30,20 +35,32 @@ const quickSort = (arr: WareHouseData[], sortDirection: string): WareHouseData[]
     } else {
         return [...quickSort(rightArr, sortDirection), pivot, ...quickSort(leftArr, sortDirection)];
     }
-
-
 };
 
 const Sum = (arr: WareHouseData[]): number => {
     return arr.reduce((total, warehouse) => total + warehouse.space_available, 0);
-}
-
-
+};
 
 const Dashboard: React.FC = () => {
-
     const data = useSelector((state: { warehouse: { data: WareHouseData[] } }) => state.warehouse.data);
-    console.log(data);
+    const { data: truckData } = useGetTruckData('1001');
+    const { data: driverData } = useGetDriverData('1001');
+    const { data: alloyData } = useQuery(
+        {
+            queryKey: ['alloyData'],
+            queryFn: async () => {
+                try {
+                    const res = await axios.post(routes.backend.alloy.getAll + '1001');
+                    return res.data;
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    message.error("Error fetching data");
+                }
+            },
+            refetchOnWindowFocus: false,
+        }
+    );
+
     // Prepare chart data for Bar chart (Space availability by city)
     const cities = [...new Set(data.map((warehouse) => warehouse.city))];
     const spaceByCity = cities.map((city) =>
@@ -63,38 +80,51 @@ const Dashboard: React.FC = () => {
     };
 
     // Memoize the calculations
-    const totalWarehouses = useMemo(() => data.length, [data]);
-    const totalSpaceAvailable = useMemo(
-        () => Sum(data),
-        [data]
-    );
-    const liveWarehouses = useMemo(
-        () => data.filter((warehouse) => warehouse.is_live).length,
-        [data]
-    )
-    const registeredWarehouses = useMemo(
-        () => data.filter((warehouse) => warehouse.is_registered).length,
-        [data]
-    )
+    // const totalWarehouses = useMemo(() => data.length, [data]);
+    // const totalSpaceAvailable = useMemo(
+    //     () => Sum(data),
+    //     [data]
+    // );
+    // const liveWarehouses = useMemo(
+    //     () => data.filter((warehouse) => warehouse.is_live).length,
+    //     [data]
+    // );
+    // const registeredWarehouses = useMemo(
+    //     () => data.filter((warehouse) => warehouse.is_registered).length,
+    //     [data]
+    // );
+    const totalTrucks = useMemo(() => truckData?.body.length || 0, [truckData]);
+    const totalDrivers = useMemo(() => driverData?.body.length || 0, [driverData]);
+    const totalAlloys = useMemo(() => alloyData?.length || 0, [alloyData]);
 
     return (
         <div className="dashboard">
             {/* Dashboard Header */}
             <header className="dashboard-header">
-                <h1>Dashboard</h1>
-                <div className="date-picker">
-                    <span>Jan 01, 2023 - Sep 23, 2024</span>
-                    <button className="download-button">Download</button>
+                <h1 className='text-2xl font-semibold'>Dashboard</h1>
+                <div className="flex flex-col md:flex-row gap-2">
+                    {/* <span>Jan 01, 2023 - Sep 23, 2024</span> */}
+                    <DatePicker.RangePicker className='py-2 w-full md:w-auto'
+                        allowClear
+                    />
+                    <button
+                        onClick={() => {
+                            alert("This feature is not available yet");
+                        }}
+                        className="download-button"
+                    >
+                        Download
+                    </button>
                 </div>
             </header>
 
             {/* Metrics Row */}
             <div className="metrics-row">
                 <div className="metric-card">
-                    <h2>Total Warehouses</h2>
-                    <p>{totalWarehouses}</p>
+                    <h2>Total Drivers</h2>
+                    <p>{totalDrivers}</p>
                 </div>
-                <div className="metric-card">
+                {/* <div className="metric-card">
                     <h2>Total Space Available</h2>
                     <p>{totalSpaceAvailable} sq. ft.</p>
                 </div>
@@ -105,6 +135,14 @@ const Dashboard: React.FC = () => {
                 <div className="metric-card">
                     <h2>Registered Warehouses</h2>
                     <p>{registeredWarehouses}</p>
+                </div> */}
+                <div className="metric-card">
+                    <h2>Total Trucks</h2>
+                    <p>{totalTrucks}</p>
+                </div>
+                <div className="metric-card">
+                    <h2>Total Alloys</h2>
+                    <p>{totalAlloys}</p>
                 </div>
             </div>
 
@@ -115,14 +153,8 @@ const Dashboard: React.FC = () => {
                     <h3>Space Availability by City</h3>
                     <Bar
                         data={barData}
-                        width={
-                            // on mobile devices, the chart width should be smaller
-                            window.innerWidth < 768 ? "100%" : undefined
-                        }
-                        height={
-                            // on mobile devices, the chart height should be smaller
-                            window.innerWidth < 768 ? "100%" : undefined
-                        }
+                        width={window.innerWidth < 768 ? "100%" : undefined}
+                        height={window.innerWidth < 768 ? "100%" : undefined}
                     />
                 </div>
 

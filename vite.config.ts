@@ -4,6 +4,16 @@ import path from "path";
 
 export default defineConfig({
   base: '/',
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://aktyres-in.stackstaging.com/php-truck/class',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
   build: {
     outDir: './dist',
     assetsDir: 'assets',
@@ -24,10 +34,10 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       'react',
-      'react-router-dom',      
+      'react-router-dom',
     ]
   },
-  resolve:{
+  resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@components': path.resolve(__dirname, 'src/components'),

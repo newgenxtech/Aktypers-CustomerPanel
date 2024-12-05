@@ -14,17 +14,18 @@
         width: 'fit-content';
     }
 }
-
+/* 
 .label {
     font-size: 1.5rem;
     font-weight: 600;
-}
+} */
 /* absolute left-2 top-2.5 h-4 w-4 text-gray-500 */
 
 @media only screen and (min-width: 768px) {
     .container {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 1rem;
         gap: 6rem;
     }
