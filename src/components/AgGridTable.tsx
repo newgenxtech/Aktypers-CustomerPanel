@@ -11,9 +11,10 @@ interface AgGridTableProps<T> {
     columns: (ColDef | ColGroupDef)[];
     data: T[];
     isLoading: boolean;
+    defaultColDef?: ColDef;
 }
 
-const AgGridTable = <T,>({ columns, data, isLoading }: AgGridTableProps<T>) => {
+const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTableProps<T>) => {
     const gridRef = useRef<AgGridReact>(null);
 
     const onBtnExport = useCallback(() => {
@@ -65,6 +66,7 @@ const AgGridTable = <T,>({ columns, data, isLoading }: AgGridTableProps<T>) => {
                     resizable: true,
                     sortable: true,
                     filter: true,
+                    ...defaultColDef
                 }}
                 enableCellTextSelection={true}
             />

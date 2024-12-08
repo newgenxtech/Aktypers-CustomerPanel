@@ -1,9 +1,13 @@
 import React, { useMemo } from 'react';
-import { Table, Tooltip, Image, Modal, Space } from 'antd';
-import type { TableProps } from 'antd';
+import { Tooltip, Image, Modal, Space } from 'antd';
 import { FileImage } from 'lucide-react';
 import { ITruckData } from '@/pages/Truck/Truck.d';
 import { routes } from "@/routes/routes";
+import { CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { ColDef, ColGroupDef } from 'ag-grid-community';
+import AgGridTable from '../AgGridTable';
 
 interface TruckTableProps {
     data: ITruckData[];
@@ -14,179 +18,175 @@ interface TruckTableProps {
 }
 
 const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIsEdit, setCurrentTruck }) => {
-    const columns: TableProps<ITruckData>['columns'] = useMemo(() => [
+    const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
-            title: 'S.N',
-            dataIndex: 'id',
-            key: 'id',
-            render: (_, __, index) => <span>{index + 1}</span>,
+            headerName: 'S.N',
+            field: 'id',
+            sortable: true,
+            filter: true,
             width: 80,
+            cellRenderer: 'params.node.rowIndex + 1'
         },
         {
-            title: 'Registration Number',
-            dataIndex: 'registration_number',
-            key: 'registration_number',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) =>
+            headerName: 'Registration Number',
+            field: 'registration_number',
+            sortable: true,
+            filter: true,
+            cellRenderer: (params: CustomCellRendererProps) => (
                 <span
-                    className="text-[#00008B] font-semibold cursor-pointer text-base "
+                    className="text-[#00008B] font-semibold cursor-pointer text-base"
                     onClick={() => {
                         setOpen(true);
                         setIsEdit(true);
-                        setCurrentTruck(data as ITruckData);
+                        setCurrentTruck(params.data);
                     }}
-                >{data.registration_number}</span>,
+                >
+                    {params.value}
+                </span>
+            )
         },
         {
-            title: 'Chassis Number',
-            dataIndex: 'chassis_number',
-            key: 'chassis_number',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.chassis_number}</span>
+            headerName: 'Chassis Number',
+            field: 'chassis_number',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Engine Number',
-            dataIndex: 'engine_number',
-            key: 'engine_number',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.engine_number}</span>
+            headerName: 'Engine Number',
+            field: 'engine_number',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Make',
-            dataIndex: 'make',
-            key: 'make',
-            width: 100,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.make}</span>
+            headerName: 'Make',
+            field: 'make',
+            sortable: true,
+            filter: true,
+            width: 100
         },
         {
-            title: 'Model',
-            dataIndex: 'model',
-            key: 'model',
-            width: 100,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.model}</span>
+            headerName: 'Model',
+            field: 'model',
+            sortable: true,
+            filter: true,
+            width: 100
         },
         {
-            title: 'Year of Manufacture',
-            dataIndex: 'year_of_manufacture',
-            key: 'year_of_manufacture',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.year_of_manufacture}</span>
+            headerName: 'Year of Manufacture',
+            field: 'year_of_manufacture',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Wheels',
-            dataIndex: 'wheels',
-            key: 'wheels',
-            width: 100,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.wheels}</span>
+            headerName: 'Wheels',
+            field: 'wheels',
+            sortable: true,
+            filter: true,
+            width: 100
         },
         {
-            title: 'Tyre Type',
-            dataIndex: 'tyre_type',
-            key: 'tyre_type',
-            width: 100,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.tyre_type}</span>
+            headerName: 'Tyre Type',
+            field: 'tyre_type',
+            sortable: true,
+            filter: true,
+            width: 100
         },
         {
-            title: 'Load Capacity',
-            dataIndex: 'load_capacity',
-            key: 'load_capacity',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.load_capacity}</span>
+            headerName: 'Load Capacity',
+            field: 'load_capacity',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Fuel Type',
-            dataIndex: 'fuel_type',
-            key: 'fuel_type',
-            width: 100,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.fuel_type}</span>
+            headerName: 'Fuel Type',
+            field: 'fuel_type',
+            sortable: true,
+            filter: true,
+            width: 100
         },
         {
-            title: 'Insurance Number',
-            dataIndex: 'insurance_number',
-            key: 'insurance_number',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.insurance_number}</span>
+            headerName: 'Insurance Number',
+            field: 'insurance_number',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Insurance Expiry Date',
-            dataIndex: 'insurance_expiry_date',
-            key: 'insurance_expiry_date',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.insurance_expiry_date}</span>
+            headerName: 'Insurance Expiry Date',
+            field: 'insurance_expiry_date',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Last Service Date',
-            dataIndex: 'last_service_date',
-            key: 'last_service_date',
-            width: 150,
-            render: (_, data: Partial<ITruckData>) => <span className="text-base">{data.last_service_date}</span>
+            headerName: 'Last Service Date',
+            field: 'last_service_date',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Remarks',
-            dataIndex: 'remarks',
-            key: 'remarks',
+            headerName: 'Remarks',
+            field: 'remarks',
+            sortable: true,
+            filter: true,
             width: 200,
-            render: (_, data: Partial<ITruckData>) => (
-                <Tooltip title={data?.remarks} key={data?.remarks}>
-                    <span>{(data?.remarks?.trim().length ?? 0) > 20 ? `${data?.remarks?.slice(0, 20)}...` : data?.remarks ?? ''}</span>
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <Tooltip title={params.value || ''}>
+                    <span>{params.value && params.value.length > 20 ? `${params.value.slice(0, 20)}...` : params.value || 'N/A'}</span>
                 </Tooltip>
-            ),
+            )
         },
         {
-            title: "Documents",
-            dataIndex: 'documents',
-            key: 'documents',
-            width: 80,
-            render: (_, data: Partial<ITruckData>) => (
-                <div className="flex justify-center items-center">
+            headerName: 'Documents',
+            field: 'documents',
+            sortable: false,
+            filter: false,
+            width: 150,
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <div className="flex justify-center items-center mt-2 ">
                     <FileImage
                         className="cursor-pointer hover:text-blue-500"
                         onClick={() => {
                             Modal.info({
                                 title: "Documents",
                                 width: 500,
-                                content: <>
+                                content: (
                                     <Space className="my-2">
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.rc_book}`}
-                                            alt={data?.rc_book ? 'RC Book' : 'RC Book Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.rc_book}`}
+                                            alt={params.data?.rc_book ? 'RC Book' : 'RC Book Not Uploaded'}
                                         />
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.insurance}`}
-                                            alt={data?.insurance ? 'Insurance' : 'Insurance Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.insurance}`}
+                                            alt={params.data?.insurance ? 'Insurance' : 'Insurance Not Uploaded'}
                                         />
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.pic}`}
-                                            alt={data?.pic ? 'Picture' : 'Picture Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.pic}`}
+                                            alt={params.data?.pic ? 'Picture' : 'Picture Not Uploaded'}
                                         />
                                     </Space>
-                                </>
+                                )
                             });
                         }}
                     />
                 </div>
-            ),
+            )
         }
-    ], []);
+    ], [setOpen, setIsEdit, setCurrentTruck]);
 
     return (
-        <Table<ITruckData>
+        <AgGridTable
             columns={columns}
-            dataSource={data}
-            loading={isLoading}
-            pagination={{
-                position: ['bottomRight'],
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '30', '40', '50'],
-                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                total: data?.length,
-            }}
-            size="middle"
-            scroll={{ x: 'auto', y: '60vh' }}
-            className="p-2 border border-gray-200 rounded-md mx-2"
+            data={data}
+            isLoading={isLoading}
         />
     );
 };

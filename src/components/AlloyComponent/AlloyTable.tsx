@@ -66,79 +66,7 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
         }
     ], []);
 
-    // const gridRef = useRef<AgGridReact>(null);
-
-    // const onBtnExport = useCallback(() => {
-    //     if (!gridRef.current) {
-    //         message.error('No data to export');
-    //     }
-    //     gridRef.current!.api.exportDataAsCsv();
-    // }, []);
-
-    // const isMobile = useMediaQuery({
-    //     query: '(max-width: 768px)'
-    // });
-
     return (
-        // <>
-        //     <div className="ag-theme-quartz mx-2" style={{ height: '50vh', width: 'auto' }}>
-        //         <div className="flex justify-end gap-2">
-        //             <Button
-        //                 icon={<FileText />}
-        //                 onClick={() => {
-        //                     message.info('Feature not available');
-        //                 }}
-        //                 className='mb-2'
-        //             />
-        //             <Button
-        //                 icon={<Sheet />}
-        //                 onClick={onBtnExport}
-        //                 className='mb-2'
-        //             />
-        //         </div>
-        //         <AgGridReact
-        //             ref={gridRef}
-        //             columnDefs={columns}
-        //             rowData={data}
-        //             loading={isLoading}
-        //             loadingOverlayComponent={'Loading...'}
-        //             overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
-        //             pagination={isMobile ? false : true}
-        //             paginationPageSize={10}
-        //             paginationPageSizeSelector={
-        //                 isMobile ? false :
-        //                     [10, 25, 50, 100, 200, 500, 1000]}
-        //             domLayout='autoHeight'
-        //             defaultColDef={{
-        //                 flex: 1,
-        //                 minWidth: 100,
-        //                 resizable: true,
-        //                 sortable: true,
-        //                 filter: true,
-        //             }}
-        //             enableCellTextSelection={true}
-        //         />
-        //         {isMobile && (
-        //             <>
-        //                 {/* <div>
-        //                     <Pagination
-        //                         showSizeChanger
-        //                         showQuickJumper
-        //                         showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-        //                         pageSizeOptions={['10', '25', '50', '100', '200', '500', '1000']}
-        //                         className='mt-2'
-        //                         total={gridRef.current?.api.getDisplayedRowCount() || 0}
-        //                     />
-        //                 </div> */}
-        //                 <div>
-        //                     <p className="text-xs text-gray-500 text-center mt-2">
-        //                         Swipe left to see more columns
-        //                     </p>
-        //                 </div>
-        //             </>
-        //         )}
-        //     </div>
-        // </>
         <AgGridTable
             columns={columns}
             data={data}

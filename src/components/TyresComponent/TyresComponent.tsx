@@ -1,5 +1,3 @@
-
-// import SearchComponent from "@/components/SearchComponent";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Drawer } from 'vaul';
@@ -8,33 +6,26 @@ import { z } from 'zod';
 import { Expand, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TyresMaster } from '@/pages/Tyres/Tyres.d';
-import { Table, message, DatePicker, Select, Input } from 'antd';
-import type { TableProps } from 'antd';
+import { message, DatePicker, Select, Input } from 'antd';
 import { routes } from "@/routes/routes";
 import axios from "axios";
 import { queryClient } from "@/hooks/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { useGetTruckData, useGetTruckDemensionDetails } from "@/hooks/GetHooks";
 import { getTyreLayout } from "@/lib/utils";
-// import { TyrePressureProps } from "../TyprePressure/TyrePressure";
-
+import AgGridTable from '../AgGridTable';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
+import { CustomCellRendererProps } from 'ag-grid-react';
 
 const TyresMasterListPage = () => {
-
     const [CurrentTyres, setCurrentTyres] = useState<TyresMaster | null>(null);
-
-    // const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps | null>(null);
     const [SelectedTruckId, setSelectedTruckId] = useState<string>('');
     const [Position, setPosition] = useState<string[]>([]);
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
-
     const [isEdit, setIsEdit] = useState(false);
 
-    const {
-        data: TruckListData
-    } = useGetTruckData('1001');
-
+    const { data: TruckListData } = useGetTruckData('1001');
     const { data, isLoading } = useQuery({
         queryKey: ['tyres', SelectedTruckId, fromDate, toDate],
         queryFn: async () => {
@@ -57,11 +48,9 @@ const TyresMasterListPage = () => {
 
     const { data: TruckDemensionDetails, isLoading: TruckDemensionDetailLoading } = useGetTruckDemensionDetails(SelectedTruckId);
 
-
     useEffect(() => {
-        if (TruckDemensionDetails && TruckDemensionDetailLoading === false && TruckDemensionDetails.body.length > 0
-        ) {
-            // setSelectedTyre(TruckDemensionDetails.body[0]);
+        if (TruckDemensionDetails && TruckDemensionDetailLoading === false &&
+            TruckDemensionDetails.body && TruckDemensionDetails.body.length > 0) {
             const res = TruckDemensionDetails.body[0];
             setPosition(getTyreLayout(
                 Number(res?.total_tyres),
@@ -77,112 +66,112 @@ const TyresMasterListPage = () => {
 
     const handleSearch = useCallback((data: string) => {
         console.log(data);
-        // const searchTerm = data.toLowerCase();
-
-        // dispatch(updateSearchColumn({
-        //     name: searchTerm,
-        // }))
     }, []);
 
+    const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
+        {
+            headerName: 'S.No',
+            field: 'key',
+            sortable: true,
+            filter: true,
+            cellRenderer: 'params.node.rowIndex + 1'
+        },
+        {
+            headerName: 'Serial Number',
+            field: 'Tyre_Serial_Number',
+            sortable: true,
+            filter: true,
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <span
+                    className="text-[#00008B] font-semibold cursor-pointer text-base"
+                    onClick={() => {
+                        setOpen(true);
+                        setIsEdit(true);
+                        setCurrentTyres(params.data);
+                    }}
+                >
+                    {params.value}
+                </span>
+            )
+        },
+        {
+            headerName: 'Wheeler Type',
+            field: 'Wheeler_Type',
+            sortable: true,
+            filter: true,
+            cellRenderer: (params: CustomCellRendererProps) => <span className="text-base">{params.value}</span>
+        },
+        {
+            headerName: 'Manufacturer',
+            field: 'Manufacturer',
+            sortable: true,
+            filter: true,
 
+        },
+        {
+            headerName: 'Brand',
+            field: 'Brand',
+            sortable: true,
+            filter: true,
 
-    const columns: TableProps<TyresMaster>['columns'] = useMemo(() => [
-        {
-            title: 'S.No',
-            dataIndex: 'key',
-            key: 'key',
-            render: (_, __, index) => <span>{index + 1}</span>,
-            width: 50
         },
         {
-            title: 'Serial Number',
-            dataIndex: 'Tyre_Serial_Number',
-            key: 'Tyre_Serial_Number',
-            render: (_, data: Partial<TyresMaster>) => <span
-                className="text-[#00008B] font-semibold cursor-pointer text-base "
-                onClick={() => {
-                    setOpen(true);
-                    setIsEdit(true);
-                    setCurrentTyres(data as TyresMaster);
-                }}
-            >{data.Tyre_Serial_Number}</span>,
-            sorter: (a, b) => a.Tyre_Serial_Number.localeCompare(b.Tyre_Serial_Number),
-            width: 100,
+            headerName: 'Fitment KM',
+            field: 'Fitment_KM',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Wheeler Type',
-            dataIndex: 'Wheeler_Type',
-            key: 'Wheeler_Type',
-            width: 50,
-            render: (_, data: Partial<TyresMaster>) => <span
-                className="text-base"
-            >{data.Wheeler_Type}</span>
+            headerName: 'Removal KM',
+            field: 'Removal_KM',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Manufacturer',
-            dataIndex: 'Manufacturer',
-            key: 'Manufacturer',
-            width: 100
+            headerName: 'Total Covered KM',
+            field: 'Total_Covered_KM',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Brand',
-            dataIndex: 'Brand',
-            key: 'Brand',
-            width: 100
+            headerName: 'New Tyre',
+            field: 'Retread_Yes_No',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Fitment KM',
-            dataIndex: 'Fitment_KM',
-            key: 'Fitment_KM',
-            width: 100
+            headerName: 'Reason for Removal Month',
+            field: 'Reason_for_Removal_MONTH',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Removal KM',
-            dataIndex: 'Removal_KM',
-            key: 'Removal_KM',
-            width: 100
+            headerName: 'Date',
+            field: 'Date',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'Total Covered KM',
-            dataIndex: 'Total_Covered_KM',
-            key: 'Total_Covered_KM',
-            width: 100
+            headerName: 'Position',
+            field: 'position',
+            sortable: true,
+            filter: true,
+
         },
         {
-            title: 'New Tyre',
-            dataIndex: 'Retread_Yes_No',
-            key: 'Retread_Yes_No',
-            width: 100
-        },
-        {
-            title: 'Reason for Removal Month',
-            dataIndex: 'Reason_for_Removal_MONTH',
-            key: 'Reason_for_Removal_MONTH',
-            width: 100
-        },
-        {
-            title: 'Date',
-            dataIndex: 'Date',
-            key: 'Date',
-            width: 100
-        },
-        {
-            title: 'Position',
-            dataIndex: 'position',
-            key: 'position',
-            width: 100
-        },
-        {
-            title: 'Registration Number',
-            dataIndex: 'registration_number',
-            key: 'registration_number',
-            width: 100
+            headerName: 'Registration Number',
+            field: 'registration_number',
+            sortable: true,
+            filter: true,
+
         }
-
-    ], [
-        // StoreData.searchColumn.name
-    ])
-
+    ], [setOpen, setIsEdit, setCurrentTyres]);
 
     const handleCreateTyres = async (data: TyresMaster) => {
         try {
@@ -190,7 +179,6 @@ const TyresMasterListPage = () => {
                 ...data,
                 Vehicle_Registration_Number: SelectedTruckId
             });
-            console.log(response);
             const { data: responseData } = response;
 
             if (responseData?.status === 201) {
@@ -214,7 +202,6 @@ const TyresMasterListPage = () => {
                 ...data,
                 id: CurrentTyres?.id
             });
-            console.log(response);
             const { data: responseData } = response;
 
             if (responseData?.status === 200) {
@@ -231,7 +218,6 @@ const TyresMasterListPage = () => {
             message.error('Failed to update tyres');
         }
     }
-
 
     const formField: CustomField[] = useMemo(() => [
         {
@@ -387,7 +373,6 @@ const TyresMasterListPage = () => {
         }
     ], [isEdit, CurrentTyres, Position]);
 
-
     return (
         <div className='tyres'>
             <div className="flex flex-col md:flex-row items-center mt-2">
@@ -412,14 +397,12 @@ const TyresMasterListPage = () => {
                     <Plus className='mr-1' />
                     Add Tyres
                 </Button>
-
             </div>
             <div className="w-full ">
                 <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
                     <div className="flex items-center justify-center gap-2">
                         <label>Truck</label>
                         <Select
-
                             className="w-64"
                             onChange={(value) => {
                                 setSelectedTruckId(value);
@@ -434,9 +417,7 @@ const TyresMasterListPage = () => {
                                 option!.label!.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                             }
                             showSearch
-
                         />
-
                     </div>
                     <div className="flex items-center justify-center gap-2">
                         <label>From Date</label>
@@ -455,44 +436,22 @@ const TyresMasterListPage = () => {
                         />
                     </div>
                 </div>
-                <Table<TyresMaster>
+                <AgGridTable
                     columns={columns}
-                    dataSource={data?.body.map((item: TyresMaster, index: number) => ({ ...item, key: index })) ?? []
-
-                    }
-                    loading={isLoading}
-                    pagination={{
-                        position: ['bottomRight'],
-                        showSizeChanger: true,
-                        pageSizeOptions: ['10', '20', '30', '40', '50'],
-                        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                        total: data?.itemCount,
-                    }}
-                    size="middle"
-                    scroll={{ x: 'auto', y: '60vh' }}
-                    className="m-4 p-2 border border-gray-200 rounded-md"
+                    data={data?.body.map((item: TyresMaster, index: number) => ({ ...item, key: index })) ?? []}
+                    isLoading={isLoading}
                 />
             </div>
 
-            <Drawer.Root direction="right" open={open} onOpenChange={setOpen}
-                dismissible={false}
-            >
-                {/* <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
-                    Open Drawer
-                </Drawer.Trigger> */}
+            <Drawer.Root direction="right" open={open} onOpenChange={setOpen} dismissible={false}>
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                     <Drawer.Content
-                        className="right-2 top-2 bottom-2 fixed z-10 outline-none 
-                         flex lg:w-96 md:w-80 w-72"
-                        // The gap between the edge of the screen and the drawer is 8px in this case.
+                        className="right-2 top-2 bottom-2 fixed z-10 outline-none flex lg:w-96 md:w-80 w-72"
                         style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
                     >
                         <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto">
                             <div className="w-full">
-                                {/* 
-                                    exit button
-                                */}
                                 <div className="flex justify-between">
                                     <Expand className=' w-5 cursor-pointer' onClick={() => {
                                         navigate({
@@ -507,9 +466,7 @@ const TyresMasterListPage = () => {
                                 <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
                                     {isEdit ? 'Edit' : 'Add'} Tyres Details
                                 </Drawer.Title>
-
                                 <Drawer.Description className="text-zinc-600 mb-2">
-                                    {/* The drawer can be opened from any direction. It can be opened from the top, right, bottom, or left. */}
                                     <FormComponentV2
                                         fields={formField}
                                         isUpdate={isEdit}
@@ -521,7 +478,6 @@ const TyresMasterListPage = () => {
                                             }
                                         }}
                                         initialValues={CurrentTyres}
-
                                     />
                                 </Drawer.Description>
                             </div>
@@ -529,8 +485,7 @@ const TyresMasterListPage = () => {
                     </Drawer.Content>
                 </Drawer.Portal>
             </Drawer.Root>
-        </div >
-
+        </div>
     );
 };
 
