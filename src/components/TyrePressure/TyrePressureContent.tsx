@@ -95,6 +95,20 @@ const TyrePressureContent: React.FC = () => {
             key: 'tyre_pressure',
             render: (text: string) => <span>{text}</span>,
         },
+        // depth 
+        {
+            title: 'Depth',
+            dataIndex: 'Depth',
+            key: 'Depth',
+            render: (text: string) => <span>{text}</span>,
+        },
+        // Toberun
+        {
+            title: 'To be Run',
+            dataIndex: 'Toberun',
+            key: 'Toberun',
+            render: (text: string) => <span>{text}</span>,
+        },
         {
             title: 'Recorded At',
             dataIndex: 'recorded_at',

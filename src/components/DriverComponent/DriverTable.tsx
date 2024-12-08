@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react';
-import { Table, Tooltip, Image, Modal, Space } from 'antd';
-import type { TableProps } from 'antd';
+import { Tooltip, Image, Modal, Space } from 'antd';
 import { FileImage } from 'lucide-react';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { routes } from "@/routes/routes";
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 
 interface DriverTableProps {
     data: DriverMaster[];
@@ -14,95 +17,108 @@ interface DriverTableProps {
 }
 
 const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, setIsEdit, setCurrentDriver }) => {
-    const columns: TableProps<DriverMaster>['columns'] = useMemo(() => [
+    const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: (_, data: Partial<DriverMaster>) => <span
-                className="text-[#00008B] font-semibold cursor-pointer text-base "
-                onClick={() => {
-                    setOpen(true);
-                    setIsEdit(true);
-                    setCurrentDriver(data as DriverMaster);
-                }}
-            >{data.name}</span>,
-            sorter: (a, b) => a.name.localeCompare(b.name),
-            width: 100,
+            headerName: 'Name',
+            field: 'name',
+            sortable: true,
+            filter: true,
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <span
+                    className="text-[#00008B] font-semibold cursor-pointer text-base"
+                    onClick={() => {
+                        setOpen(true);
+                        setIsEdit(true);
+                        setCurrentDriver(params.data);
+                    }}
+                >
+                    {params.value}
+                </span>
+            )
         },
         {
-            title: 'Cus ID',
-            dataIndex: 'customerid',
-            key: 'customerid',
-            width: 50,
-            render: (_, data: Partial<DriverMaster>) => <span className="text-base">{data.customerid}</span>
-        },
-        {
-            title: 'License Number',
-            dataIndex: 'license_number',
-            key: 'license_number',
+            headerName: 'Cus ID',
+            field: 'customerid',
+            sortable: true,
+            filter: true,
             width: 100
         },
         {
-            title: 'License Expiry Date',
-            dataIndex: 'license_expiry_date',
-            key: 'license_expiry_date',
-            width: 100
-        },
-        {
-            title: 'Phone Number',
-            dataIndex: 'phone_number',
-            key: 'phone_number',
-            width: 100
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            width: 100,
-            render: (_, data: Partial<DriverMaster>) => (
-                <Tooltip title={data?.address} key={data?.address}>
-                    <span>{(data?.address?.trim().length ?? 0) > 20 ? `${data?.address?.slice(0, 20)}...` : data?.address ?? ''}</span>
-                </Tooltip>
-            ),
-        },
-        {
-            title: 'Date of Birth',
-            dataIndex: 'date_of_birth',
-            key: 'date_of_birth',
-            width: 80
-        },
-        {
-            title: 'Date of Joining',
-            dataIndex: 'date_of_joining',
-            key: 'date_of_joining',
-            width: 80
-        },
-        {
-            title: 'Emergency Contact',
-            dataIndex: 'emergency_contact',
-            key: 'emergency_contact',
+            headerName: 'License Number',
+            field: 'license_number',
+            sortable: true,
+            filter: true,
             width: 150
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 50
+            headerName: 'License Expiry Date',
+            field: 'license_expiry_date',
+            sortable: true,
+            filter: true,
+            width: 150
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            headerName: 'Phone Number',
+            field: 'phone_number',
+            sortable: true,
+            filter: true,
+            width: 150
+        },
+        {
+            headerName: 'Address',
+            field: 'address',
+            sortable: true,
+            filter: true,
+            width: 200,
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <Tooltip title={params.value}>
+                    <span>{params.value.length > 20 ? `${params.value.slice(0, 20)}...` : params.value}</span>
+                </Tooltip>
+            )
+        },
+        {
+            headerName: 'Date of Birth',
+            field: 'date_of_birth',
+            sortable: true,
+            filter: true,
+            width: 150
+        },
+        {
+            headerName: 'Date of Joining',
+            field: 'date_of_joining',
+            sortable: true,
+            filter: true,
+            width: 150
+        },
+        {
+            headerName: 'Emergency Contact',
+            field: 'emergency_contact',
+            sortable: true,
+            filter: true,
+            width: 150
+        },
+        {
+            headerName: 'Status',
+            field: 'status',
+            sortable: true,
+            filter: true,
             width: 100
         },
         {
-            title: "Documents",
-            dataIndex: 'documents',
-            key: 'documents',
-            width: 80,
-            render: (_, data: Partial<DriverMaster>) => (
-                <div className="flex justify-center items-center">
+            headerName: 'Email',
+            field: 'email',
+            sortable: true,
+            filter: true,
+            width: 200
+        },
+        {
+            headerName: 'Documents',
+            field: 'documents',
+            sortable: false,
+            filter: false,
+            width: 150,
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <div className="flex justify-center items-center mt-2 ">
                     <FileImage
                         className="cursor-pointer hover:text-blue-500"
                         onClick={() => {
@@ -113,18 +129,18 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                                     <Space className="my-2">
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.aadhaar_pic}`}
-                                            alt={data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.aadhaar_pic}`}
+                                            alt={params.data?.aadhaar_pic ? 'Aadhar Card' : 'Adhar Card Not Uploaded'}
                                         />
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.pancard_pic}`}
-                                            alt={data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.pancard_pic}`}
+                                            alt={params.data?.pancard_pic ? 'Pancard' : 'Pancard Not Uploaded'}
                                         />
                                         <Image
                                             width={100}
-                                            src={`${routes.backend.file.download}/${data.license_pic}`}
-                                            alt={data?.license_pic ? 'License' : 'License Not Uploaded'}
+                                            src={`${routes.backend.file.download}/${params.data.license_pic}`}
+                                            alt={params.data?.license_pic ? 'License' : 'License Not Uploaded'}
                                         />
                                     </Space>
                                 )
@@ -132,26 +148,41 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                         }}
                     />
                 </div>
-            ),
+            )
         }
-    ], []);
+    ], [setOpen, setIsEdit, setCurrentDriver]);
 
     return (
-        <Table<DriverMaster>
-            columns={columns}
-            dataSource={data}
-            loading={isLoading}
-            pagination={{
-                position: ['bottomRight'],
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '30', '40', '50'],
-                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                total: data?.length,
-            }}
-            size="middle"
-            scroll={{ x: 'auto', y: '60vh' }}
-            className="p-2 border border-gray-200 rounded-md mx-2"
-        />
+        <div
+            className="ag-theme-quartz mx-2"
+            style={{
+                height: '60vh', width: 'auto'
+            }}>
+            <AgGridReact
+                columnDefs={columns}
+                rowData={data}
+                // loadingOverlayComponentParams={{ loadingMessage: 'Loading...' }}
+                // overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}
+                // overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
+                loading={isLoading}
+                loadingOverlayComponent={'Loading...'}
+                overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
+                pagination={true}
+                paginationPageSize={10}
+                paginationPageSizeSelector={
+                    [10, 25, 50, 100, 200, 500, 1000]
+                }
+                domLayout='autoHeight'
+                defaultColDef={{
+                    flex: 1,
+                    minWidth: 100,
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                }}
+
+            />
+        </div>
     );
 };
 

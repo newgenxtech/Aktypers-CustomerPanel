@@ -60,13 +60,13 @@ const Truck: React.FC<TruckProps> = ({
                         <div style={{
                             color: 'white', fontSize: '0.8rem', textAlign: 'center',
                             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                            marginLeft: TyrePressureData[index].tyre_position.includes('L') ? '-2rem' : '2rem'
+                            marginLeft: TyrePressureData[index] && TyrePressureData[index].tyre_position ? (TyrePressureData[index].tyre_position.includes('L') ? '-2rem' : '2rem') : ''
                         }}>
                             <div style={{ marginBottom: '0.2rem' }}>
-                                {TyrePressureData[index].tyre_position}
+                                {TyrePressureData[index] && TyrePressureData[index].tyre_position}
                             </div>
                             <div style={{ color: 'white' }}>
-                                {TyrePressureData[index].tyre_pressure}
+                                {TyrePressureData[index] && TyrePressureData[index].tyre_pressure}
                             </div>
                         </div>
                     </Html>

@@ -149,7 +149,7 @@ const TyresMasterListPage = () => {
             width: 100
         },
         {
-            title: 'Retread Yes No',
+            title: 'New Tyre',
             dataIndex: 'Retread_Yes_No',
             key: 'Retread_Yes_No',
             width: 100
