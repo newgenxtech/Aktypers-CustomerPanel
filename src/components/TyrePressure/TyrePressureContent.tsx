@@ -1,16 +1,20 @@
+// src/pages/TyrePressure/TyrePressureContent.tsx
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ITyrePressure } from '@/pages/TyprePressure/Tyre.d';
-import { DatePicker, Input, message, Select, Table } from 'antd';
-import type { TableProps } from 'antd';
+import { Button } from 'antd';
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { routes } from "@/routes/routes";
-import { useQuery } from "@tanstack/react-query";
 import { useGetTruckData } from "@/hooks/GetHooks";
 import { GetApiResponse } from "@/Interfaces/interface";
 import TruckCanvas from "@/pages/TyprePressure/TruckCanvas";
 import { getTyreLayout } from "@/lib/utils";
+import AgGridTable from '@/components/AgGridTable';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
+import { ITyrePressure } from '@/pages/TyprePressure/Tyre.d';
+import { DatePicker, Input, Select, message } from 'antd';
+
 
 export interface TyrePressureProps {
     wheels: string;
@@ -31,7 +35,7 @@ const TyrePressureContent: React.FC = () => {
         queryKey: ['TyrePressure', fromDate, toDate, SelectedTruckId],
         queryFn: async () => {
             try {
-                const res = await axios.post(routes.backend.tyre.getLatestTyrePressureDetails + SelectedTruckId, {
+                const res = await axios.post(`${routes.backend.tyre.getLatestTyrePressureDetails}${SelectedTruckId}`, {
                     from_date: fromDate,
                     to_date: toDate
                 });
@@ -49,7 +53,7 @@ const TyrePressureContent: React.FC = () => {
         queryKey: ['TruckDemensionDetails', SelectedTruckId],
         queryFn: async () => {
             try {
-                const res = await axios.get(routes.backend.tyre.getTyreDetails + SelectedTruckId);
+                const res = await axios.get(`${routes.backend.tyre.getTyreDetails}${SelectedTruckId}`);
                 return res.data;
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -76,44 +80,53 @@ const TyrePressureContent: React.FC = () => {
         console.log(data);
     }, []);
 
-    const columns: TableProps<ITyrePressure>['columns'] = useMemo(() => [
+    const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
-            title: 'S.N',
-            dataIndex: 'id',
-            key: 'id',
-            render: (_, __, index) => <span>{index + 1}</span>,
+            headerName: 'S.N',
+            field: 'id',
+            sortable: true,
+            filter: true,
+            width: 80,
+            valueGetter: 'node.rowIndex + 1',
         },
         {
-            title: 'Tyre Position',
-            dataIndex: 'tyre_position',
-            key: 'tyre_position',
-            render: (text: string) => <span>{text}</span>,
+            headerName: 'Tyre Position',
+            field: 'tyre_position',
+            sortable: true,
+            filter: true,
+            width: 150,
         },
         {
-            title: 'Tyre Pressure',
-            dataIndex: 'tyre_pressure',
-            key: 'tyre_pressure',
-            render: (text: string) => <span>{text}</span>,
-        },
-        // depth 
-        {
-            title: 'Depth',
-            dataIndex: 'Depth',
-            key: 'Depth',
-            render: (text: string) => <span>{text}</span>,
-        },
-        // Toberun
-        {
-            title: 'To be Run',
-            dataIndex: 'Toberun',
-            key: 'Toberun',
-            render: (text: string) => <span>{text}</span>,
+            headerName: 'Tyre Pressure',
+            field: 'tyre_pressure',
+            sortable: true,
+            filter: true,
+            width: 150,
+
         },
         {
-            title: 'Recorded At',
-            dataIndex: 'recorded_at',
-            key: 'recorded_at',
-            render: (text: string) => <span>{text}</span>,
+            headerName: 'Depth',
+            field: 'Depth',
+            sortable: true,
+            filter: true,
+            width: 100,
+
+        },
+        {
+            headerName: 'To be Run',
+            field: 'Toberun',
+            sortable: true,
+            filter: true,
+            width: 120,
+
+        },
+        {
+            headerName: 'Recorded At',
+            field: 'recorded_at',
+            sortable: true,
+            filter: true,
+            width: 180,
+
         },
     ], []);
 
@@ -145,7 +158,6 @@ const TyrePressureContent: React.FC = () => {
                         <div className="flex items-center justify-center gap-2">
                             <label>Truck</label>
                             <Select
-
                                 className="w-64"
                                 onChange={(value) => {
                                     setSelectedTruckId(value);
@@ -157,10 +169,9 @@ const TyrePressureContent: React.FC = () => {
                                 placeholder="Select Truck"
                                 allowClear
                                 filterOption={(inputValue, option) =>
-                                    option!.label!.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                    option!.label!.toUpperCase().includes(inputValue.toUpperCase())
                                 }
                                 showSearch
-
                             />
                         </div>
                         <div className="flex items-center justify-center gap-2">
@@ -180,32 +191,13 @@ const TyrePressureContent: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <Table<ITyrePressure>
+                    <AgGridTable
                         columns={columns}
-                        dataSource={
-                            TyrePressureData?.body.map((item, index) => ({
-                                ...item,
-                                key: index,
-                            })) ?? []
-                        }
-                        loading={TyrePressureDataLoading}
-                        pagination={{
-                            position: ['bottomRight'],
-                            showSizeChanger: true,
-                            pageSizeOptions: ['10', '20', '30', '40', '50'],
-                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                        }}
-                        size="middle"
-                        scroll={{ x: '100%', y: '100%' }}
-                        className=" p-2 border border-gray-200 rounded-md mx-2"
-
+                        data={TyrePressureData?.body.map((item, index) => ({ ...item, key: index })) ?? []}
+                        isLoading={TyrePressureDataLoading}
                     />
                 </div>
-                <div className="w-full md:w-1/2 flex justify-center items-center"
-                    style={{
-                        height: "70vh"
-                    }}
-                >
+                <div className="w-full md:w-1/2 flex justify-center items-center" style={{ height: "70vh" }}>
                     {TyrePressureDataLoading ? (
                         <div className="loader">Loading...</div>
                     ) : (
@@ -213,12 +205,12 @@ const TyrePressureContent: React.FC = () => {
                         SelectedTyre && (
                             <TruckCanvas
                                 TyreData={getTyreLayout(
-                                    Number(SelectedTyre!.total_tyres!),
-                                    Number(SelectedTyre!.total_axles!),
-                                    SelectedTyre!.axtyre!
+                                    Number(SelectedTyre.total_tyres),
+                                    Number(SelectedTyre.total_axles),
+                                    SelectedTyre.axtyre
                                 )}
                                 TyreDetailData={SelectedTyre}
-                                TyrePressureData={TyrePressureData!.body!}
+                                TyrePressureData={TyrePressureData?.body ?? []}
                             />
                         )
                     )}
