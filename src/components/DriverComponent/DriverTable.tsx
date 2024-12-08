@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { Tooltip, Image, Modal, Space, Button, message } from 'antd';
+import { Tooltip, Image, Modal, Space, Button, message, Pagination } from 'antd';
 import { FileImage, FileText, Sheet } from 'lucide-react';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { routes } from "@/routes/routes";
@@ -227,13 +227,30 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                 {/* 
                     Custom Paginator
                  */}
-                <div>
-                </div>
-                <div>
-                    <p className="text-xs text-gray-500 text-center mt-2">
-                        {isMobile ? 'Swipe left to see more columns' : 'Scroll right to see more columns'}
-                    </p>
-                </div>
+                {
+                    isMobile &&
+                    <>
+                        <div>
+                            <Pagination
+                                showSizeChanger
+                                showQuickJumper
+                                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                                pageSizeOptions={['10', '25', '50', '100', '200', '500', '1000']}
+                                className='mt-2'
+                                total={gridRef.current?.api.getDisplayedRowCount() || 0}
+
+
+                            />
+                        </div>
+                        <div>
+                            <p className="text-xs text-gray-500 text-center mt-2">
+                                {/* {isMobile ? 'Swipe left to see more columns' : 'Scroll right to see more columns'} */}
+                                Swipe left to see more columns
+                            </p>
+                        </div>
+                    </>
+
+                }
             </div>
         </>
 
