@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
-import { Tooltip, Image, Modal, Space } from 'antd';
-import { FileImage } from 'lucide-react';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { Tooltip, Image, Modal, Space, Button, message } from 'antd';
+import { FileImage, FileText, Sheet } from 'lucide-react';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { routes } from "@/routes/routes";
 import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
+import { useMediaQuery } from 'react-responsive'
 
 interface DriverTableProps {
     data: DriverMaster[];
@@ -152,37 +153,90 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
         }
     ], [setOpen, setIsEdit, setCurrentDriver]);
 
-    return (
-        <div
-            className="ag-theme-quartz mx-2"
-            style={{
-                height: '60vh', width: 'auto'
-            }}>
-            <AgGridReact
-                columnDefs={columns}
-                rowData={data}
-                // loadingOverlayComponentParams={{ loadingMessage: 'Loading...' }}
-                // overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}
-                // overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
-                loading={isLoading}
-                loadingOverlayComponent={'Loading...'}
-                overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
-                pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={
-                    [10, 25, 50, 100, 200, 500, 1000]
-                }
-                domLayout='autoHeight'
-                defaultColDef={{
-                    flex: 1,
-                    minWidth: 100,
-                    resizable: true,
-                    sortable: true,
-                    filter: true,
-                }}
+    const gridRef = useRef<AgGridReact>(null);
 
-            />
-        </div>
+    const onBtnExport = useCallback(() => {
+        if (!gridRef.current) {
+            message.error('No data to export');
+        }
+        gridRef.current!.api.exportDataAsCsv();
+    }, []);
+
+
+    // const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 1224px)' })
+    // const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+    // const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+    // const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+    // const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
+    const isMobile = useMediaQuery({
+        query: '(max-width: 768px)'
+    })
+
+    return (
+
+        <>
+
+            <div
+                className="ag-theme-quartz mx-2"
+                style={{
+                    height: '60vh', width: 'auto'
+                }}>
+                <div className="flex justify-end gap-2">
+                    {/* <FileText /> */}
+                    <Button
+                        icon={<FileText />}
+                        onClick={
+                            () => {
+                                // exportToPDF(gridRef)
+                                message.info('Feature not available');
+                            }
+                        }
+                        className='mb-2'
+                    />
+                    <Button
+                        icon={<Sheet />}
+                        onClick={onBtnExport}
+                        className='mb-2'
+                    />
+                </div>
+                <AgGridReact
+                    ref={gridRef}
+                    columnDefs={columns}
+                    rowData={data}
+                    // loadingOverlayComponentParams={{ loadingMessage: 'Loading...' }}
+                    // overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}
+                    // overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
+                    loading={isLoading}
+                    loadingOverlayComponent={'Loading...'}
+                    overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
+                    pagination={isMobile ? false : true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={
+                        [10, 25, 50, 100, 200, 500, 1000]
+                    }
+                    domLayout='autoHeight'
+                    defaultColDef={{
+                        flex: 1,
+                        minWidth: 100,
+                        resizable: true,
+                        sortable: true,
+                        filter: true,
+                    }}
+                    enableCellTextSelection={true}
+                />
+                {/* 
+                    Custom Paginator
+                 */}
+                <div>
+                </div>
+                <div>
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                        {isMobile ? 'Swipe left to see more columns' : 'Scroll right to see more columns'}
+                    </p>
+                </div>
+            </div>
+        </>
+
     );
 };
 

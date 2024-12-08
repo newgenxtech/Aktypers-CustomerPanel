@@ -44,6 +44,11 @@ export default function Login() {
 
             if (responseJson.jwt.jwt) {
 
+                if (responseJson.jwt.role !== 'user' && responseJson.jwt.customer_id !== '' && responseJson.jwt.customer_id !== null) {
+                    message.error("You are not authorized to login");
+                    return;
+                }
+
                 message.success("Login Successful");
                 localStorage.setItem('jwt', responseJson.jwt.jwt);
                 localStorage.setItem('customer_id', responseJson.jwt.customer_id);

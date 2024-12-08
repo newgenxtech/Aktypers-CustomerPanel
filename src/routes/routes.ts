@@ -23,7 +23,8 @@ export const routes = {
     },
     backend: {
         auth: {
-            login: `${base}?route=login`,
+            // login: `${base}?route=login`,
+            login: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=login',
             signup: `${base}?route=signup`,
         },
         driver: {
