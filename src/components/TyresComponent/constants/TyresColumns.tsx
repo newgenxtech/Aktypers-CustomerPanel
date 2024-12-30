@@ -62,6 +62,10 @@ const TyresColumns = (
             field: 'Retread_Yes_No'
         },
         {
+            headerName: 'Tyre Condition',
+            field: 'Tyre_Condition'
+        },
+        {
             headerName: 'Reason for Removal Month',
             field: 'Reason_for_Removal_MONTH'
         },

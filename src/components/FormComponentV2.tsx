@@ -92,7 +92,8 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         }
     }
 
-    const { handleSubmit, formState, setValue, getValues, control } = useForm({
+    // const { handleSubmit, formState, setValue, getValues, control } = 
+    const FormMethods = useForm({
         resolver: zodResolver(schema),
         defaultValues: Object.fromEntries(
             fields.map((field) => [
@@ -113,8 +114,8 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 data: base64Data
             }]);
             console.log(response.data);
-            setValue(field.name, response.data[0].location);
-            console.log('getValues', getValues());
+            FormMethods.setValue(field.name, response.data[0].location);
+            console.log('getValues', FormMethods.getValues());
 
             return file;
         } catch (error) {
@@ -154,7 +155,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            formState.errors[field.name] ? 'error' : undefined
+                            FormMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                     />
                 )
@@ -169,7 +170,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            formState.errors[field.name] ? 'error' : undefined
+                            FormMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='email'
                     />
@@ -185,7 +186,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            formState.errors[field.name] ? 'error' : undefined
+                            FormMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='number'
                     />
@@ -201,7 +202,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     <Input {...controllerField}
                         placeholder={field.label}
                         status={
-                            formState.errors[field.name] ? 'error' : undefined
+                            FormMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='password'
                     />
@@ -261,7 +262,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         {...controllerField}
                         placeholder={field.label}
                         status={
-                            formState.errors[field.name] ? 'error' : undefined
+                            FormMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                     />
                 );
@@ -282,7 +283,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         }))}
 
                         onChange={(value) => {
-                            setValue(field.name, value);
+                            FormMethods.setValue(field.name, value);
                         }}
 
 
@@ -296,9 +297,9 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         placeholder={field?.isInputProps?.placeholder}
                         // className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
                         onChange={(_, dateString) => {
-                            setValue(field.name, dateString as string);
+                            FormMethods.setValue(field.name, dateString as string);
                         }}
-                        defaultValue={getValues(field.name) ? dayjs(getValues(field.name)) : undefined}
+                        defaultValue={FormMethods.getValues(field.name) ? dayjs(FormMethods.getValues(field.name)) : undefined}
                     />
 
 
@@ -346,10 +347,10 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                                 icon={<LucideUpload />}>Click to Upload</Button>
                         </Upload>
                         {
-                            getValues(field.name) && (
+                            FormMethods.getValues(field.name) && (
                                 <Image
                                     width={100}
-                                    src={`${routes.backend.file.download}/${getValues(field.name)}`}
+                                    src={`${routes.backend.file.download}/${FormMethods.getValues(field.name)}`}
                                     alt={'License'}
 
                                 />
@@ -370,7 +371,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
             onSubmit={
                 (e) => {
                     e.preventDefault();
-                    handleSubmit(onSubmit)
+                    FormMethods.handleSubmit(onSubmit)
                 }
             }
         >
@@ -386,16 +387,16 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
 
                         <Controller
                             name={field.name}
-                            control={control}
+                            control={FormMethods.control}
                             render={({ field: controllerField }) => renderField(field, controllerField)}
 
                         />
 
-                        {formState.errors[field.name] && (
+                        {FormMethods.formState.errors[field.name] && (
                             <p
                                 className='text-red-500 text-xs'
                             >{
-                                    formState.errors[field.name]?.message?.toString() ?? 'This field is required'
+                                    FormMethods.formState.errors[field.name]?.message?.toString() ?? 'This field is required'
                                 }</p>
                         )}
                     </div>
@@ -405,7 +406,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 buttonComponent ? buttonComponent : (
                     <div className='flex gap-4 justify-center'>
                         <button
-                            onClick={handleSubmit(onSubmit)}
+                            onClick={FormMethods.handleSubmit(onSubmit)}
                             className="bg-[#2F4829] text-white px-2 py-2 rounded-md w-24 flex items-center justify-center gap-2"
                         >
                             <SquareCheck
@@ -420,13 +421,13 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                                 console.log('Clearing form');
                                 //  Check if the Form already cleared
 
-                                if (Object.keys(getValues()).every((key) => getValues()[key] === '')) {
+                                if (Object.keys(FormMethods.getValues()).every((key) => FormMethods.getValues()[key] === '')) {
                                     message.info('Form already cleared');
                                     return;
                                 }
 
-                                Object.keys(getValues()).forEach((key) => {
-                                    setValue(key, '');
+                                Object.keys(FormMethods.getValues()).forEach((key) => {
+                                    FormMethods.setValue(key, '');
                                 });
 
                             }}

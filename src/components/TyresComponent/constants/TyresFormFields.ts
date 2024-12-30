@@ -105,6 +105,21 @@ const TyresFormFields = (
             }
         },
         {
+            label: 'Tyre Condition',
+            name: 'Tyre_Condition',
+            type: 'select',
+            isInputProps: {
+                placeholder: 'Enter Tyre Condition'
+            },
+            validation: {
+                required: true,
+                pattern: z.string().refine((val) => ['New', 'Re-Used', 'Old'].includes(val), {
+                    message: "Invalid Tyre Condition"
+                })
+            },
+            options: ['New', 'Re-Used', 'Old']
+        },
+        {
             label: 'Reason for Removal Month',
             name: 'Reason_for_Removal_MONTH',
             type: 'text',
@@ -143,7 +158,9 @@ const TyresFormFields = (
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(30)
+                pattern: z.string().refine((val) => Position.includes(val), {
+                    message: "Invalid Position"
+                })
             },
             options: Position ?? []
         },

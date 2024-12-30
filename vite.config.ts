@@ -39,6 +39,8 @@ export default defineConfig({
       'antd',
       'axios',
       'framer-motion',
+      'ag-grid-community',
+      'ag-grid-react',
     ]
   },
   resolve: {
