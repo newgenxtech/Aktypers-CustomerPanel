@@ -4,6 +4,9 @@ import { Expand, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import FormComponentV2, { CustomField } from '@/components/FormComponentV2';
 import { TyresMaster } from '@/pages/Tyres/Tyres.d';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 interface TyresDrawerProps {
     open: boolean;
@@ -27,6 +30,46 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
     formField
 }) => {
     const navigate = useNavigate();
+
+    const createSchemaObject = (fields: CustomField[]) =>
+        Object.fromEntries(
+            fields.map((field) => [
+                field.name,
+                field.validation?.pattern ?? z.string()
+            ])
+        );
+
+    const setDefaultValues = (field: CustomField) => {
+        switch (field.type) {
+            case 'text':
+            case 'email':
+            case 'number':
+            case 'password':
+            case 'textarea':
+                return field?.isInputProps?.defaultValue ?? '';
+            case 'checkbox':
+                return field?.isInputProps?.defaultChecked ?? false;
+            case 'select':
+                return field?.isInputProps?.defaultSelected ?? '';
+            case 'radio':
+                return field?.isInputProps?.defaultSelected ?? '';
+            case 'date':
+                return field?.isInputProps?.defaultValue ?? '';
+            default:
+                return '';
+        }
+    };
+
+    const formMethods = useForm({
+        resolver: zodResolver(z.object(createSchemaObject(formField)).required()),
+        defaultValues: Object.fromEntries(
+            formField.map((field) => [
+                field.name,
+                setDefaultValues(field)
+            ])
+        ),
+        values: CurrentTyres as FieldValues
+    });
 
     return (
         <Drawer.Root direction="right" open={open} onOpenChange={setOpen} dismissible={false}>
@@ -55,14 +98,9 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
                             <Drawer.Description className="text-zinc-600 mb-2">
                                 <FormComponentV2
                                     fields={formField}
+                                    onSubmit={isEdit ? (handleUpdateTyres as SubmitHandler<FieldValues>) : (handleCreateTyres as SubmitHandler<FieldValues>)}
                                     isUpdate={isEdit}
-                                    onSubmit={(data) => {
-                                        if (isEdit) {
-                                            handleUpdateTyres(data as TyresMaster);
-                                        } else {
-                                            handleCreateTyres(data as TyresMaster);
-                                        }
-                                    }}
+                                    formMethods={formMethods}
                                     initialValues={CurrentTyres}
                                 />
                             </Drawer.Description>

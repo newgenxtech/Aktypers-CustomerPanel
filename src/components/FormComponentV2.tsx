@@ -1,7 +1,6 @@
 import React from 'react';
-import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, FormState, Controller, ControllerRenderProps } from 'react-hook-form';
+import { SubmitHandler, FieldValues, Controller, ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
 import { Button, DatePicker, message, Radio, Upload, Image, Select, Input, Checkbox } from 'antd';
@@ -39,84 +38,25 @@ interface ReusableFormProps<T> {
     buttonComponent?: React.ReactNode;
     AdditionalButton?: React.ReactNode;
     isUpdate?: boolean;
-    CutomRender?: (
-        fields: CustomField[],
-        renderField: (field: CustomField) => React.ReactNode,
-        ReactHookFormProps: {
-            register?: UseFormRegister<{
-                [k: string]: string | boolean;
-            }>
-            handleSubmit?: UseFormHandleSubmit<{
-                [k: string]: string | boolean;
-            }, undefined>
-            formState?: FormState<{
-                [k: string]: string | boolean;
-            }>
-        }
-    ) => React.ReactNode;
-    initialValues?: T
+    formMethods: UseFormReturn<FieldValues>;
+    initialValues?: T;
 }
 
 
-const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, initialValues }: ReusableFormProps<T>) => {
-
-    const SchemaObject = Object.fromEntries(
-        fields.map((field) => [
-            field.name,
-            field.validation?.pattern ?? z.string()
-        ])
-    );
-
-    const schema = z.object(
-        SchemaObject
-    ).required();
-
-    const setDefaultValues = (field: CustomField) => {
-        switch (field.type) {
-            case 'text':
-            case 'email':
-            case 'number':
-            case 'password':
-            case 'textarea':
-                return field?.isInputProps?.defaultValue ?? '';
-            case 'checkbox':
-                return field?.isInputProps?.defaultChecked ?? false;
-            case 'select':
-                return field?.isInputProps?.defaultSelected ?? '';
-            case 'radio':
-                return field?.isInputProps?.defaultSelected ?? '';
-            case 'date':
-                return field?.isInputProps?.defaultValue ?? '';
-            default:
-                return '';
-        }
-    }
-
-    // const { handleSubmit, formState, setValue, getValues, control } = 
-    const FormMethods = useForm({
-        resolver: zodResolver(schema),
-        defaultValues: Object.fromEntries(
-            fields.map((field) => [
-                field.name,
-                setDefaultValues(field)
-            ])
-        ),
-        values: initialValues as FieldValues
-
-    });
+const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, AdditionalButton, formMethods }: ReusableFormProps<T>) => {
 
 
     const handleFileUpload = async (file: File, field: CustomField) => {
         try {
             const base64Data = await readFileAsBase64(file);
-            const response = await axios.post<{ message: string, file_name: string, location: string }[]>(routes.backend.file.upload + '?route=uploaddriverFile', [{
-                filename: file.name,
-                data: base64Data
-            }]);
-            console.log(response.data);
-            FormMethods.setValue(field.name, response.data[0].location);
-            console.log('getValues', FormMethods.getValues());
-
+            const response = await axios.post<{ message: string, file_name: string, location: string }[]>(
+                routes.backend.file.upload + '?route=uploaddriverFile',
+                [{
+                    filename: file.name,
+                    data: base64Data
+                }]
+            );
+            formMethods.setValue(field.name, response.data[0].location);
             return file;
         } catch (error) {
             console.error(error);
@@ -124,14 +64,6 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
             return null;
         }
     };
-
-    // const constructImageURL = (field: CustomField) => {
-    //     const value = getValues(field.name);
-    //     if (value) {
-    //         return routes.backend.file.download
-    //     }
-    // }
-
 
     const renderField = (field: CustomField, controllerField:
         ControllerRenderProps<FieldValues, string>
@@ -144,76 +76,47 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
         switch (field.type) {
             case 'text':
                 return (
-                    // <input
-                    //     type={field.type}
-                    //     {...register(field.name)}
-                    //     placeholder={field?.isInputProps?.placeholder}
-                    //     className={cn("p-2", "border", "rounded-md", "text-base", "bg-white", "text-gray-800, shadow-md")}
-                    // />
                     <Input
                         type={field.type}
                         {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            FormMethods.formState.errors[field.name] ? 'error' : undefined
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                     />
                 )
             case 'email':
                 return (
-                    // <input
-                    //     type={field.type}
-                    //     {...register(field.name)}
-                    //     placeholder={field?.isInputProps?.placeholder}
-                    //     className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
-                    // />
                     <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            FormMethods.formState.errors[field.name] ? 'error' : undefined
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='email'
                     />
                 )
             case 'number':
                 return (
-                    // <input
-                    //     type={field.type}
-                    //     {...register(field.name)}
-                    //     placeholder={field?.isInputProps?.placeholder}
-                    //     className={cn(`p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md`)}
-                    // />
                     <Input {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         status={
-                            FormMethods.formState.errors[field.name] ? 'error' : undefined
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='number'
                     />
                 )
             case 'password':
                 return (
-                    // <input
-                    //     type={field.type}
-                    //     {...register(field.name)}
-                    //     placeholder={field.label}
-                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                    // />
                     <Input {...controllerField}
                         placeholder={field.label}
                         status={
-                            FormMethods.formState.errors[field.name] ? 'error' : undefined
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='password'
                     />
                 );
             case 'checkbox':
                 return (
-                    // <input
-                    //     type="checkbox"
-                    //     {...register(field.name)}
-                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                    // />
                     <Checkbox
                         {...controllerField}
                         defaultChecked={field?.isInputProps?.defaultChecked}
@@ -221,22 +124,6 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 );
             case 'select':
                 return (
-                    // <select {...register(field.name)}
-                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                    //     multiple={
-                    //         field?.isInputProps?.multiple ?? false
-                    //     }
-                    // >
-                    //     <option value="" selected disabled hidden>{field?.isInputProps?.placeholder}</option>
-                    //     {field.options?.map((option) => (
-                    //         <option key={option} value={option}
-                    //             className='p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md'
-                    //         >
-                    //             {option}
-                    //         </option>
-                    //     ))}
-                    // </select>
-
                     <Select
                         {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
@@ -253,16 +140,11 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 );
             case 'textarea':
                 return (
-                    // <textarea
-                    //     {...register(field.name)}
-                    //     placeholder={field.label}
-                    //     className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
-                    // />
                     <Input.TextArea
                         {...controllerField}
                         placeholder={field.label}
                         status={
-                            FormMethods.formState.errors[field.name] ? 'error' : undefined
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                     />
                 );
@@ -283,7 +165,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         }))}
 
                         onChange={(value) => {
-                            FormMethods.setValue(field.name, value);
+                            formMethods.setValue(field.name, value);
                         }}
 
 
@@ -292,27 +174,12 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
             case 'date':
                 return (
                     <DatePicker
-                        // {...field}
-                        // {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
-                        // className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
                         onChange={(_, dateString) => {
-                            FormMethods.setValue(field.name, dateString as string);
+                            formMethods.setValue(field.name, dateString as string);
                         }}
-                        defaultValue={FormMethods.getValues(field.name) ? dayjs(FormMethods.getValues(field.name)) : undefined}
+                        defaultValue={formMethods.getValues(field.name) ? dayjs(formMethods.getValues(field.name)) : undefined}
                     />
-
-
-                    //     <DatePicker
-                    //     // {...field}
-                    //     {...controllerField}
-                    //     placeholder={field?.isInputProps?.placeholder}
-                    //     // className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md selection: bg-transparent')}
-                    //     onChange={(_, dateString) => {
-                    //         setValue(field.name, dateString as string);
-                    //     }}
-                    // // defaultValue={getValues(field.name) ? dayjs(getValues(field.name)) : undefined}
-                    // />
                 );
             case 'upload':
                 return (
@@ -347,10 +214,10 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                                 icon={<LucideUpload />}>Click to Upload</Button>
                         </Upload>
                         {
-                            FormMethods.getValues(field.name) && (
+                            formMethods.getValues(field.name) && (
                                 <Image
                                     width={100}
-                                    src={`${routes.backend.file.download}/${FormMethods.getValues(field.name)}`}
+                                    src={`${routes.backend.file.download}/${formMethods.getValues(field.name)}`}
                                     alt={'License'}
 
                                 />
@@ -366,19 +233,16 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
 
     return (
         <form
-            // className="flex flex-col gap-4 w-full"
             className={`flex flex-col gap-4`}
             onSubmit={
                 (e) => {
                     e.preventDefault();
-                    FormMethods.handleSubmit(onSubmit)
+                    formMethods.handleSubmit(onSubmit)
                 }
             }
         >
 
             {
-                // CutomRender ?
-                //     CutomRender!(fields, renderField, { register, handleSubmit, formState }) :
                 fields.map((field) => (
                     <div key={field.name} className="flex flex-col gap-1">
                         <label htmlFor={field.name} className="text-sm" >{field.label}
@@ -387,16 +251,16 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
 
                         <Controller
                             name={field.name}
-                            control={FormMethods.control}
+                            control={formMethods.control}
                             render={({ field: controllerField }) => renderField(field, controllerField)}
 
                         />
 
-                        {FormMethods.formState.errors[field.name] && (
+                        {formMethods.formState.errors[field.name] && (
                             <p
                                 className='text-red-500 text-xs'
                             >{
-                                    FormMethods.formState.errors[field.name]?.message?.toString() ?? 'This field is required'
+                                    formMethods.formState.errors[field.name]?.message?.toString() ?? 'This field is required'
                                 }</p>
                         )}
                     </div>
@@ -406,7 +270,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                 buttonComponent ? buttonComponent : (
                     <div className='flex gap-4 justify-center'>
                         <button
-                            onClick={FormMethods.handleSubmit(onSubmit)}
+                            onClick={formMethods.handleSubmit(onSubmit)}
                             className="bg-[#2F4829] text-white px-2 py-2 rounded-md w-24 flex items-center justify-center gap-2"
                         >
                             <SquareCheck
@@ -419,15 +283,13 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         <button
                             onClick={() => {
                                 console.log('Clearing form');
-                                //  Check if the Form already cleared
-
-                                if (Object.keys(FormMethods.getValues()).every((key) => FormMethods.getValues()[key] === '')) {
+                                if (Object.keys(formMethods.getValues()).every((key) => formMethods.getValues()[key] === '')) {
                                     message.info('Form already cleared');
                                     return;
                                 }
 
-                                Object.keys(FormMethods.getValues()).forEach((key) => {
-                                    FormMethods.setValue(key, '');
+                                Object.keys(formMethods.getValues()).forEach((key) => {
+                                    formMethods.setValue(key, '');
                                 });
 
                             }}
