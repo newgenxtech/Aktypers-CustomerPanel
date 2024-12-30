@@ -16,17 +16,16 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
             headerName: 'S.N',
-            field: 'id',
-            sortable: true,
-            filter: true,
-            width: 100,
+            field: 'sno',
+            width: 80,
+            minWidth: 0,
+            flex: 0,
+            autoHeight: false,
             valueGetter: 'node.rowIndex + 1'
         },
         {
             headerName: 'Vehicle',
             field: 'vehicle',
-            sortable: true,
-            filter: true,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <span className="text-[#00008B] font-semibold cursor-pointer text-base">
                     {params.value}
@@ -36,23 +35,14 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
         {
             headerName: 'Cus ID',
             field: 'customerid',
-            sortable: true,
-            filter: true,
-            width: 100
         },
         {
             headerName: 'Date',
             field: 'date',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Before PDF',
             field: 'before',
-            sortable: false,
-            filter: false,
-            width: 150,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <a
                     href={params.value}
@@ -71,6 +61,9 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
             columns={columns}
             data={data}
             isLoading={isLoading}
+            defaultColDef={{
+                autoHeight: true,
+            }}
         />
     );
 };

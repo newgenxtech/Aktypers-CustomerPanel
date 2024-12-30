@@ -193,6 +193,10 @@ const TyresMasterListPage = () => {
                     columns={columns}
                     data={data?.body.map((item: TyresMaster, index: number) => ({ ...item, key: index })) ?? []}
                     isLoading={isLoading}
+                    defaultColDef={{
+                        flex: 0,
+                        autoHeight: true,
+                    }}
                 />
             </div>
 

@@ -20,10 +20,16 @@ interface DriverTableProps {
 const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, setIsEdit, setCurrentDriver }) => {
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
+            headerName: 'Sno',
+            field: 'sno',
+            width: 80,
+            minWidth: 0,
+            autoHeight: false,
+            cellRenderer: (params: CustomCellRendererProps) => `${params.node?.rowIndex ? params.node.rowIndex + 1 : '1'}`
+        },
+        {
             headerName: 'Name',
             field: 'name',
-            sortable: true,
-            filter: true,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <span
                     className="text-[#00008B] font-semibold cursor-pointer text-base"
@@ -40,37 +46,22 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
         {
             headerName: 'Cus ID',
             field: 'customerid',
-            sortable: true,
-            filter: true,
-            width: 100
         },
         {
             headerName: 'License Number',
             field: 'license_number',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'License Expiry Date',
             field: 'license_expiry_date',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Phone Number',
             field: 'phone_number',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Address',
             field: 'address',
-            sortable: true,
-            filter: true,
-            width: 200,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <Tooltip title={params.value}>
                     <span>{params.value.length > 20 ? `${params.value.slice(0, 20)}...` : params.value}</span>
@@ -80,44 +71,26 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
         {
             headerName: 'Date of Birth',
             field: 'date_of_birth',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Date of Joining',
             field: 'date_of_joining',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Emergency Contact',
             field: 'emergency_contact',
-            sortable: true,
-            filter: true,
-            width: 150
         },
         {
             headerName: 'Status',
             field: 'status',
-            sortable: true,
-            filter: true,
-            width: 100
         },
         {
             headerName: 'Email',
             field: 'email',
-            sortable: true,
-            filter: true,
-            width: 200
         },
         {
             headerName: 'Documents',
             field: 'documents',
-            sortable: false,
-            filter: false,
-            width: 150,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <div className="flex justify-center items-center mt-2 ">
                     <FileImage
@@ -159,6 +132,10 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                 columns={columns}
                 data={data}
                 isLoading={isLoading}
+                defaultColDef={{
+                    flex: 0,
+                    autoHeight: true,
+                }}
             />
         </>
 

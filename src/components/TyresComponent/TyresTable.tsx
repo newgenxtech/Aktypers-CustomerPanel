@@ -16,17 +16,16 @@ const TyresTable: React.FC<TyresTableProps> = ({ data, isLoading, setOpen, setIs
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
             headerName: 'S.No',
-            field: 'key',
-            sortable: true,
-            filter: true,
+            field: 'sno',
             width: 50,
-            cellRenderer: 'params.node.rowIndex + 1'
+            minWidth: 0,
+            flex: 0,
+            autoHeight: false,
+            valueGetter: 'node.rowIndex + 1'
         },
         {
             headerName: 'Serial Number',
             field: 'Tyre_Serial_Number',
-            sortable: true,
-            filter: true,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <span
                     className="text-[#00008B] font-semibold cursor-pointer text-base"
@@ -43,80 +42,47 @@ const TyresTable: React.FC<TyresTableProps> = ({ data, isLoading, setOpen, setIs
         {
             headerName: 'Wheeler Type',
             field: 'Wheeler_Type',
-            sortable: true,
-            filter: true,
-            width: 50,
             cellRenderer: (params: CustomCellRendererProps) => <span className="text-base">{params.value}</span>
         },
         {
             headerName: 'Manufacturer',
-            field: 'Manufacturer',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Manufacturer'
         },
         {
             headerName: 'Brand',
-            field: 'Brand',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Brand'
         },
         {
             headerName: 'Fitment KM',
-            field: 'Fitment_KM',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Fitment_KM'
         },
         {
             headerName: 'Removal KM',
-            field: 'Removal_KM',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Removal_KM'
         },
         {
             headerName: 'Total Covered KM',
-            field: 'Total_Covered_KM',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Total_Covered_KM'
         },
         {
             headerName: 'New Tyre',
-            field: 'Retread_Yes_No',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Retread_Yes_No'
         },
         {
             headerName: 'Reason for Removal Month',
-            field: 'Reason_for_Removal_MONTH',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Reason_for_Removal_MONTH'
         },
         {
             headerName: 'Date',
-            field: 'Date',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'Date'
         },
         {
             headerName: 'Position',
-            field: 'position',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'position'
         },
         {
             headerName: 'Registration Number',
-            field: 'registration_number',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'registration_number'
         }
     ], [setOpen, setIsEdit, setCurrentTyres]);
 
@@ -125,6 +91,10 @@ const TyresTable: React.FC<TyresTableProps> = ({ data, isLoading, setOpen, setIs
             columns={columns}
             data={data}
             isLoading={isLoading}
+            defaultColDef={{
+                flex: 0,
+                autoHeight: true,
+            }}
         />
     );
 };

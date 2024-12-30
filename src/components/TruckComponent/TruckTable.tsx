@@ -21,17 +21,16 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
             headerName: 'S.N',
-            field: 'id',
-            sortable: true,
-            filter: true,
+            field: 'sno',
             width: 80,
-            cellRenderer: 'params.node.rowIndex + 1'
+            minWidth: 0,
+            flex: 0,
+            autoHeight: false,
+            valueGetter: 'node.rowIndex + 1'
         },
         {
             headerName: 'Registration Number',
             field: 'registration_number',
-            sortable: true,
-            filter: true,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <span
                     className="text-[#00008B] font-semibold cursor-pointer text-base"
@@ -47,94 +46,55 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
         },
         {
             headerName: 'Chassis Number',
-            field: 'chassis_number',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'chassis_number'
         },
         {
             headerName: 'Engine Number',
-            field: 'engine_number',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'engine_number'
         },
         {
             headerName: 'Make',
-            field: 'make',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'make'
         },
         {
             headerName: 'Model',
-            field: 'model',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'model'
         },
         {
             headerName: 'Year of Manufacture',
-            field: 'year_of_manufacture',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'year_of_manufacture'
         },
         {
             headerName: 'Wheels',
-            field: 'wheels',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'wheels'
         },
         {
             headerName: 'Tyre Type',
-            field: 'tyre_type',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'tyre_type'
         },
         {
             headerName: 'Load Capacity',
-            field: 'load_capacity',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'load_capacity'
         },
         {
             headerName: 'Fuel Type',
-            field: 'fuel_type',
-            sortable: true,
-            filter: true,
-            width: 100
+            field: 'fuel_type'
         },
         {
             headerName: 'Insurance Number',
-            field: 'insurance_number',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'insurance_number'
         },
         {
             headerName: 'Insurance Expiry Date',
-            field: 'insurance_expiry_date',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'insurance_expiry_date'
         },
         {
             headerName: 'Last Service Date',
-            field: 'last_service_date',
-            sortable: true,
-            filter: true,
-            width: 150
+            field: 'last_service_date'
         },
         {
             headerName: 'Remarks',
             field: 'remarks',
-            sortable: true,
-            filter: true,
-            width: 200,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <Tooltip title={params.value || ''}>
                     <span>{params.value && params.value.length > 20 ? `${params.value.slice(0, 20)}...` : params.value || 'N/A'}</span>
@@ -144,9 +104,6 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
         {
             headerName: 'Documents',
             field: 'documents',
-            sortable: false,
-            filter: false,
-            width: 150,
             cellRenderer: (params: CustomCellRendererProps) => (
                 <div className="flex justify-center items-center mt-2 ">
                     <FileImage
@@ -187,6 +144,10 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
             columns={columns}
             data={data}
             isLoading={isLoading}
+            defaultColDef={{
+                flex: 0,
+                autoHeight: true,
+            }}
         />
     );
 };

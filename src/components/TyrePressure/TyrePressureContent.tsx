@@ -83,50 +83,30 @@ const TyrePressureContent: React.FC = () => {
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
             headerName: 'S.N',
-            field: 'id',
-            sortable: true,
-            filter: true,
+            field: 'sno',
             width: 80,
             valueGetter: 'node.rowIndex + 1',
         },
         {
             headerName: 'Tyre Position',
-            field: 'tyre_position',
-            sortable: true,
-            filter: true,
-            width: 150,
+            field: 'tyre_position'
         },
         {
             headerName: 'Tyre Pressure',
-            field: 'tyre_pressure',
-            sortable: true,
-            filter: true,
-            width: 150,
-
+            field: 'tyre_pressure'
         },
         {
             headerName: 'Depth',
-            field: 'Depth',
-            sortable: true,
-            filter: true,
-            width: 100,
-
+            field: 'Depth'
         },
         {
             headerName: 'To be Run',
             field: 'Toberun',
-            sortable: true,
-            filter: true,
-            width: 120,
-
+            valueGetter: 'node.data.Toberun ? "node.data.Toberun" : "-"',
         },
         {
             headerName: 'Recorded At',
-            field: 'recorded_at',
-            sortable: true,
-            filter: true,
-            width: 180,
-
+            field: 'recorded_at'
         },
     ], []);
 
@@ -195,6 +175,11 @@ const TyrePressureContent: React.FC = () => {
                         columns={columns}
                         data={TyrePressureData?.body.map((item, index) => ({ ...item, key: index })) ?? []}
                         isLoading={TyrePressureDataLoading}
+                        defaultColDef={{
+                            flex: 0,
+                            autoHeight: true,
+                            minWidth: 0,
+                        }}
                     />
                 </div>
                 <div className="w-full md:w-1/2 flex justify-center items-center" style={{ height: "70vh" }}>
