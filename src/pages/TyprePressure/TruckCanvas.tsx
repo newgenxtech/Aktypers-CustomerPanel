@@ -237,9 +237,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
         //     [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4], // Wheels 15-18
         //     [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5], // Wheels 19-22
         // ]
-    }, [
-        WheelPositionData[0].wheelPositions
-    ]);
+    }, [WheelPositionData]);
 
 
     // const wheelPositionTagIds = React.useMemo(() => {
@@ -266,9 +264,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
         //     { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
         //     { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
         // ]
-    }, [
-        WheelPositionData[0].axlesData
-    ]);
+    }, [WheelPositionData]);
 
 
     return (

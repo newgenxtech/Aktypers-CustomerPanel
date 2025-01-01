@@ -16,11 +16,12 @@ import { TyresMaster } from "@/pages/Tyres/Tyres";
 import TyresFormFields from "./constants/TyresFormFields";
 import TyresDrawer from "./TyresDrawer";
 import TyresColumns from "./constants/TyresColumns";
+import { ITruckData } from "@/pages/Truck/Truck.d";
 
 const TyresMasterListPage = () => {
   const [CurrentTyres, setCurrentTyres] = useState<TyresMaster | null>(null);
   const [SelectedTruckId, setSelectedTruckId] = useState<string>("");
-  const [SelectedTruck, setSelectedTruck] = useState<TyresMaster>();
+  const [SelectedTruck, setSelectedTruck] = useState<ITruckData>();
   const [Position, setPosition] = useState<string[]>([]);
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
@@ -88,10 +89,12 @@ const TyresMasterListPage = () => {
   );
 
   const handleCreateTyres = async (data: TyresMaster) => {
+    const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
     try {
       const response = await axios.post(routes.backend.tyre.createTyre, {
         ...data,
         Vehicle_Registration_Number: SelectedTruckId,
+        Total_Covered_KM: totalCoveredKM,
       });
       const { data: responseData } = response;
 
@@ -111,10 +114,13 @@ const TyresMasterListPage = () => {
   };
 
   const handleUpdateTyres = async (data: TyresMaster) => {
+    const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
+
     try {
       const response = await axios.post(routes.backend.tyre.updateTyre, {
         ...data,
         id: CurrentTyres?.id,
+        Total_Covered_KM: totalCoveredKM,
       });
       const { data: responseData } = response;
 
@@ -187,6 +193,24 @@ const TyresMasterListPage = () => {
                   .indexOf(inputValue.toUpperCase()) !== -1
               }
               showSearch
+            />
+          </div>
+          {/* Tyre Condition filter with these option - ['New', 'Re-Used', 'Old'] */}
+          <div className="flex items-center justify-center gap-2">
+            <label>Condition</label>
+            <Select
+              mode="multiple"
+              options={[
+                { value: "New", label: "New" },
+                { value: "Re-Used", label: "Re-Used" },
+                { value: "Old", label: "Old" },
+              ]}
+              placeholder="Select conditions..."
+              className="w-32 md:w-60"
+              allowClear
+              onChange={(selectedOptions) => {
+                console.log(selectedOptions);
+              }}
             />
           </div>
           <div className="flex items-center justify-center gap-2">

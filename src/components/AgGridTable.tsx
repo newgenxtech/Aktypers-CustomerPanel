@@ -1,11 +1,12 @@
 import { useRef, useCallback } from 'react';
 import { Button, message } from 'antd';
 import { FileText, Sheet } from 'lucide-react';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { useMediaQuery } from 'react-responsive';
 import { AgGridReact } from 'ag-grid-react';
+import { themeQuartz } from 'ag-grid-community';
 
 interface AgGridTableProps<T> {
     columns: (ColDef | ColGroupDef)[];
@@ -13,6 +14,13 @@ interface AgGridTableProps<T> {
     isLoading: boolean;
     defaultColDef?: ColDef;
 }
+
+// to use myTheme in an application, pass it to the theme grid option
+const myTheme = themeQuartz
+    .withParams({
+        browserColorScheme: "light",
+        headerFontSize: 14
+    });
 
 const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTableProps<T>) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -50,9 +58,11 @@ const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTabl
                 />
             </div>
             <AgGridReact
+                theme={myTheme}
                 ref={gridRef}
                 columnDefs={columns}
                 rowData={data}
+                className="scrollbar scrollbar-thumb-blue-500 scrollbar-track-gray-300 hover:scrollbar-thumb-blue-700"
                 loadingOverlayComponent={'Loading...'}
                 overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
                 pagination={isMobile ? false : true}

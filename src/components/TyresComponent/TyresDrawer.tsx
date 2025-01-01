@@ -7,7 +7,7 @@ import { TyresMaster } from "@/pages/Tyres/Tyres.d";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { queryClient } from "@/hooks/queryClient";
+import { ITruckData } from "@/pages/Truck/Truck.d";
 
 interface TyresDrawerProps {
   open: boolean;
@@ -18,7 +18,7 @@ interface TyresDrawerProps {
   handleCreateTyres: (data: TyresMaster) => void;
   handleUpdateTyres: (data: TyresMaster) => void;
   formField: CustomField[];
-  SelectedTruck: TruckMaster | undefined;
+  SelectedTruck: ITruckData | undefined;
 }
 
 const TyresDrawer: React.FC<TyresDrawerProps> = ({
@@ -75,8 +75,11 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
     if (!isEdit && open) {
       console.log("SelectedTruck", SelectedTruck);
       formMethods.setValue("Wheeler_Type", SelectedTruck?.wheels);
+      formMethods.setValue("Manufacturer", SelectedTruck?.make);
+      formMethods.setValue("Brand", SelectedTruck?.model);
+      
     }
-  }, [SelectedTruck, SelectedTruck?.Manufacturer, formMethods, isEdit, open]);
+  }, [SelectedTruck, formMethods, isEdit, open]);
 
   return (
     <Drawer.Root
