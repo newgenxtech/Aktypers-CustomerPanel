@@ -287,11 +287,11 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
         }
     ]
     const formMethods = useForm<FieldValues>({
-        resolver: zodResolver(z.object(createSchemaObject(formFields)).required()),
+        resolver: zodResolver(z.object(createSchemaObject(formFields as CustomField[])).required()),
         defaultValues: Object.fromEntries(
             formFields.map((field) => [
                 field.name,
-                setDefaultValues(field)
+                setDefaultValues(field as CustomField)
             ])
         ),
         values: CurrentTruck as FieldValues
