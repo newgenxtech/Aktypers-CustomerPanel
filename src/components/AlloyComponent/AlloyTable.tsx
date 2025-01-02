@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 import { FileImage } from 'lucide-react';
 import { CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
 import { AlloyMaster } from '@/pages/Alloy/Alloy.d';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import AgGridTable from '../AgGridTable';
+
 
 interface AlloyTableProps {
     data: AlloyMaster[];
@@ -58,6 +59,7 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
 
     return (
         <AgGridTable
+
             columns={columns}
             data={data}
             isLoading={isLoading}

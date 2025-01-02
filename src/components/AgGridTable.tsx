@@ -6,7 +6,6 @@ import { FileText, Sheet } from 'lucide-react';
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { useMediaQuery } from 'react-responsive';
 import { AgGridReact } from 'ag-grid-react';
-import { themeQuartz } from 'ag-grid-community';
 
 interface AgGridTableProps<T> {
     columns: (ColDef | ColGroupDef)[];
@@ -14,6 +13,8 @@ interface AgGridTableProps<T> {
     isLoading: boolean;
     defaultColDef?: ColDef;
 }
+
+import { themeQuartz } from 'ag-grid-community';
 
 // to use myTheme in an application, pass it to the theme grid option
 const myTheme = themeQuartz
