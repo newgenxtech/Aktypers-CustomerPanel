@@ -91,8 +91,75 @@ export const routes = {
             // }
 
 
+        },
+        insurance: {
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=createInsurance
+            create: `${base}?route=createInsurance`,
+            //             BODY 
+            // [{
+            //                 "customer_id": 101,
+            //                 "vehicle_id": 501,
+            //                 "insurance_number": "INS123456",
+            //                 "insurance_name": "ICICI Lombard Policy",
+            //                 "filename": "policy_file_123.pdf",
+            //                 "purchase_date": "2023-01-15",
+            //                 "expiry_date": "2024-01-14"
+            //             }
+            //             ]
+            // RESPONSE :
+
+            // {
+            //     "message": "Insurance records created successfully."
+            // }
+
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=editInsurance
+            update: `${base}?route=editInsurance`,
+            //             BODY 
+            //             {
+            //     "insurance_id": 1,
+            //         "insurance_name": "ICICI Lombard - Updated",
+            //             "filename": "updated_policy_file_123.pdf",
+            //                 "purchase_date": "2023-01-20",
+            //                     "expiry_date": "2024-01-19"
+            // }
+
+            // this body is dynamic what we need to edit that oine is enough to edit
+            // RESPONSE:
+
+            // {
+            //     "message": "Insurance record updated successfully."
+            // }
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getInsuranceByCustomerId&customer_id=101
+            getInsuranceByCustomerId: `${base}?route=getInsuranceByCustomerId&customer_id=`,
+            //             RESPONSE 
+            // [
+            //     {
+            //         "insurance_id": "1",
+            //         "customer_id": "101",
+            //         "vehicle_id": "501",
+            //         "insurance_number": "INS123456",
+            //         "insurance_name": "ICICI Lombard - Updated",
+            //         "filename": "updated_policy_file_123.pdf",
+            //         "purchase_date": "2023-01-20",
+            //         "expiry_date": "2024-01-19",
+            //         "created_at": "2023-01-15 10:30:00",
+            //         "updated_at": "2025-01-04 08:35:51"
+            //     }
+            // ]
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=deleteInsurance
+            deleteInsurance: `${base}?route=deleteInsurance`,
+            //             BODY 
+
+            //             {
+            //     "insurance_id": 1
+            // }
+
+
+            // RESPONSE
+            // {
+            //     "message": "Insurance record deleted successfully."
+            // }
+
         }
     },
-
-
 };
