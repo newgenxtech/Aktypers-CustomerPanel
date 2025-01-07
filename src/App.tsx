@@ -20,6 +20,7 @@ import TyresMasterListPage from "./pages/Tyres/TyresMaster";
 import Login from "./pages/Auth/Login";
 import AuthLayout from "./layouts/AuthLayout";
 import Signup from "./pages/Auth/Signup";
+import InsuranceMasterListPage from "./components/InsuranceComponent/InsuranceMasterListPage";
 
 const router = createBrowserRouter([
     {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
             {
                 path: "/tyres",
                 element: <TyresMasterListPage />
+            },
+            {
+                path: "/insurance",
+                element: <InsuranceMasterListPage />
             }
         ],
     },

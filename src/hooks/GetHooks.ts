@@ -7,6 +7,7 @@ import { routes } from "@/routes/routes";
 import { DriverMaster } from "@/pages/Driver/Driver.d"; // Add this line to import DriverMaster
 import { AlloyMaster } from "@/pages/Alloy/Alloy.d";
 import { ITruckData } from "@/pages/Truck/Truck.d";
+import { InsuranceMaster } from "@/pages/Insurance/Insurance.d";
 
 export const useGetDriverData = (customer_id: string) => {
     return useQuery<GetApiResponse<DriverMaster>>({
@@ -70,3 +71,13 @@ export const useGetTruckDemensionDetails = (SelectedTruckId: string | undefined)
         enabled: !!SelectedTruckId
     });
 }
+
+export const useGetInsuranceData = (customer_id: string) => {
+    return useQuery<GetApiResponse<InsuranceMaster>>({
+        queryKey: ['insurance'],
+        queryFn: () => GetApiCustomerRoutes(
+            routes.backend.insurance.getInsuranceByCustomerId + customer_id,
+            'DummyToken'
+        ).then((res) => res as GetApiResponse<InsuranceMaster>),
+    });
+};

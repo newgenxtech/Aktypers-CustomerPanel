@@ -114,7 +114,7 @@ export const routes = {
 
             // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=editInsurance
             update: `${base}?route=editInsurance`,
-            //             BODY 
+            // BODY 
             //             {
             //     "insurance_id": 1,
             //         "insurance_name": "ICICI Lombard - Updated",
@@ -131,7 +131,7 @@ export const routes = {
             // }
             // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getInsuranceByCustomerId&customer_id=101
             getInsuranceByCustomerId: `${base}?route=getInsuranceByCustomerId&customer_id=`,
-            //             RESPONSE 
+            // RESPONSE 
             // [
             //     {
             //         "insurance_id": "1",
@@ -148,9 +148,8 @@ export const routes = {
             // ]
             // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=deleteInsurance
             deleteInsurance: `${base}?route=deleteInsurance`,
-            //             BODY 
-
-            //             {
+            // BODY 
+            // {
             //     "insurance_id": 1
             // }
 

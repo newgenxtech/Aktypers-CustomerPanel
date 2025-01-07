@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut } from "lucide-react";
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 // import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -64,6 +64,11 @@ const menuItems: MenuItem[] = [
         label: 'Tyres',
         path: '/tyres',
         icon: <LifeBuoy />
+    },
+    {
+        label: 'Insurance',
+        path: '/insurance',
+        icon: <ShieldCheck />
     }
 ];
 
