@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { InsuranceMaster } from '@/pages/Insurance/Insurance.d';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ITruckData } from '@/pages/Truck/Truck.d';
 
 interface InsuranceDrawerProps {
     open: boolean;
@@ -16,6 +17,7 @@ interface InsuranceDrawerProps {
     CurrentInsurance: InsuranceMaster | null;
     handleCreateInsurance: (data: InsuranceMaster) => void;
     handleUpdateInsurance: (data: InsuranceMaster) => void;
+    TruckListData: ITruckData[];
 }
 
 const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
@@ -25,8 +27,11 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
     setIsEdit,
     CurrentInsurance,
     handleCreateInsurance,
-    handleUpdateInsurance
+    handleUpdateInsurance,
+    TruckListData
 }) => {
+    console.log(TruckListData);
+
     const navigate = useNavigate();
 
     const createSchemaObject = (fields: CustomField[]) =>
@@ -64,6 +69,8 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
             name: 'customer_id',
             type: 'text' as const,
             isInputProps: {
+                disabled: true,
+                defaultValue: localStorage.getItem('customer_id') || '',
                 placeholder: 'Enter Customer ID'
             },
             validation: {
@@ -74,14 +81,16 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
         {
             label: 'Vehicle ID',
             name: 'vehicle_id',
-            type: 'text' as const,
+            type: 'select',
             isInputProps: {
-                placeholder: 'Enter Vehicle ID'
+                placeholder: 'Select Vehicle ID',
+                defaultValue: isEdit ? CurrentInsurance?.vehicle_id : ''
             },
             validation: {
                 required: true,
                 pattern: z.string().min(1).max(20)
-            }
+            },
+            options: TruckListData?.map((truck: ITruckData) => (truck.id))
         },
         {
             label: 'Insurance Number',

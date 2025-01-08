@@ -47,15 +47,22 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
         },
         {
             headerName: 'Insurance Name',
-            field: 'insurance_name'
+            field: 'insurance_name',
+        },
+        {
+            headerName: 'Truck',
+            field: 'vehicle_id',
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <span>{params.data.vehicle_id}</span>
+            )
         },
         {
             headerName: 'Purchase Date',
-            field: 'purchase_date'
+            field: 'purchase_date',
         },
         {
             headerName: 'Expiry Date',
-            field: 'expiry_date'
+            field: 'expiry_date',
         },
         {
             headerName: 'Documents',
@@ -81,7 +88,7 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
                 </div>
             )
         }
-    ], [setOpen, setIsEdit, setCurrentInsurance]);
+    ] as ColDef[], [setOpen, setIsEdit, setCurrentInsurance]);
 
     return (
         <AgGridTable
@@ -91,6 +98,7 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
             defaultColDef={{
                 flex: 1,
                 autoHeight: true,
+                floatingFilter: true,
             }}
         />
     );

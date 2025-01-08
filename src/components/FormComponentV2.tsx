@@ -23,6 +23,7 @@ export interface CustomField {
         defaultChecked?: boolean,
         defaultSelected?: boolean,
         multiple?: boolean,
+        disabled?: boolean,
     };
     options?: string[];  // For select fields
     validation?: {
@@ -83,6 +84,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         status={
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
+                        disabled={field?.isInputProps?.disabled}
                     />
                 )
             case 'email':
@@ -93,6 +95,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='email'
+                        disabled={field?.isInputProps?.disabled}
                     />
                 )
             case 'number':
@@ -103,6 +106,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='number'
+                        disabled={field?.isInputProps?.disabled}
                     />
                 )
             case 'password':
@@ -113,6 +117,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='password'
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'checkbox':
@@ -120,6 +125,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     <Checkbox
                         {...controllerField}
                         defaultChecked={field?.isInputProps?.defaultChecked}
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'select':
@@ -136,6 +142,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             (option?.label?.toLowerCase().indexOf(input.toLowerCase()) ?? -1) >= 0
                         }
                         getPopupContainer={(trigger) => trigger.parentElement}
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'textarea':
@@ -146,6 +153,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         status={
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'radio':
@@ -153,6 +161,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                     <Radio
                         {...controllerField}
                         className={cn('p-2 border rounded-md text-base bg-whitetext-gray-800 shadow-md')}
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'checkboxGroup':
@@ -167,8 +176,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         onChange={(value) => {
                             formMethods.setValue(field.name, value);
                         }}
-
-
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'date':
@@ -179,6 +187,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             formMethods.setValue(field.name, dateString as string);
                         }}
                         defaultValue={formMethods.getValues(field.name) ? dayjs(formMethods.getValues(field.name)) : undefined}
+                        disabled={field?.isInputProps?.disabled}
                     />
                 );
             case 'upload':

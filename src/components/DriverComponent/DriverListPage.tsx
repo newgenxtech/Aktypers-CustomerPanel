@@ -14,7 +14,7 @@ const DriverDrawer = React.lazy(() => import('@/components/DriverComponent/Drive
 const DriverListPage = () => {
     const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
     const [isEdit, setIsEdit] = useState(false);
-    const { data, isLoading } = useGetDriverData('1001');
+    const { data, isLoading } = useGetDriverData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
     // const navigate = useNavigate();
 

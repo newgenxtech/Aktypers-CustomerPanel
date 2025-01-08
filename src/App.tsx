@@ -21,6 +21,7 @@ import Login from "./pages/Auth/Login";
 import AuthLayout from "./layouts/AuthLayout";
 import Signup from "./pages/Auth/Signup";
 import InsuranceMasterListPage from "./components/InsuranceComponent/InsuranceMasterListPage";
+import ErrorBoundaryPage from "./components/ErrorBoundary/ErrorBoundaryPage";
 
 const router = createBrowserRouter([
     {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
         element: (
             <BaseLayout />
         ),
-        errorElement: <ErrorPage />,
+        errorElement: <ErrorBoundaryPage />,
         children: [
             {
                 index: true,

@@ -104,8 +104,10 @@ export const routes = {
             //                 "filename": "policy_file_123.pdf",
             //                 "purchase_date": "2023-01-15",
             //                 "expiry_date": "2024-01-14"
+
             //             }
             //             ]
+
             // RESPONSE :
 
             // {

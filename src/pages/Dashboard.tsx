@@ -43,14 +43,14 @@ const Sum = (arr: WareHouseData[]): number => {
 
 const Dashboard: React.FC = () => {
     const data = useSelector((state: { warehouse: { data: WareHouseData[] } }) => state.warehouse.data);
-    const { data: truckData } = useGetTruckData('1001');
-    const { data: driverData } = useGetDriverData('1001');
+    const { data: truckData } = useGetTruckData(localStorage.getItem('customer_id') || '');
+    const { data: driverData } = useGetDriverData(localStorage.getItem('customer_id') || '');
     const { data: alloyData } = useQuery(
         {
             queryKey: ['alloyData'],
             queryFn: async () => {
                 try {
-                    const res = await axios.post(routes.backend.alloy.getAll + '1001');
+                    const res = await axios.post(routes.backend.alloy.getAll + localStorage.getItem('customer_id') || '');
                     return res.data;
                 } catch (error) {
                     console.error("Error fetching data:", error);

@@ -2,11 +2,13 @@ import { useState, Suspense, lazy } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input, message } from 'antd';
-import { useGetInsuranceData } from "@/hooks/GetHooks";
+import { useGetInsuranceData, useGetTruckData } from "@/hooks/GetHooks";
 import { queryClient } from "@/hooks/queryClient";
 import axios from "axios";
 import { InsuranceMaster } from '@/pages/Insurance/Insurance.d';
 import { routes } from "@/routes/routes";
+import toast from 'react-hot-toast';
+// import { ITruckData } from '@/pages/Truck/Truck.d';
 
 const InsuranceTable = lazy(() => import('./InsuranceTable'));
 const InsuranceDrawer = lazy(() => import('./InsuranceDrawer'));
@@ -14,12 +16,29 @@ const InsuranceDrawer = lazy(() => import('./InsuranceDrawer'));
 const InsuranceMasterListPage = () => {
     const [CurrentInsurance, setCurrentInsurance] = useState<InsuranceMaster | null>(null);
     const [isEdit, setIsEdit] = useState(false);
-    const { data, isLoading } = useGetInsuranceData('1001');
+    const { data, isLoading } = useGetInsuranceData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
+    // const [selectedTruckId, setSelectedTruckId] = useState<string | null>(null);
+    // const [selectedTruck, setSelectedTruck] = useState<ITruckData | null>(null);
+    // const [fromDate, setFromDate] = useState<string | null>(null);
+    // const [toDate, setToDate] = useState<string | null>(null);
+
+
+    const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
 
     const handleCreateInsurance = async (data: InsuranceMaster) => {
+        toast.loading("Creating Insurance...", {
+            duration: 0,
+        })
         try {
-            const response = await axios.post(routes.backend.insurance.create, data);
+            const response = await axios.post(routes.backend.insurance.create, [
+                {
+                    ...data,
+                    customer_id: parseInt(localStorage.getItem('customer_id') || '0'),
+                    vehicle_id: parseInt(data.vehicle_id || '0')
+                }
+            ]
+            );
             if (response.data?.message) {
                 message.success(response.data.message);
             }
@@ -65,6 +84,66 @@ const InsuranceMasterListPage = () => {
                     Add Insurance
                 </Button>
             </div>
+
+            {/* <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
+                <div className="flex items-center justify-center gap-2">
+                    <label>Truck</label>
+                    <Select
+                        className="w-64"
+                        onChange={(value) => {
+                            setSelectedTruckId(value);
+                            setSelectedTruck(
+                                TruckListData?.body.find((item) => item.id === value) ?? null
+                            );
+                        }}
+                        options={TruckListData?.body.map((item) => ({
+                            value: item.id,
+                            label: item.registration_number,
+                        }))}
+                        placeholder="Select Truck"
+                        allowClear
+                        filterOption={(inputValue, option) =>
+                            option!
+                                .label!.toUpperCase()
+                                .indexOf(inputValue.toUpperCase()) !== -1
+                        }
+                        showSearch
+                    />
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <label>Condition</label>
+                    <Select
+                        mode="multiple"
+                        options={[
+                            { value: "New", label: "New" },
+                            { value: "Re-Used", label: "Re-Used" },
+                            { value: "Old", label: "Old" },
+                        ]}
+                        placeholder="Select conditions..."
+                        className="w-32 md:w-60"
+                        allowClear
+                        onChange={(selectedOptions) => {
+                            console.log(selectedOptions);
+                        }}
+                    />
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <label>From Date</label>
+                    <DatePicker
+                        onChange={(_date, dateString) => {
+                            setFromDate(dateString as string);
+                        }}
+                    />
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <label>To Date</label>
+                    <DatePicker
+                        onChange={(_date, dateString) => {
+                            setToDate(dateString as string);
+                        }}
+                    />
+                </div>
+            </div> */}
             <Suspense fallback={<div>Loading...</div>}>
                 <InsuranceTable
                     data={data?.body || []}
@@ -81,6 +160,7 @@ const InsuranceMasterListPage = () => {
                     CurrentInsurance={CurrentInsurance}
                     handleCreateInsurance={handleCreateInsurance}
                     handleUpdateInsurance={handleUpdateInsurance}
+                    TruckListData={TruckListData?.body || []}
                 />
             </Suspense>
         </div>

@@ -27,7 +27,7 @@ const TyresMasterListPage = () => {
   const [toDate, setToDate] = useState<string>("");
   const [isEdit, setIsEdit] = useState(false);
 
-  const { data: TruckListData } = useGetTruckData("1001");
+  const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
   const { data, isLoading } = useQuery({
     queryKey: ["tyres", SelectedTruckId, fromDate, toDate],
     queryFn: async () => {
@@ -38,7 +38,7 @@ const TyresMasterListPage = () => {
             truck_id: SelectedTruckId,
             from_date: fromDate,
             to_date: toDate,
-            customerid: 1001,
+            customerid: localStorage.getItem('customer_id') || '',
           },
         );
         const result = res.data;
