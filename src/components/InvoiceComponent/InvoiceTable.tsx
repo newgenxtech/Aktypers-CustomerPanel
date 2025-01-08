@@ -127,7 +127,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, isLoading }) => {
             data={data}
             isLoading={isLoading}
             defaultColDef={{
-                flex: 1,
+                flex: 0,
                 autoHeight: true,
                 floatingFilter: true,
             }}

@@ -96,7 +96,7 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
             data={data}
             isLoading={isLoading}
             defaultColDef={{
-                flex: 1,
+                flex: 0,
                 autoHeight: true,
                 floatingFilter: true,
             }}
