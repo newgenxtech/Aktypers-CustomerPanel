@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck } from "lucide-react";
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 // import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -23,16 +23,6 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: <Home /> },
-    // { label: 'Product', path: '/product', icon: <Package /> },
-    // { label: 'Warehouse', path: '/warehouse', icon: <Warehouse /> },
-    // { label: 'Purchaser', path: '/purchaser' },
-    // { label: 'Contracts', path: '/contracts' },
-    // { label: 'RFP', path: '/rfp' },
-    // { label: 'WRO', path: '/wro' },
-    // { label: 'Inventory', path: '/inventory' },
-    // { label: 'Order', path: '/order', icon: <ShoppingCart /> },
-    // { label: 'Work Order', path: '/work-order' },
-    // { label: 'Billing', path: '/billing', icon: <CreditCard /> },
     { label: 'Drvier', path: '/driver', icon: <Car /> },
     { label: 'Alloy', path: '/alloy', icon: <Forklift /> },
     {
@@ -69,6 +59,11 @@ const menuItems: MenuItem[] = [
         label: 'Insurance',
         path: '/insurance',
         icon: <ShieldCheck />
+    },
+    {
+        label: 'Invoice',
+        path: '/invoice',
+        icon: <ReceiptIndianRupee />
     }
 ];
 

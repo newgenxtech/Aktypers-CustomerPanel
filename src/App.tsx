@@ -22,6 +22,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import Signup from "./pages/Auth/Signup";
 import InsuranceMasterListPage from "./components/InsuranceComponent/InsuranceMasterListPage";
 import ErrorBoundaryPage from "./components/ErrorBoundary/ErrorBoundaryPage";
+import InvoiceMasterListPage from "./components/InvoiceComponent/InvoiceMasterListPage";
 
 const router = createBrowserRouter([
     {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
             {
                 path: "/insurance",
                 element: <InsuranceMasterListPage />
+            },
+            {
+                path: "/invoice",
+                element: <InvoiceMasterListPage />
             }
         ],
     },

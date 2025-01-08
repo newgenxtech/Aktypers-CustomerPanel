@@ -93,74 +93,58 @@ export const routes = {
 
         },
         insurance: {
-            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=createInsurance
             create: `${base}?route=createInsurance`,
-            //             BODY 
-            // [{
-            //                 "customer_id": 101,
-            //                 "vehicle_id": 501,
-            //                 "insurance_number": "INS123456",
-            //                 "insurance_name": "ICICI Lombard Policy",
-            //                 "filename": "policy_file_123.pdf",
-            //                 "purchase_date": "2023-01-15",
-            //                 "expiry_date": "2024-01-14"
-
-            //             }
-            //             ]
-
-            // RESPONSE :
-
-            // {
-            //     "message": "Insurance records created successfully."
-            // }
-
-            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=editInsurance
             update: `${base}?route=editInsurance`,
-            // BODY 
-            //             {
-            //     "insurance_id": 1,
-            //         "insurance_name": "ICICI Lombard - Updated",
-            //             "filename": "updated_policy_file_123.pdf",
-            //                 "purchase_date": "2023-01-20",
-            //                     "expiry_date": "2024-01-19"
-            // }
-
-            // this body is dynamic what we need to edit that oine is enough to edit
-            // RESPONSE:
-
-            // {
-            //     "message": "Insurance record updated successfully."
-            // }
-            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getInsuranceByCustomerId&customer_id=101
             getInsuranceByCustomerId: `${base}?route=getInsuranceByCustomerId&customer_id=`,
-            // RESPONSE 
+            deleteInsurance: `${base}?route=deleteInsurance`,
+        },
+        invoice: {
+            // 1)
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getCustomerpayfilter
+            getCustomerpayfilter: `${base}?route=getCustomerpayfilter`,
+            // Post Request to get the invoice data
+            // {
+            //     "customer_id": "1006"
+
+            // } 
+
+            // Response
             // [
             //     {
-            //         "insurance_id": "1",
-            //         "customer_id": "101",
-            //         "vehicle_id": "501",
-            //         "insurance_number": "INS123456",
-            //         "insurance_name": "ICICI Lombard - Updated",
-            //         "filename": "updated_policy_file_123.pdf",
-            //         "purchase_date": "2023-01-20",
-            //         "expiry_date": "2024-01-19",
-            //         "created_at": "2023-01-15 10:30:00",
-            //         "updated_at": "2025-01-04 08:35:51"
+            //         "Date": "2024-10-16",
+            //         "Invoiceid": "68",
+            //         "Particulars": "SALES",
+            //         "VCH_TYP": "SALES",
+            //         "VCH_NO": null,
+            //         "Debit": "30",
+            //         "Credit": "30"
+            //     },
+            //     {
+            //         "Date": "2024-10-16",
+            //         "Invoiceid": "71",
+            //         "Particulars": "SALES",
+            //         "VCH_TYP": "SALES",
+            //         "VCH_NO": null,
+            //         "Debit": "16",
+            //         "Credit": "0"
             //     }
             // ]
-            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=deleteInsurance
-            deleteInsurance: `${base}?route=deleteInsurance`,
-            // BODY 
-            // {
-            //     "insurance_id": 1
-            // }
 
+            // 2)
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getInvoiceFiles&invoice_id=72,
+            getInvoiceFiles: `${base}?route=getInvoiceFiles&invoice_id=`,
+            // Response
+            // [
+            //     {
+            //         "id": "1",
+            //         "invoice_id": "72",
+            //         "file_name": "uploads/1736278157_Aktypers New changes.pdf",
+            //         "created_at": "2025-01-05 08:16:36",
+            //         "updated_at": "2025-01-07 19:29:28"
+            //     }
+            // ]
 
-            // RESPONSE
-            // {
-            //     "message": "Insurance record deleted successfully."
-            // }
-
-        }
+        },
     },
 };
+
