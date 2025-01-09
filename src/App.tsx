@@ -140,6 +140,14 @@ const router = createBrowserRouter([
                         <InvoiceMasterListPage />
                     </Suspense>
                 ),
+            },
+            {
+                path: "/complaints",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <NotFound />
+                    </Suspense>
+                ),
             }
         ],
     },
