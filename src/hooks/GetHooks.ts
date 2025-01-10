@@ -8,7 +8,7 @@ import { DriverMaster } from "@/pages/Driver/Driver.d"; // Add this line to impo
 import { AlloyMaster } from "@/pages/Alloy/Alloy.d";
 import { ITruckData } from "@/pages/Truck/Truck.d";
 import { InsuranceMaster } from "@/pages/Insurance/Insurance.d";
-
+import { ComplaintsMaster } from "@/pages/Compliant/Compliant.d";
 export const useGetDriverData = (customer_id: string) => {
     return useQuery<GetApiResponse<DriverMaster>>({
         queryKey: ['drivers'],
@@ -81,3 +81,13 @@ export const useGetInsuranceData = (customer_id: string) => {
         ).then((res) => res as GetApiResponse<InsuranceMaster>),
     });
 };
+
+export const useGetComplaintsData = (customer_id: string) => {
+    return useQuery<GetApiResponse<ComplaintsMaster>>({
+        queryKey: ['complaints'],
+        queryFn: () => GetApiCustomerRoutes(
+            routes.backend.complaints.getComplaintsByCustomerId + customer_id,
+            'DummyToken'
+        ).then((res) => res as GetApiResponse<ComplaintsMaster>),
+    });
+}

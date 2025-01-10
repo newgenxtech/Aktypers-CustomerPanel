@@ -68,7 +68,7 @@ const menuItems: MenuItem[] = [
     {
         label: 'Complaints',
         path: '/complaints',
-        icon: <Bo okOpenCheck />,
+        icon: <BookOpenCheck />,
     }
 ];
 

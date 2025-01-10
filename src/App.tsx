@@ -17,6 +17,7 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Signup = lazy(() => import("./pages/Auth/Signup"));
+const CompliantListPage = lazy(() => import("./pages/Compliant/Compliant"));
 
 // Feature Components
 const DriverListPage = lazy(() => import("./pages/Driver/Driver"));
@@ -145,7 +146,7 @@ const router = createBrowserRouter([
                 path: "/complaints",
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
-                        <NotFound />
+                        <CompliantListPage />
                     </Suspense>
                 ),
             }

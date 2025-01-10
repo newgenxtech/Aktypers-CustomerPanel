@@ -145,6 +145,23 @@ export const routes = {
             // ]
 
         },
+        // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getComplaintsByCustomerId&customer_id=123
+        complaints: {
+            getComplaintsByCustomerId: `${base}?route=getComplaintsByCustomerId&customer_id=`,
+        },
+        // [
+        //     {
+        //         "complaint_id": "1",
+        //         "customer_id": "123",
+        //         "truck_id": "456",
+        //         "filename": "example.jpg",
+        //         "complaint_description": "Brake issue",
+        //         "complaint_date": "2025-01-09 11:01:09",
+        //         "status": "Resolved",
+        //         "updated_by": "Admin",
+        //         "updated_date": "2025-01-09 12:34:56"
+        //     }
+        // ]
     },
 };
 
