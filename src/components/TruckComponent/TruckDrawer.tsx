@@ -4,7 +4,7 @@ import { Expand, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import FormComponentV2, { CustomField } from '@/components/FormComponentV2';
 import { z } from 'zod';
-import { ITruckData } from '@/pages/Truck/Truck.d';
+import { ITruckConfig, ITruckData } from '@/pages/Truck/Truck.d';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -16,6 +16,7 @@ interface TruckDrawerProps {
     CurrentTruck: ITruckData | null;
     handleCreateTruck: (data: ITruckData) => void;
     handleUpdateTruck: (data: ITruckData) => void;
+    TruckConfigData: ITruckConfig[]
 }
 
 const TruckDrawer: React.FC<TruckDrawerProps> = ({
@@ -25,7 +26,8 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
     setIsEdit,
     CurrentTruck,
     handleCreateTruck,
-    handleUpdateTruck
+    handleUpdateTruck,
+    TruckConfigData
 }) => {
     const navigate = useNavigate();
 
@@ -155,13 +157,15 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
                 pattern: z.string().min(1).max(2)
             }
         },
+        // {"json":{"truck_id":"1","truck_type":"6 tyre","total_tyres":"6","axle_configuration":"1-1 2-2","total_axles":"2","axtyre":"[{\"tyre\":1},{\"tyre\":2}]","config":"[{\n    \"TotalWheel\": 12,\n    \"TotalAxle\": 4,\n    \"wheelPositions\": [\n        [-1, 0, 4.7], [1, 0, 4.7],\n        [-1.2, 0, 3.3], [1.2, 0, 3.3],\n        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], \n        [-1.2, 0, -4], [-0.9, 0, -4], [1.2, 0, -4], [0.9, 0, -4]\n    ],\n    \"axlesData\": [true, true, false, true, true, false]\n}]"}}
         {
-            label: 'Tyre Type',
+            label: 'Truck Type',
             name: 'tyre_type',
-            type: 'text',
+            type: 'select',
             isInputProps: {
                 placeholder: 'Enter Tyre Type'
             },
+            options: TruckConfigData.map((config) => config.total_tyres + " Tyres" + " - [" + config.axle_configuration + "] - " + config.total_axles + " Axles"),
             validation: {
                 required: true,
                 pattern: z.string().min(3).max(20)

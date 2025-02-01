@@ -38,6 +38,9 @@ export const routes = {
             create: `${base}?route=createTruck`,
             update: `${base}?route=updateTruck`,
             uploadTruckFile: `${base}?route=uploadtruckFile`,
+            getTruckConfig: `${base}?route=gettruckconfig`,
+
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=gettruckconfig
         },
         trip: {
             getAll: `${base}?route=gettrip&customer_id=`,

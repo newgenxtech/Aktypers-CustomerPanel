@@ -2,7 +2,7 @@ import { useCallback, useState, Suspense, lazy } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input, message } from 'antd';
-import { useGetTruckData } from "@/hooks/GetHooks";
+import { useGetTruckConfig, useGetTruckData } from "@/hooks/GetHooks";
 import { queryClient } from "@/hooks/queryClient";
 import axios from "axios";
 import { ITruckData } from "@/pages/Truck/Truck.d";
@@ -16,6 +16,7 @@ const TruckListPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const { data, isLoading } = useGetTruckData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
+    const { data: TruckConfigData } = useGetTruckConfig();
 
 
     const handleSearch = useCallback((data: string) => {
@@ -92,6 +93,7 @@ const TruckListPage = () => {
                     open={open}
                     setOpen={setOpen}
                     isEdit={isEdit}
+                    TruckConfigData={TruckConfigData?.body || []}
                     CurrentTruck={CurrentTruck}
                     handleCreateTruck={handleCreateTruck}
                     handleUpdateTruck={handleUpdateTruck}

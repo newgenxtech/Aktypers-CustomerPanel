@@ -81,8 +81,9 @@ const Truck: React.FC<TruckProps> = ({
   TyrePressureData,
 }) => {
   const renderWheels = () => {
-    return wheelPositions.map((position, index) => (
-      <group key={index} position={position}>
+    return wheelPositions.map((position, index) => {
+      console.log(position, index, TyrePressureData[index].tyre_position);
+      return <group key={index} position={position}>
         {/* Tire */}
         <Cylinder
           args={[wheelRadius, wheelRadius, wheelWidth, 32]}
@@ -100,23 +101,22 @@ const Truck: React.FC<TruckProps> = ({
                 left: "50%",
                 transform: "translate(-50%, -50%)",
                 marginLeft:
-                  TyrePressureData[index] &&
-                  TyrePressureData[index].tyre_position
-                    ? TyrePressureData[index].tyre_position.includes("L")
-                      ? TyrePressureData[index].tyre_position.includes("L1")
-                        ? "2rem"
-                        : "-2rem"
-                      : "2rem"
-                    : "",
+                  TyrePressureData[index]?.tyre_position?.includes("L")
+                    ? TyrePressureData[index]?.tyre_position.includes("L1")
+                      ? "2rem"
+                      : "-2rem"
+                    : TyrePressureData[index]?.tyre_position.includes("R")
+                      ? TyrePressureData[index]?.tyre_position.includes("R1")
+                        ? "-2rem"
+                        : "2rem"
+                      : "0rem",
               }}
             >
               <div style={{ marginBottom: "0.2rem" }}>
-                {TyrePressureData[index] &&
-                  TyrePressureData[index].tyre_position}
+                {TyrePressureData[index]?.tyre_position}
               </div>
               <div style={{ color: "white" }}>
-                {TyrePressureData[index] &&
-                  TyrePressureData[index].tyre_pressure}
+                {TyrePressureData[index]?.tyre_pressure}
               </div>
             </div>
           </Html>
@@ -129,7 +129,7 @@ const Truck: React.FC<TruckProps> = ({
           <meshStandardMaterial color="gray" />
         </Cylinder>
       </group>
-    ));
+    });
   };
 
   const renderAxles = (truckData: IAxcelsData[]) => {
@@ -193,72 +193,9 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
   TyrePressureData,
 }) => {
   console.table(TyreData);
-  // const data = [
-  //     {
-  //         "position": "1L0"
-  //     },
-  //     {
-  //         "position": "1R0"
-  //     },
-  //     {
-  //         "position": "2L0"
-  //     },
-  //     {
-  //         "position": "2R0"
-  //     },
-  //     {
-  //         "position": "3L0"
-  //     },
-  //     {
-  //         "position": "3R0"
-  //     },
-  //     {
-  //         "position": "3L1"
-  //     },
-  //     {
-  //         "position": "3R1"
-  //     },
-  //     {
-  //         "position": "4L0"
-  //     },
-  //     {
-  //         "position": "4R0"
-  //     },
-  //     {
-  //         "position": "4L1"
-  //     },
-  //     {
-  //         "position": "4R1"
-  //     }
-  // ]
 
-  // loop through the data and shift the position when the EachSideWheelCount is 4 then shift L1 and R0 Position
   console.table(TyreDetailData);
   console.table(TyrePressureData);
-
-  // {
-  //     "wheels": "12",
-  //     "axtyre": "[{\"tyre\":1},{\"tyre\":1},{\"tyre\":2},{\"tyre\":2}]",
-  //     "total_tyres": "12",
-  //     "total_axles": "4",
-  //     "config": " [{\n    \"TotalWheel\": 12,\n    \"TotalAxle\": 4,\n    \"wheelPositions\": [\n      [-1, 0, 4.7], [1, 0, 4.7],\n      [-1.2, 0, 3.3], [1.2, 0, 3.3],\n      [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4],\n      [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5]\n    ],\n    \"axlesData\": [true, true, true, false, true, true]\n  }]"
-  // }
-
-  // [
-  //     {
-  //       TotalWheel: 12,
-  //       TotalAxle: 4,
-  //       wheelPositions: [
-  //         [Array], [Array],
-  //         [Array], [Array],
-  //         [Array], [Array],
-  //         [Array], [Array],
-  //         [Array], [Array],
-  //         [Array], [Array]
-  //       ],
-  //       axlesData: [ true, true, true, false, true, true ]
-  //     }
-  //   ]
 
   const WheelPositionData = JSON.parse(TyreDetailData.config);
   console.log(WheelPositionData);
@@ -273,24 +210,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
   const wheelPositions: Array<[number, number, number]> = React.useMemo(() => {
     return WheelPositionData[0].wheelPositions;
 
-    // [
-    //     // Front Cab
-    //     [-1, 0, 4.7], [1, 0, 4.7], // Wheels 1 and 2
-
-    //     [-1.2, 0, 3.3], [-0.9, 0, 3.3], [0.9, 0, 3.3], [1.2, 0, 3.3], // Wheels 3 and 4
-    //     [-1.2, 0, 2.3], [-0.9, 0, 2.3], [0.9, 0, 2.3], [1.2, 0, 2.3], // Wheels 7, 8, 9, 10
-    //     // Trailer Wheels
-    //     [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], // Wheels 11-14
-    //     [-1.2, 0, -4], [-0.9, 0, -4], [0.9, 0, -4], [1.2, 0, -4], // Wheels 15-18
-    //     [-1.2, 0, -5], [-0.9, 0, -5], [0.9, 0, -5], [1.2, 0, -5], // Wheels 19-22
-    // ]
   }, [WheelPositionData]);
-
-  // const wheelPositionTagIds = React.useMemo(() => {
-  //     return [
-
-  //     ]
-  // }, []);
 
   const axlesData: IAxcelsData[] = React.useMemo(() => {
     const result = WheelPositionData[0].axlesData
@@ -303,15 +223,6 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
     console.log(result);
 
     return result;
-    // return [
-    //     { axlePositions: [[0, -0, 4.7]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    //     { axlePositions: [[0, -0, 3.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    //     { axlePositions: [[0, -0, 2.3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    //     { axlePositions: [[0, -0, -0.85]], axleRadius: 0.05, axleLength: 8.3, rotation: [Math.PI / 2, 0, 0] },
-    //     { axlePositions: [[0, -0, -3]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    //     { axlePositions: [[0, -0, -4]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    //     { axlePositions: [[0, -0, -5]], axleRadius: 0.05, axleLength: 2, rotation: [0, 0, Math.PI / 2] },
-    // ]
   }, [WheelPositionData]);
 
   return (

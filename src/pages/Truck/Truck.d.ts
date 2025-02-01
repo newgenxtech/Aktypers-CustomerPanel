@@ -40,3 +40,13 @@ export type ITruckData = {
     insurance: string;
     pic: string;
 }
+
+export interface ITruckConfig {
+    truck_id: string;
+    truck_type: string;
+    total_tyres: string;
+    axle_configuration: string;
+    total_axles: string;
+    axtyre: string;
+    config: string;
+}

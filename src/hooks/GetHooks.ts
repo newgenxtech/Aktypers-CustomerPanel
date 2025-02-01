@@ -6,7 +6,7 @@ import { routes } from "@/routes/routes";
 
 import { DriverMaster } from "@/pages/Driver/Driver.d"; // Add this line to import DriverMaster
 import { AlloyMaster } from "@/pages/Alloy/Alloy.d";
-import { ITruckData } from "@/pages/Truck/Truck.d";
+import { ITruckConfig, ITruckData } from "@/pages/Truck/Truck.d";
 import { InsuranceMaster } from "@/pages/Insurance/Insurance.d";
 import { ComplaintsMaster } from "@/pages/Compliant/Compliant.d";
 import axios from "axios";
@@ -46,6 +46,18 @@ export const useGetTruckData = (customer_id: string) => {
         routes.backend.truck.getAll + customer_id,
         "DummyToken",
       ).then((res) => res as GetApiResponse<ITruckData>),
+  });
+};
+
+// GetTruckConfig
+export const useGetTruckConfig = () => {
+  return useQuery<GetApiResponse<ITruckConfig>>({
+    queryKey: ["truckConfig"],
+    queryFn: () =>
+      GetApiCustomerRoutes(routes.backend.truck.getTruckConfig, "DummyToken").then(
+        (res) =>
+          res as GetApiResponse<ITruckConfig>,
+      ),
   });
 };
 
