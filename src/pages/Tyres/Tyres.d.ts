@@ -27,6 +27,7 @@ export interface TyresMaster extends CommonTableEntity {
   position: string;
   registration_number: string;
   Vehicle_Registration_Number?: string;
+  truckid?: string;
 }
 
 export interface TyresMasterDataStoreInterface {

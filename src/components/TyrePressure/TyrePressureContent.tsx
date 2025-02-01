@@ -108,6 +108,14 @@ const TyrePressureContent: React.FC = () => {
             headerName: 'Recorded At',
             field: 'recorded_at'
         },
+        {
+            headerName: 'Fixed Depth',
+            field: 'fixedDep',
+        },
+        {
+            headerName: 'Actual Depth',
+            field: 'actualDep',
+        }
     ], []);
 
     return (

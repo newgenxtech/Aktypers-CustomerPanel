@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// import { Plus } from 'lucide-react';
+// import { Button } from '@/components/ui/button';
 import { Input } from 'antd';
 import { useGetComplaintsData } from "@/hooks/GetHooks";
 // import { ITruckData } from '@/pages/Truck/Truck.d';
@@ -23,7 +23,7 @@ const CompliantListPage = () => {
                         className="lg:w-1/3 md:w-1/3"
                     />
                 </div>
-                <Button
+                {/* <Button
                     onClick={
                         () => {
                             console.log("onClick");
@@ -33,7 +33,7 @@ const CompliantListPage = () => {
                 >
                     <Plus className='mr-1' />
                     Add Complaints
-                </Button>
+                </Button> */}
             </div>
 
             <Suspense fallback={<div>Loading...</div>}>

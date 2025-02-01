@@ -27,7 +27,9 @@ const TyresMasterListPage = () => {
   const [toDate, setToDate] = useState<string>("");
   const [isEdit, setIsEdit] = useState(false);
 
-  const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
+  const { data: TruckListData } = useGetTruckData(
+    localStorage.getItem("customer_id") || "",
+  );
   const { data, isLoading } = useQuery({
     queryKey: ["tyres", SelectedTruckId, fromDate, toDate],
     queryFn: async () => {
@@ -38,7 +40,7 @@ const TyresMasterListPage = () => {
             truck_id: SelectedTruckId,
             from_date: fromDate,
             to_date: toDate,
-            customerid: localStorage.getItem('customer_id') || '',
+            customerid: localStorage.getItem("customer_id") || "",
           },
         );
         const result = res.data;
@@ -84,12 +86,13 @@ const TyresMasterListPage = () => {
   }, []);
 
   const columns: (ColDef | ColGroupDef)[] = useMemo(
-    () => TyresColumns(setOpen, setIsEdit, setCurrentTyres),
-    [setOpen, setIsEdit, setCurrentTyres],
+    () => TyresColumns(setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId),
+    [setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId],
   );
 
   const handleCreateTyres = async (data: TyresMaster) => {
-    const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
+    const totalCoveredKM =
+      parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
     try {
       const response = await axios.post(routes.backend.tyre.createTyre, {
         ...data,
@@ -114,7 +117,8 @@ const TyresMasterListPage = () => {
   };
 
   const handleUpdateTyres = async (data: TyresMaster) => {
-    const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
+    const totalCoveredKM =
+      parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
 
     try {
       const response = await axios.post(routes.backend.tyre.updateTyre, {
