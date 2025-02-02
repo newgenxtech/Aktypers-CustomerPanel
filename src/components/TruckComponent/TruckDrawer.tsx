@@ -61,18 +61,18 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
     };
 
     const formFields: CustomField[] = [
-        {
-            label: 'Customer ID',
-            name: 'customerid',
-            type: 'text',
-            isInputProps: {
-                placeholder: 'Enter Customer ID'
-            },
-            validation: {
-                required: true,
-                pattern: z.string().min(3).max(20)
-            }
-        },
+        // {
+        //     label: 'Customer ID',
+        //     name: 'customerid',
+        //     type: 'text',
+        //     isInputProps: {
+        //         placeholder: 'Enter Customer ID'
+        //     },
+        //     validation: {
+        //         required: true,
+        //         pattern: z.string().min(1)
+        //     }
+        // },
         {
             label: 'Registration Number',
             name: 'registration_number',
@@ -82,7 +82,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(3)
             }
         },
         {
@@ -94,7 +94,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(3)
             }
         },
         {
@@ -106,7 +106,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(3)
             }
         },
         {
@@ -118,7 +118,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(3)
             }
         },
         {
@@ -130,7 +130,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(3)
             }
         },
         {
@@ -145,18 +145,18 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
                 pattern: z.string().min(4).max(4)
             }
         },
-        {
-            label: 'Wheels',
-            name: 'wheels',
-            type: 'text',
-            isInputProps: {
-                placeholder: 'Enter Wheels'
-            },
-            validation: {
-                required: true,
-                pattern: z.string().min(1).max(2)
-            }
-        },
+        // {
+        //     label: 'Wheels',
+        //     name: 'wheels',
+        //     type: 'text',
+        //     isInputProps: {
+        //         placeholder: 'Enter Wheels'
+        //     },
+        //     validation: {
+        //         required: true,
+        //         pattern: z.string().min(1).max(2)
+        //     }
+        // },
         // {"json":{"truck_id":"1","truck_type":"6 tyre","total_tyres":"6","axle_configuration":"1-1 2-2","total_axles":"2","axtyre":"[{\"tyre\":1},{\"tyre\":2}]","config":"[{\n    \"TotalWheel\": 12,\n    \"TotalAxle\": 4,\n    \"wheelPositions\": [\n        [-1, 0, 4.7], [1, 0, 4.7],\n        [-1.2, 0, 3.3], [1.2, 0, 3.3],\n        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], \n        [-1.2, 0, -4], [-0.9, 0, -4], [1.2, 0, -4], [0.9, 0, -4]\n    ],\n    \"axlesData\": [true, true, false, true, true, false]\n}]"}}
         {
             label: 'Truck Type',
@@ -173,7 +173,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             }),
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string()
             }
         },
         {
@@ -185,7 +185,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(1).max(20)
+                pattern: z.string().min(1)
             }
         },
         {
@@ -197,7 +197,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(1)
             }
         },
         {
@@ -209,7 +209,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(20)
+                pattern: z.string().min(1)
             }
         },
         {
@@ -225,6 +225,8 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
                 pattern: z.string().refine((val) => {
                     const date = new Date(val);
                     return date >= new Date();
+                }, {
+                    message: "Date must be greater than today"
                 })
             }
         },
@@ -309,7 +311,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
     useEffect(() => {
         if (!isEdit) {
             // set CustomerId 
-            formMethods.setValue('customerid', CurrentTruck?.customerid);
+            formMethods.setValue('customerid', localStorage.getItem('customer_id') || '');
         }
     }, [CurrentTruck, formMethods, isEdit, open]);
     return (

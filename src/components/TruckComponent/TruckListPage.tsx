@@ -25,13 +25,17 @@ const TruckListPage = () => {
 
     const handleCreateTruck = async (data: ITruckData) => {
         try {
-            const response = await axios.post(routes.backend.truck.create, data);
+            const response = await axios.post(routes.backend.truck.create, {
+                ...data,
+                customerid: localStorage.getItem('customer_id'),
+                wheels: data.tyre_type.split('Tyres')[0]
+            });
             const { data: responseData } = response;
 
             if (responseData?.status === 201) {
                 message.success(responseData?.data?.message);
             }
-            await queryClient.invalidateQueries({ queryKey: ['drivers'], exact: true });
+            await queryClient.invalidateQueries({ queryKey: ['trucks'], exact: true });
             setOpen(false);
         } catch (error) {
             console.error(error);
@@ -41,13 +45,18 @@ const TruckListPage = () => {
 
     const handleUpdateTruck = async (data: ITruckData) => {
         try {
-            const response = await axios.post(routes.backend.truck.update, { ...data, id: CurrentTruck?.id });
+            const response = await axios.post(routes.backend.truck.update, {
+                ...data,
+                id: CurrentTruck?.id,
+                customerid: localStorage.getItem('customer_id'),
+                wheels: data.tyre_type.split('Tyres')[0]
+            });
             const { data: responseData } = response;
 
             if (responseData?.status === 200) {
                 message.success(responseData?.data?.message);
             }
-            await queryClient.invalidateQueries({ queryKey: ['drivers'], exact: true });
+            await queryClient.invalidateQueries({ queryKey: ['trucks'], exact: true });
             setOpen(false);
         } catch (error) {
             console.error(error);
