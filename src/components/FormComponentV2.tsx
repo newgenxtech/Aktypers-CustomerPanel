@@ -25,7 +25,10 @@ export interface CustomField {
         multiple?: boolean,
         disabled?: boolean,
     };
-    options?: string[];  // For select fields
+    options?: {
+        label: string | number | boolean;
+        value: string | number | boolean;
+    }[];
     validation?: {
         required?: boolean;
         pattern?: z.ZodTypeAny;
@@ -134,12 +137,13 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
                         options={field.options?.map((option) => ({
-                            value: option,
-                            label: option
+                            label: option.label,
+                            value: option.value
                         }))}
                         allowClear
-                        filterOption={(input, option) =>
-                            (option?.label?.toLowerCase().indexOf(input.toLowerCase()) ?? -1) >= 0
+                        filterOption={
+                            (input, option) =>
+                                (option?.label?.toString()?.toLowerCase()?.indexOf(input.toLowerCase()) ?? -1) >= 0
                         }
                         getPopupContainer={(trigger) => trigger.parentElement}
                         disabled={field?.isInputProps?.disabled}
@@ -164,30 +168,25 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         disabled={field?.isInputProps?.disabled}
                     />
                 );
-            case 'checkboxGroup':
-                return (
-                    <Checkbox.Group
-                        {...controllerField}
-                        options={field.options?.map((option) => ({
-                            label: option,
-                            value: option
-                        }))}
-
-                        onChange={(value) => {
-                            formMethods.setValue(field.name, value);
-                        }}
-                        disabled={field?.isInputProps?.disabled}
-                    />
-                );
             case 'date':
                 return (
                     <DatePicker
+                        {...controllerField}
                         placeholder={field?.isInputProps?.placeholder}
-                        onChange={(_, dateString) => {
-                            formMethods.setValue(field.name, dateString as string);
+                        onChange={(date) => {
+                            if (date) {
+                                formMethods.setValue(field.name, date.format('YYYY-MM-DD'));
+                            } else {
+                                formMethods.setValue(field.name, null);
+                            }
                         }}
-                        defaultValue={formMethods.getValues(field.name) ? dayjs(formMethods.getValues(field.name)) : undefined}
+                        value={formMethods.getValues(field.name) ? dayjs(formMethods.getValues(field.name)) : null}
                         disabled={field?.isInputProps?.disabled}
+                        allowClear
+                        format="DD/MM/YYYY"
+                        status={
+                            formMethods.formState.errors[field.name] ? 'error' : undefined
+                        }
                     />
                 );
             case 'upload':
@@ -300,6 +299,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                                 Object.keys(formMethods.getValues()).forEach((key) => {
                                     formMethods.setValue(key, '');
                                 });
+
 
                             }}
                             className="bg-[#A61C1C] text-white px-2 py-2 rounded-md w-24 flex items-center justify-center gap-2"

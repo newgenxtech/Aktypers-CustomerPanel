@@ -63,7 +63,7 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
         }
     };
 
-    const formFields = [
+    const formFields: CustomField[] = [
         {
             label: 'Customer ID',
             name: 'customer_id',
@@ -90,7 +90,12 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
                 required: true,
                 pattern: z.string().min(1).max(20)
             },
-            options: TruckListData?.map((truck: ITruckData) => (truck.id))
+            options: TruckListData?.map((truck: ITruckData) => {
+                return {
+                    label: truck?.registration_number,
+                    value: truck?.id,
+                }
+            })
         },
         {
             label: 'Insurance Number',

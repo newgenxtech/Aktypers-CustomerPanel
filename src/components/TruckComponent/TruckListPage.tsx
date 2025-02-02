@@ -55,6 +55,8 @@ const TruckListPage = () => {
         }
     };
 
+
+
     return (
         <div className='warehouse'>
             <div className="flex flex-col md:flex-row items-center mt-2">
@@ -77,17 +79,11 @@ const TruckListPage = () => {
             </div>
             <Suspense fallback={<div>Loading...</div>}>
                 <TruckTable
-                    // data: ITruckData[];
-                    // isLoading: boolean;
-                    // setOpen: (open: boolean) => void;
-                    // setIsEdit: (isEdit: boolean) => void;
-                    // setCurrentTruck: (truck: ITruckData | null) => void;
                     data={data?.body || []}
                     isLoading={isLoading}
                     setOpen={setOpen}
                     setIsEdit={setIsEdit}
                     setCurrentTruck={setCurrentTruck}
-
                 />
                 <TruckDrawer
                     open={open}

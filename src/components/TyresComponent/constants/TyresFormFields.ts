@@ -117,7 +117,20 @@ const TyresFormFields = (
                     message: "Invalid Tyre Condition"
                 })
             },
-            options: ['New', 'Re-Used', 'Old']
+            options: [
+                {
+                    label: 'New',
+                    value: 'New'
+                },
+                {
+                    label: 'Re-Used',
+                    value: 'Re-Used'
+                },
+                {
+                    label: 'Old',
+                    value: 'Old'
+                }
+            ]
         },
         {
             label: 'Reason for Removal Month',
@@ -162,7 +175,12 @@ const TyresFormFields = (
                     message: "Invalid Position"
                 })
             },
-            options: Position ?? []
+            options: Position.map((pos) => {
+                return {
+                    label: pos,
+                    value: pos
+                }
+            })
         },
         {
             label: 'Registration Number',

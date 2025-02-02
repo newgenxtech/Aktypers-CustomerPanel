@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Drawer } from 'vaul';
 import { Expand, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
         }
     };
 
-    const formFields = [
+    const formFields: CustomField[] = [
         {
             label: 'Customer ID',
             name: 'customerid',
@@ -163,9 +163,14 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             name: 'tyre_type',
             type: 'select',
             isInputProps: {
-                placeholder: 'Enter Tyre Type'
+                placeholder: 'Select Tyre Type'
             },
-            options: TruckConfigData.map((config) => config.total_tyres + " Tyres" + " - [" + config.axle_configuration + "] - " + config.total_axles + " Axles"),
+            options: TruckConfigData?.map((config) => {
+                return {
+                    label: config.total_tyres + " Tyres" + " - [" + config.axle_configuration + "] - " + config.total_axles + " Axles",
+                    value: config.truck_id
+                }
+            }),
             validation: {
                 required: true,
                 pattern: z.string().min(3).max(20)
@@ -300,6 +305,13 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
         ),
         values: CurrentTruck as FieldValues
     })
+
+    useEffect(() => {
+        if (!isEdit) {
+            // set CustomerId 
+            formMethods.setValue('customerid', CurrentTruck?.customerid);
+        }
+    }, [CurrentTruck, formMethods, isEdit, open]);
     return (
         <Drawer.Root direction="right" open={open} onOpenChange={setOpen} dismissible={false}>
             <Drawer.Portal>

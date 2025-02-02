@@ -38,7 +38,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             ])
         );
 
-    const formFields = [
+    const formFields: CustomField[] = [
         {
             label: 'Name',
             name: 'name',
@@ -108,7 +108,10 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             type: 'select',
             isInputProps: { placeholder: 'Select Status' },
             validation: { required: true, pattern: z.string().min(3).max(20) },
-            options: ['Active', 'Inactive']
+            options: [
+                { label: 'Active', value: 'Active' },
+                { label: 'Inactive', value: 'Inactive' }
+            ]
         },
         {
             label: 'Aadhaar Pic',
