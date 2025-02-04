@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Drawer } from 'vaul';
 import { Expand, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
@@ -70,9 +70,9 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
         {
             label: 'Phone Number',
             name: 'phone_number',
-            type: 'text',
+            type: 'number',
             isInputProps: { placeholder: 'Enter Phone Number' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
+            validation: { required: true, pattern: z.string().min(10).max(20) }
         },
         {
             label: 'Address',
@@ -98,9 +98,9 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
         {
             label: 'Emergency Contact',
             name: 'emergency_contact',
-            type: 'text',
+            type: 'number',
             isInputProps: { placeholder: 'Enter Emergency Contact' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
+            validation: { required: true, pattern: z.string().min(10).max(20) }
         },
         {
             label: 'Status',
@@ -116,6 +116,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             type: 'upload',
             isInputProps: { placeholder: 'Enter Aadhaar Pic' },
             validation: { required: false, pattern: z.string().nullable() }
+            
         },
         {
             label: 'Pancard Pic',
@@ -139,16 +140,26 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             validation: { required: true, pattern: z.string().min(3).max(40) }
         }
     ];
+
+    const defaultvalues = Object.fromEntries(
+        formFields.map((field) => [
+            field.name,
+            field?.isInputProps?.defaultValue ?? ''
+        ])
+    )
     const formMethods = useForm<FieldValues>({
         resolver: zodResolver(z.object(createSchemaObject(formFields as CustomField[])).required()),
-        defaultValues: Object.fromEntries(
-            formFields.map((field) => [
-                field.name,
-                field?.isInputProps?.defaultValue ?? ''
-            ])
-        ),
+        defaultValues:defaultvalues,
         values: CurrentDriver as FieldValues
     });
+    
+
+    useEffect(()=>{
+        if(isEdit) {
+            formMethods.reset(CurrentDriver as FieldValues)
+         } 
+         if(!isEdit) {formMethods.reset(defaultvalues)}
+    },[isEdit])
 
     return (
         <Drawer.Root direction="right" open={open} onOpenChange={setOpen} dismissible={false}>
@@ -158,11 +169,12 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
                     className="right-2 top-2 bottom-2 fixed z-10 outline-none flex lg:w-96 md:w-80 w-72"
                     style={{ '--initial-transform': 'calc(100% + 8px)' } as React.CSSProperties}
                 >
-                    <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto">
+                    <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto " style={{scrollbarWidth:'none'}}>
                         <div className="w-full">
                             <div className="flex justify-between">
                                 <Expand className='w-5 cursor-pointer' onClick={() => navigate({ pathname: `/warehouse/1` })} />
-                                <X className='cursor-pointer' onClick={() => { setOpen(false); setIsEdit(false); }} />
+                                <X className='cursor-pointer' onClick={() => { setOpen(false); setIsEdit(false); 
+}} />
                             </div>
                             <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">
                                 {isEdit ? 'Edit' : 'Add'} Driver Details

@@ -11,7 +11,7 @@ import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 // import { NavUser } from './nav-user';
-import { message } from 'antd';
+import { message, Tooltip } from 'antd';
 import { Logout } from '@/lib/utils';
 // import { motion, AnimatePresence } from "framer-motion"
 
@@ -158,6 +158,7 @@ const Sidebar = () => {
                                         avatar: 'https://avatars.dicebear.com/api/avataaars/john-doe.svg'
                                     }}
                                 /> */}
+                                <Tooltip title={'Log out'}>
                                 <LogOut
                                     style={{
                                         width: '30px',
@@ -167,12 +168,14 @@ const Sidebar = () => {
                                         cursor: 'pointer',
                                         color: 'white',
                                     }}
+                                    
                                     onClick={
                                         () => {
                                             Logout({ navigate, message })
                                         }
                                     }
                                 />
+                                </Tooltip>
                             </footer>
                         </div>
                     </div>

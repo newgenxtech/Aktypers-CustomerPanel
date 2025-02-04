@@ -39,15 +39,18 @@ const DriverListPage = () => {
     };
 
     const handleUpdateDriver = async (data: DriverMaster) => {
+        console.log(data , 'what');
+        
         try {
             const response = await axios.post(routes.backend.driver.update, { ...data, id: CurrentDriver?.id });
             const { data: responseData } = response;
 
             if (responseData?.status === 200) {
-                message.success(responseData?.data?.message);
+                message.success(responseData?.data?.message || 'Driver Updated Successfully');
             }
             await queryClient.invalidateQueries({ queryKey: ['drivers'], exact: true });
             setOpen(false);
+            setIsEdit(false)
         } catch (error) {
             console.error(error);
             message.error('Failed to update driver');
@@ -56,9 +59,9 @@ const DriverListPage = () => {
 
     return (
         <div className='warehouse'>
-            <div className="flex flex-col md:flex-row items-center mt-2">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
-                    <label className="font-bold text-xl md:text-xl">Driver Master</label>
+            <div className="flex flex-col md:flex-row items-center my-9">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4 px-8 ">
+                    <label className="font-bold text-xl md:text-2xl">Driver Master</label>
                     <Input
                         placeholder="Search Driver"
                         onChange={(e) => handleSearch(e.target.value)}
@@ -66,8 +69,10 @@ const DriverListPage = () => {
                     />
                 </div>
                 <Button
-                    onClick={() => setOpen(true)}
-                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2"
+                    onClick={() => {
+                        setOpen(true)
+                    }}
+                    className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2 "
                 >
                     <Plus className='mr-1' />
                     Add Driver

@@ -3,7 +3,7 @@ import { SubmitHandler, FieldValues, Controller, ControllerRenderProps, UseFormR
 import { z } from 'zod';
 import { LucideUpload, SquareCheck, SquareX } from 'lucide-react';
 import { cn, readFileAsBase64 } from "@/lib/utils";
-import { Button, DatePicker, message, Radio, Upload, Image, Select, Input, Checkbox } from 'antd';
+import { Button, DatePicker, message, Radio, Upload, Select, Input, Checkbox, Image } from 'antd';
 import { routes } from '@/routes/routes';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -106,6 +106,7 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                             formMethods.formState.errors[field.name] ? 'error' : undefined
                         }
                         type='number'
+                        className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                         disabled={field?.isInputProps?.disabled}
                     />
                 )
@@ -223,14 +224,17 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                                 icon={<LucideUpload />}>Click to Upload</Button>
                         </Upload>
                         {
-                            formMethods.getValues(field.name) && (
+                            formMethods.getValues(field.name) && ( 
                                 <Image
                                     width={100}
+                                    draggable={true}
+                                    className='!important'
                                     src={`${routes.backend.file.download}/${formMethods.getValues(field.name)}`}
                                     alt={'License'}
+                                    fetchPriority='high'
 
                                 />
-                            )
+                             )
                         }
                     </>
 
