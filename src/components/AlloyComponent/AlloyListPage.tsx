@@ -19,7 +19,7 @@ const AlloyListPage = () => {
             queryKey: ['alloyData', fromDate, toDate],
             queryFn: async () => {
                 try {
-                    const res = await axios.post(routes.backend.alloy.getAll + '1001', {
+                    const res = await axios.post(routes.backend.alloy.getAll + localStorage.getItem('customer_id') || '', {
                         from_date: fromDate,
                         to_date: toDate
                     });

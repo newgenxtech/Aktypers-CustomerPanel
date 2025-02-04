@@ -5,6 +5,7 @@ import '@/styles/BaseLayout.css';
 import BreadCrumb from '@/components/BreadcrumbComponent';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { message } from 'antd';
+import {Toaster} from 'react-hot-toast';
 
 const BaseLayout: React.FC = () => {
     const [mainContentRef] = useAutoAnimate();
@@ -20,6 +21,7 @@ const BaseLayout: React.FC = () => {
             <SideBar />
             <div className="main-content" ref={mainContentRef}>
                 <BreadCrumb />
+                <Toaster/>
                 <Outlet />
             </div>
         </div>

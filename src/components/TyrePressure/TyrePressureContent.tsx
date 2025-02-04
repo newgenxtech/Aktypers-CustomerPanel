@@ -27,7 +27,7 @@ export interface TyrePressureProps {
 const TyrePressureContent: React.FC = () => {
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
-    const { data: TruckListData } = useGetTruckData('1001');
+    const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
     const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
     const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps>();
 
@@ -108,6 +108,14 @@ const TyrePressureContent: React.FC = () => {
             headerName: 'Recorded At',
             field: 'recorded_at'
         },
+        {
+            headerName: 'Fixed Depth',
+            field: 'fixedDep',
+        },
+        {
+            headerName: 'Actual Depth',
+            field: 'actualDep',
+        }
     ], []);
 
     return (

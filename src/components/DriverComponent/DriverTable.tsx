@@ -4,8 +4,8 @@ import { FileImage } from 'lucide-react';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { routes } from "@/routes/routes";
 import { CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import AgGridTable from '../AgGridTable';
 
@@ -24,15 +24,19 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
             field: 'sno',
             width: 80,
             minWidth: 0,
+            pinned: "left",
             autoHeight: false,
             cellRenderer: (params: CustomCellRendererProps) => `${params.node?.rowIndex ? params.node.rowIndex + 1 : '1'}`
         },
         {
             headerName: 'Name',
             field: 'name',
+            width: 150,
+            pinned: "left",
             cellRenderer: (params: CustomCellRendererProps) => (
                 <span
-                    className="text-[#00008B] font-semibold cursor-pointer text-base"
+                
+                    className="text-[#00008B] font-semibold cursor-pointer text-base "
                     onClick={() => {
                         setOpen(true);
                         setIsEdit(true);
@@ -93,6 +97,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
             field: 'documents',
             cellRenderer: (params: CustomCellRendererProps) => (
                 <div className="flex justify-center items-center mt-2 ">
+                    <Tooltip title={"Documents"} placement="bottom" >
                     <FileImage
                         className="cursor-pointer hover:text-blue-500"
                         onClick={() => {
@@ -121,6 +126,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                             });
                         }}
                     />
+                    </Tooltip>
                 </div>
             )
         }

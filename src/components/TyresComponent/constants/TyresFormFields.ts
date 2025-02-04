@@ -80,18 +80,18 @@ const TyresFormFields = (
                 pattern: z.string().min(1).max(10)
             }
         },
-        {
-            label: 'Total Covered KM',
-            name: 'Total_Covered_KM',
-            type: 'text',
-            isInputProps: {
-                placeholder: 'Enter Total Covered KM'
-            },
-            validation: {
-                required: true,
-                pattern: z.string().min(1).max(10)
-            }
-        },
+        // {
+        //     label: 'Total Covered KM',
+        //     name: 'Total_Covered_KM',
+        //     type: 'text',
+        //     isInputProps: {
+        //         placeholder: 'Enter Total Covered KM'
+        //     },
+        //     validation: {
+        //         required: true,
+        //         pattern: z.string().min(1).max(10)
+        //     }
+        // },
         {
             label: 'Retread Yes No',
             name: 'Retread_Yes_No',

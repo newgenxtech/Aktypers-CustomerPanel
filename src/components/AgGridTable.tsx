@@ -1,8 +1,8 @@
 import { useRef, useCallback } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import { FileText, Sheet } from 'lucide-react';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { useMediaQuery } from 'react-responsive';
 import { AgGridReact } from 'ag-grid-react';
@@ -13,6 +13,15 @@ interface AgGridTableProps<T> {
     isLoading: boolean;
     defaultColDef?: ColDef;
 }
+
+import { themeQuartz } from 'ag-grid-community';
+
+// to use myTheme in an application, pass it to the theme grid option
+const myTheme = themeQuartz
+    .withParams({
+        browserColorScheme: "light",
+        headerFontSize: 14
+    });
 
 const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTableProps<T>) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -34,8 +43,9 @@ const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTabl
     });
 
     return (
-        <div className="ag-theme-quartz mx-2" style={{ height: '60vh', width: 'auto' }}>
-            <div className="flex justify-end gap-2">
+        <div className="ag-theme-quartz mx-2  " style={{ height: '60vh', width: 'auto' }}>
+            <div className="flex justify-end gap-2 px-5">
+                <Tooltip title={"File Download"} placement="bottomRight" >
                 <Button
                     icon={<FileText />}
                     onClick={() => {
@@ -43,16 +53,22 @@ const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTabl
                     }}
                     className='mb-2'
                 />
+                </Tooltip>
+                <Tooltip title={"Excel Download"} placement="bottomRight" >
                 <Button
                     icon={<Sheet />}
                     onClick={onBtnExport}
                     className='mb-2'
                 />
+                </Tooltip>
             </div>
+            <div className='p-5'>
             <AgGridReact
+                theme={myTheme}
                 ref={gridRef}
                 columnDefs={columns}
                 rowData={data}
+                className="scrollbar scrollbar-thumb-blue-500 scrollbar-track-gray-300 hover:scrollbar-thumb-blue-700"
                 loadingOverlayComponent={'Loading...'}
                 overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
                 pagination={isMobile ? false : true}
@@ -70,6 +86,7 @@ const AgGridTable = <T,>({ columns, data, isLoading, defaultColDef }: AgGridTabl
                 }}
                 enableCellTextSelection={true}
             />
+            </div>
             {isMobile && (
                 <div>
                     <p className="text-xs text-gray-500 text-center mt-2">

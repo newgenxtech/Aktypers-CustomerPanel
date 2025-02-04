@@ -14,7 +14,7 @@ const TruckDrawer = lazy(() => import('./TruckDrawer'));
 const TruckListPage = () => {
     const [CurrentTruck, setCurrentTruck] = useState<ITruckData | null>(null);
     const [isEdit, setIsEdit] = useState(false);
-    const { data, isLoading } = useGetTruckData('1001');
+    const { data, isLoading } = useGetTruckData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
 
 
