@@ -16,51 +16,14 @@ import {
   useGetTruckData,
   useGetDriverData,
   useGetTyreData,
+  useGetInvoiceData,
 } from "@/hooks/GetHooks";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { routes } from "@/routes/routes";
-import { DatePicker, message, Spin } from "antd";
-// import { TyreStats } from "@/components/DashboardComponent/TyreStats";
-// import { TyreChart } from "@/components/DashboardComponent/TyreChart";
-// import { TyreTable } from "@/components/DashboardComponent/TyreTable";
+import { DatePicker, Spin } from "antd";
+import { TyreChart } from "@/components/DashboardComponent/TyreChart";
+import { TyreTable } from "@/components/DashboardComponent/TyreTable";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const quickSort = (
-  arr: WareHouseData[],
-  sortDirection: string,
-): WareHouseData[] => {
-  if (arr.length <= 1) {
-    return arr;
-  }
-
-  const pivot = arr[0];
-  const leftArr: WareHouseData[] = [];
-  const rightArr: WareHouseData[] = [];
-
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i].space_available < pivot.space_available) {
-      leftArr.push(arr[i]);
-    } else {
-      rightArr.push(arr[i]);
-    }
-  }
-
-  if (sortDirection === "asc") {
-    return [
-      ...quickSort(leftArr, sortDirection),
-      pivot,
-      ...quickSort(rightArr, sortDirection),
-    ];
-  } else {
-    return [
-      ...quickSort(rightArr, sortDirection),
-      pivot,
-      ...quickSort(leftArr, sortDirection),
-    ];
-  }
-};
 
 const Sum = (arr: WareHouseData[]): number => {
   return arr.reduce((total, warehouse) => total + warehouse.space_available, 0);
@@ -70,30 +33,17 @@ const Dashboard: React.FC = () => {
   const data = useSelector(
     (state: { warehouse: { data: WareHouseData[] } }) => state.warehouse.data,
   );
+
   const { data: truckData } = useGetTruckData(
     localStorage.getItem("customer_id") || "",
   );
   const { data: driverData } = useGetDriverData(
     localStorage.getItem("customer_id") || "",
   );
-  const { data: alloyData } = useQuery({
-    queryKey: ["alloyData"],
-    queryFn: async () => {
-      try {
-        const res = await axios.post(
-          routes.backend.alloy.getAll + localStorage.getItem("customer_id") ||
-          "",
-        );
-        return res.data;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        message.error("Error fetching data");
-      }
-    },
-    refetchOnWindowFocus: false,
-  });
 
   const { data: tyresData } = useGetTyreData();
+
+  const { data: InvoiceData } = useGetInvoiceData();
 
   // Prepare chart data for Bar chart (Space availability by city)
   const cities = [...new Set(data.map((warehouse) => warehouse.city))];
@@ -113,13 +63,20 @@ const Dashboard: React.FC = () => {
     ],
   };
 
-  const totalTrucks = useMemo(() => truckData?.body.length || 0, [truckData]);
+  const totalTrucks = useMemo(() => {
+
+
+
+    return truckData?.body.length || 0;
+  }, [truckData]);
   const totalDrivers = useMemo(
     () => driverData?.body.length || 0,
     [driverData],
   );
-  const totalAlloys = useMemo(() => alloyData?.length || 0, [alloyData]);
 
+  console.log('====================================');
+  console.log(InvoiceData);
+  console.log('====================================');
   return (
     <div className="dashboard">
       {/* Dashboard Header */}
@@ -147,28 +104,38 @@ const Dashboard: React.FC = () => {
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Total Drivers</h2>
-            <p>{totalDrivers}</p>
+            <p className="text-2xl font-bold">{totalDrivers}</p>
           </div>
         </Suspense>
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Total Trucks</h2>
-            <p>{totalTrucks}</p>
+            <p className="text-2xl font-bold">{totalTrucks}</p>
           </div>
         </Suspense>
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Total Tyres</h2>
-            <p>{tyresData?.body.length ?? []}</p>
-          </div>
-        </Suspense>
-        <Suspense fallback={<Spin size="large" />}>
-          <div className="metric-card">
-            <h2>Total Alloys</h2>
-            <p>{totalAlloys}</p>
+            <p className="text-2xl font-bold">{tyresData?.body.length ?? []}</p>
           </div>
         </Suspense>
       </div>
+
+      {/* Overview Cards
+      <div className="my-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="metric-card">
+            <h2 className="text-gray-500 text-sm">Old tyres</h2>
+            <p className="text-2xl font-bold">
+              {tyresData?.body.filter((tyre) => tyre.is_old).length ?? []}
+            </p>
+          </div>
+          <div className="metric-card">
+            <h2 className="text-gray-500 text-sm">Replaced This Month</h2>
+            <p className="text-2xl font-bold">10</p>
+          </div>
+        </div>
+      </div> */}
 
       {/* Charts and List Section */}
       <div className="chart-and-list">
@@ -186,42 +153,73 @@ const Dashboard: React.FC = () => {
 
         {/* Recent Warehouse Activity */}
         <div className="recent-activity">
-          <h3>Top Warehouses by Space</h3>
+          <h3>
+            {/* Top Warehouses by Space */}
+            Pending Inovices
+          </h3>
+
           <Suspense fallback={<Spin size="large" />}>
             <ul>
-              {data &&
-                data.length > 0 &&
-                quickSort(data, "desc")
-                  .splice(0, 8)
-                  .map((warehouse, index) => (
-                    <li key={index}>
-                      <div className="warehouse-details">
-                        <span className="warehouse-name">{warehouse.name}</span>
-                        <span>{warehouse.city}</span>
+              {InvoiceData &&
+                InvoiceData.length > 0 &&
+                InvoiceData.filter((invoice: {
+                  Credit: number,
+                  Date: string,
+                  Invoiceid: string,
+                  Particulars: string
+                }) => invoice.Credit !== 0).map((invoice, index) => {
+                  const today = new Date();
+                  const invoiceDate = new Date(invoice.Date);
+                  const overdueDays = Math.floor(
+                    (today.getTime() - invoiceDate.getTime()) / (1000 * 60 * 60 * 24)
+                  );
+
+                  return (
+                    <li
+                      key={index}
+                      className="p-4 rounded-lg mb-2 flex justify-between items-center hover:shadow-md transition-shadow duration-300"
+                    >
+                      <div>
+                        <div className="mb-1">
+                          <span className="text-sm text-gray-500">Invoice ID:</span>
+                          <span className="ml-1 text-lg font-bold text-blue-600">
+                            {invoice.Invoiceid ?? "N/A"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-base font-semibold">{invoice.Particulars}</span>
+                          <span className="ml-2 text-sm text-gray-400">{invoice.Date}</span>
+                        </div>
                       </div>
-                      <span className="space-available">
-                        {warehouse.space_available.toLocaleString()} sq. ft.
-                      </span>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">{invoice.Credit}</div>
+                        <div className="mt-1">
+                          {overdueDays > 0 ? (
+                            <span className="text-red-500 text-sm">
+                              Overdue by {overdueDays} day{overdueDays > 1 ? "s" : ""}
+                            </span>
+                          ) : (
+                            <span className="text-green-500 text-sm">No overdue</span>
+                          )}
+                        </div>
+                      </div>
                     </li>
-                  ))}
+                  );
+                })}
             </ul>
           </Suspense>
         </div>
       </div>
 
-      {/* Overview Cards */}
-      {/* <div className="my-6">
-        <TyreStats />
-      </div> */}
       {/* Chart Section */}
-      {/* <div className="my-6">
+      <div className="my-6">
         <TyreChart />
-      </div> */}
+      </div>
 
       {/* Table Section */}
-      {/* <div className="my-6">
+      <div className="my-6">
         <TyreTable />
-      </div> */}
+      </div>
     </div>
   );
 };

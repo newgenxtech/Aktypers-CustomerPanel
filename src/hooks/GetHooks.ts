@@ -143,3 +143,26 @@ export const useGetTyreData = (
     refetchOnWindowFocus: false,
   });
 };
+
+
+export const useGetInvoiceData = (fromDate?: string, toDate?: string) => {
+  return useQuery({
+    queryKey: ['invoices', fromDate, toDate],
+    queryFn: async () => {
+      try {
+        const res = await axios.post(
+          routes.backend.invoice.getCustomerpayfilter,
+          {
+            // customer_id: localStorage.getItem('customer_id') || '',
+            customer_id: '1006',
+          }
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        message.error("Error fetching invoice data");
+        return [];
+      }
+    },
+  });
+}
