@@ -166,3 +166,103 @@ export const useGetInvoiceData = (fromDate?: string, toDate?: string) => {
     },
   });
 }
+
+
+
+// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getTruckMakersByCustomerId&customer_id=1001
+
+// {
+//   "itemCount": 6,
+//     "body": [
+//       {
+//         "make": "134314",
+//         "count": "1"
+//       },
+//       {
+//         "make": "asdsadasd",
+//         "count": "2"
+//       },
+//       {
+//         "make": "dfgdfg",
+//         "count": "1"
+//       },
+//       {
+//         "make": "Mda",
+//         "count": "1"
+//       },
+//       {
+//         "make": "Suzuki",
+//         "count": "1"
+//       },
+//       {
+//         "make": "Toyota",
+//         "count": "3"
+//       }
+//     ]
+// }
+
+export const useGetTruckMakers = (customer_id: string) => {
+  return useQuery<GetApiResponse<{ make: string; count: string }>>({
+    queryKey: ["truckMakers", customer_id],
+    queryFn: () =>
+      GetApiCustomerRoutes(
+        routes.backend.truck.getTruckMakersByCustomerId + customer_id,
+        "DummyToken",
+      ).then((res) => res as GetApiResponse<{ make: string; count: string }>),
+  });
+}
+
+
+// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=insertTruckIdsAndGroupByBrand&customer_id=1001
+
+// {
+//     "itemCount": 7,
+//     "body": [
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "Apollo",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "Bridgestone",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "6",
+//             "tyre_brand": "cdvdv",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "CEAT",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "Mechillen",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "Michelin",
+//             "tyre_count": "1"
+//         },
+//         {
+//             "truck_id": "1",
+//             "tyre_brand": "MRF",
+//             "tyre_count": "1"
+//         }
+//     ]
+// }
+
+export const useGetTruckIdsAndGroupByBrand = (customer_id: string) => {
+  return useQuery<GetApiResponse<{ truck_id: string; tyre_brand: string; tyre_count: string }>>({
+    queryKey: ["truckIdsAndGroupByBrand", customer_id],
+    queryFn: () =>
+      GetApiCustomerRoutes(
+        routes.backend.truck.getTruckIdsAndGroupByBrand + customer_id,
+        "DummyToken",
+      ).then((res) => res as GetApiResponse<{ truck_id: string; tyre_brand: string; tyre_count: string }>),
+  });
+}
