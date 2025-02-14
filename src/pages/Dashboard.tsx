@@ -1,6 +1,5 @@
-// src/components/Dashboard.tsx
 import React, { useMemo, Suspense } from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart,
   BarElement,
@@ -8,6 +7,8 @@ import {
   LinearScale,
   Tooltip,
   Legend,
+  Title,
+  ArcElement,
 } from "chart.js";
 import "@/styles/Dashboard.css";
 import { useSelector } from "react-redux";
@@ -16,18 +17,18 @@ import {
   useGetTruckData,
   useGetDriverData,
   useGetTyreData,
-  useGetInvoiceData,
+  useGetPaymentAnalytics,
+  useGetTyreAnalytics,
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
-import { TyreChart } from "@/components/DashboardComponent/TyreChart";
 import { TyreTable } from "@/components/DashboardComponent/TyreTable";
 
-Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
+Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement);
 
 const Sum = (arr: WareHouseData[]): number => {
   return arr.reduce((total, warehouse) => total + warehouse.space_available, 0);
 };
+
 
 const Dashboard: React.FC = () => {
   const data = useSelector(
@@ -43,13 +44,39 @@ const Dashboard: React.FC = () => {
 
   const { data: tyresData } = useGetTyreData();
 
-  const { data: InvoiceData } = useGetInvoiceData();
+
+  const {
+    data: tyreAnalyticsData, isLoading: tyreAnalyticsLoading,
+  } = useGetTyreAnalytics(localStorage.getItem("customer_id") || "");
+
+  const {
+    data: paymentAnalyticsData,
+  } = useGetPaymentAnalytics(
+    localStorage.getItem("customer_id") || "",
+  )
 
   // Prepare chart data for Bar chart (Space availability by city)
   const cities = [...new Set(data.map((warehouse) => warehouse.city))];
   const spaceByCity = cities.map((city) =>
     Sum(data.filter((warehouse) => warehouse.city === city)),
   );
+
+  // get Credit and Debit and then calculate the balance
+
+  const balance = useMemo(() => {
+    console.log(paymentAnalyticsData);
+    let credit = 0;
+    let debit = 0;
+    paymentAnalyticsData?.body.flat().forEach((item) => {
+      if (item.Credit) {
+        credit += parseInt(item.Credit);
+      }
+      if (item.Debit) {
+        debit += parseInt(item.Debit);
+      }
+    });
+    return credit - debit;
+  }, [paymentAnalyticsData]);
 
   const barData = {
     labels: cities,
@@ -64,19 +91,14 @@ const Dashboard: React.FC = () => {
   };
 
   const totalTrucks = useMemo(() => {
-
-
-
     return truckData?.body.length || 0;
   }, [truckData]);
+
   const totalDrivers = useMemo(
     () => driverData?.body.length || 0,
     [driverData],
   );
 
-  console.log('====================================');
-  console.log(InvoiceData);
-  console.log('====================================');
   return (
     <div className="dashboard">
       {/* Dashboard Header */}
@@ -103,6 +125,12 @@ const Dashboard: React.FC = () => {
       <div className="metrics-row">
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
+            <h2>Pending Balanace To Pay</h2>
+            <p className="text-2xl font-bold">₹{balance}</p>
+          </div>
+        </Suspense>
+        <Suspense fallback={<Spin size="large" />}>
+          <div className="metric-card">
             <h2>Total Drivers</h2>
             <p className="text-2xl font-bold">{totalDrivers}</p>
           </div>
@@ -120,22 +148,6 @@ const Dashboard: React.FC = () => {
           </div>
         </Suspense>
       </div>
-
-      {/* Overview Cards
-      <div className="my-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="metric-card">
-            <h2 className="text-gray-500 text-sm">Old tyres</h2>
-            <p className="text-2xl font-bold">
-              {tyresData?.body.filter((tyre) => tyre.is_old).length ?? []}
-            </p>
-          </div>
-          <div className="metric-card">
-            <h2 className="text-gray-500 text-sm">Replaced This Month</h2>
-            <p className="text-2xl font-bold">10</p>
-          </div>
-        </div>
-      </div> */}
 
       {/* Charts and List Section */}
       <div className="chart-and-list">
@@ -155,66 +167,51 @@ const Dashboard: React.FC = () => {
         <div className="recent-activity">
           <h3>
             {/* Top Warehouses by Space */}
-            Pending Inovices
+            Overdue Insurance
           </h3>
 
           <Suspense fallback={<Spin size="large" />}>
-            <ul>
-              {InvoiceData &&
-                InvoiceData.length > 0 &&
-                InvoiceData.filter((invoice: {
-                  Credit: number,
-                  Date: string,
-                  Invoiceid: string,
-                  Particulars: string
-                }) => invoice.Credit !== 0).map((invoice, index) => {
-                  const today = new Date();
-                  const invoiceDate = new Date(invoice.Date);
-                  const overdueDays = Math.floor(
-                    (today.getTime() - invoiceDate.getTime()) / (1000 * 60 * 60 * 24)
-                  );
 
-                  return (
-                    <li
-                      key={index}
-                      className="p-4 rounded-lg mb-2 flex justify-between items-center hover:shadow-md transition-shadow duration-300"
-                    >
-                      <div>
-                        <div className="mb-1">
-                          <span className="text-sm text-gray-500">Invoice ID:</span>
-                          <span className="ml-1 text-lg font-bold text-blue-600">
-                            {invoice.Invoiceid ?? "N/A"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-base font-semibold">{invoice.Particulars}</span>
-                          <span className="ml-2 text-sm text-gray-400">{invoice.Date}</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">{invoice.Credit}</div>
-                        <div className="mt-1">
-                          {overdueDays > 0 ? (
-                            <span className="text-red-500 text-sm">
-                              Overdue by {overdueDays} day{overdueDays > 1 ? "s" : ""}
-                            </span>
-                          ) : (
-                            <span className="text-green-500 text-sm">No overdue</span>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-            </ul>
           </Suspense>
         </div>
       </div>
 
-      {/* Chart Section */}
-      <div className="my-6">
-        <TyreChart />
-      </div>
+      <Suspense fallback={<Spin size="large" />}>
+        {
+          !tyreAnalyticsLoading && tyreAnalyticsData && (
+            <div className="my-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-[50vh] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                  Tyre Maintenance Trends
+                </h2>
+                <Pie
+                  data={{
+                    labels: Object.keys(tyreAnalyticsData?.analytics || {}),
+                    datasets: [
+                      {
+                        label: "Tyre Status Distribution",
+                        data: Object.values(tyreAnalyticsData?.analytics || {}),
+                        backgroundColor: ["#ff4242", "#FF8042", "#00C49F"],
+                        hoverBackgroundColor: ["#ff4242", "#FF8042", "#00C49F"],
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: { position: "top" },
+                      title: { display: true, text: "Tyre Maintenance Trends" },
+                    },
+                  }}
+                  // Use a key based on your analytics data to force re‑mounting when data changes
+                  key={JSON.stringify(tyreAnalyticsData?.analytics)}
+                  redraw={true}
+                />
+              </div>
+            </div>
+          )
+        }
+      </Suspense>
 
       {/* Table Section */}
       <div className="my-6">

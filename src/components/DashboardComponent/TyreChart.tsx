@@ -1,6 +1,5 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -51,30 +50,6 @@ const barOptions = {
   },
 };
 
-const pieData = {
-  labels: ["Under Maintenance", "Replaced", "In Use"],
-  datasets: [
-    {
-      label: "Tyre Status Distribution",
-      data: [25, 10, 115],
-      backgroundColor: ["#FF8042", "#0088FE", "#00C49F"],
-      hoverBackgroundColor: ["#FF8042", "#0088FE", "#00C49F"],
-    },
-  ],
-};
-
-const pieOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Tyre Status Distribution",
-    },
-  },
-};
 
 export const TyreChart: React.FC = () => {
   return (
@@ -87,13 +62,6 @@ export const TyreChart: React.FC = () => {
         <Bar width={100} height={100} data={barData} options={barOptions} />
       </div>
 
-      {/* Pie Chart */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-[50vh] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-          Tyre Status Distribution
-        </h2>
-        <Pie width={100} height={100} data={pieData} options={pieOptions} />
-      </div>
     </div>
   );
 };

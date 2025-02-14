@@ -65,6 +65,7 @@ export const routes = {
 
             updateTyre: `${base}?route=editTyre`,
 
+            getTyreAnalytics: `${base}?route=getTyreAnalytics`,
         },
         insurance: {
             create: `${base}?route=createInsurance`,
@@ -76,7 +77,7 @@ export const routes = {
             getCustomerpayfilter: `${base}?route=getCustomerpayfilter`,
 
             getInvoiceFiles: `${base}?route=getInvoiceFiles&invoice_id=`,
-
+            getPaymentAnalytics: `${base}?route=getPaymentAnalytics`,
         },
 
         complaints: {
