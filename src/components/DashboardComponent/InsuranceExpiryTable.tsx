@@ -74,7 +74,7 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thres
 
     return (
         <div className="container mx-auto">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 h-[690px] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
                 <h2 className="text-2xl font-semibold mb-4">Insurances Near Expiry</h2>
                 <TableComponent
                     data={filteredData}
