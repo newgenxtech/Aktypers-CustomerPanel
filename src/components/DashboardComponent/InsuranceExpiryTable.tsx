@@ -22,6 +22,7 @@ interface InsuranceExpiryTableProps {
 const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thresholdDays = 60 }) => {
     // Use new Date() for current date, or for testing override as below:
     // const today = new Date("2025-02-14");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const today = new Date();
 
     const filteredData = useMemo(() => {
@@ -62,7 +63,7 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thres
         {
             title: 'Days Left',
             key: 'days_left',
-            render: (_: any, record: InsuranceRecord) => {
+            render: (_: unknown, record: InsuranceRecord) => {
                 const expiry = new Date(record.expiry_date);
                 const diffTime = expiry.getTime() - today.getTime();
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -72,15 +73,18 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thres
     ];
 
     return (
-        <div>
-            <h2>Insurances Near Expiry</h2>
+        <div className="container mx-auto p-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold mb-4">Insurances Near Expiry</h2>
             <Table
                 dataSource={filteredData}
                 columns={columns}
                 rowKey="insurance_id"
                 pagination={false}
                 locale={{ emptyText: 'No insurances nearing expiry' }}
+                className="modern-table"
             />
+            </div>
         </div>
     );
 };

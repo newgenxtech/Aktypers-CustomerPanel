@@ -24,6 +24,7 @@ import {
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
+import RecentComplaintsTable from "@/components/DashboardComponent/RecentComplaintsTable";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement);
 
@@ -124,7 +125,7 @@ const Dashboard: React.FC = () => {
       <div className="metrics-row">
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
-            <h2>Pending Balanace To Pay</h2>
+            <h2>Pending Balance To Pay</h2>
             <p className="text-2xl font-bold">₹{balance}</p>
           </div>
         </Suspense>
@@ -191,14 +192,10 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-4">
-        <div className="recent-activity mt-4 w-full">
-          <h3>Overdue Insurance</h3>
-          <Suspense fallback={<Spin size="large" />}>
-            {/* Add your overdue insurance content here */}
-          </Suspense>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
+        {complaintsData && (
+          <RecentComplaintsTable data={complaintsData.body} thresholdDays={60} />
+        )}
         {/* Pie Chart Section */}
         <Suspense fallback={<Spin size="large" />}>
           {!tyreAnalyticsLoading && tyreAnalyticsData && (
@@ -207,36 +204,38 @@ const Dashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                   Tyre Maintenance Trends
                 </h2>
-                <Pie
-                  data={{
-                    labels: Object.keys(tyreAnalyticsData?.analytics || {}),
-                    datasets: [
-                      {
-                        label: "Tyre Status Distribution",
-                        data: Object.values(tyreAnalyticsData?.analytics || {}),
-                        backgroundColor: [
-                          "#ff4242",
-                          "#FF8042",
-                          "#00C49F",
-                        ],
-                        hoverBackgroundColor: [
-                          "#ff4242",
-                          "#FF8042",
-                          "#00C49F",
-                        ],
+                <div className="w-full h-full">
+                  <Pie
+                    data={{
+                      labels: Object.keys(tyreAnalyticsData?.analytics || {}),
+                      datasets: [
+                        {
+                          label: "Tyre Status Distribution",
+                          data: Object.values(tyreAnalyticsData?.analytics || {}),
+                          backgroundColor: [
+                            "#ff4242",
+                            "#FF8042",
+                            "#00C49F",
+                          ],
+                          hoverBackgroundColor: [
+                            "#ff4242",
+                            "#FF8042",
+                            "#00C49F",
+                          ],
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { position: "top" },
                       },
-                    ],
-                  }}
-                  options={{
-                    responsive: true,
-                    plugins: {
-                      legend: { position: "top" },
-                      title: { display: true, text: "Tyre Maintenance Trends" },
-                    },
-                  }}
-                  key={JSON.stringify(tyreAnalyticsData?.analytics)}
-                  redraw={true}
-                />
+                    }}
+                    key={JSON.stringify(tyreAnalyticsData?.analytics)}
+                    redraw={true}
+                  />
+                </div>
               </div>
             </div>
           )}
