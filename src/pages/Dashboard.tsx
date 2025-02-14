@@ -23,7 +23,7 @@ import {
   useGetComplaintsData,
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
-import { TyreTable } from "@/components/DashboardComponent/TyreTable";
+import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement);
 
@@ -191,60 +191,61 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="recent-activity mt-4 w-full">
-        <h3>Overdue Insurance</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  w-full gap-4">
+        <div className="recent-activity mt-4 w-full">
+          <h3>Overdue Insurance</h3>
+          <Suspense fallback={<Spin size="large" />}>
+            {/* Add your overdue insurance content here */}
+          </Suspense>
+        </div>
+
+        {/* Pie Chart Section */}
         <Suspense fallback={<Spin size="large" />}>
-          {/* Add your overdue insurance content here */}
-        </Suspense>
-      </div>
-
-      {/* Pie Chart Section */}
-      <Suspense fallback={<Spin size="large" />}>
-        {!tyreAnalyticsLoading && tyreAnalyticsData && (
-          <div className="my-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-[50vh] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                Tyre Maintenance Trends
-              </h2>
-              <Pie
-                data={{
-                  labels: Object.keys(tyreAnalyticsData?.analytics || {}),
-                  datasets: [
-                    {
-                      label: "Tyre Status Distribution",
-                      data: Object.values(tyreAnalyticsData?.analytics || {}),
-                      backgroundColor: [
-                        "#ff4242",
-                        "#FF8042",
-                        "#00C49F",
-                      ],
-                      hoverBackgroundColor: [
-                        "#ff4242",
-                        "#FF8042",
-                        "#00C49F",
-                      ],
+          {!tyreAnalyticsLoading && tyreAnalyticsData && (
+            <div className="my-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-[50vh] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                  Tyre Maintenance Trends
+                </h2>
+                <Pie
+                  data={{
+                    labels: Object.keys(tyreAnalyticsData?.analytics || {}),
+                    datasets: [
+                      {
+                        label: "Tyre Status Distribution",
+                        data: Object.values(tyreAnalyticsData?.analytics || {}),
+                        backgroundColor: [
+                          "#ff4242",
+                          "#FF8042",
+                          "#00C49F",
+                        ],
+                        hoverBackgroundColor: [
+                          "#ff4242",
+                          "#FF8042",
+                          "#00C49F",
+                        ],
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: { position: "top" },
+                      title: { display: true, text: "Tyre Maintenance Trends" },
                     },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { position: "top" },
-                    title: { display: true, text: "Tyre Maintenance Trends" },
-                  },
-                }}
-                key={JSON.stringify(tyreAnalyticsData?.analytics)}
-                redraw={true}
-              />
+                  }}
+                  key={JSON.stringify(tyreAnalyticsData?.analytics)}
+                  redraw={true}
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </Suspense>
+          )}
+        </Suspense>
 
-      {/* Table Section */}
-      {/* <div className="my-6">
-          <TyreTable />
-      </div> */}
+        {insuranceData && (
+          <InsuranceExpiryTable data={insuranceData.body} thresholdDays={60} />
+        )}
+      </div>
     </div>
   );
 };
