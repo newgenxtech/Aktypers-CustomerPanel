@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Table } from 'antd';
+import React, { useMemo, useState } from 'react';
+import TableComponent, { DataCol } from '../TableComponent';
 
 interface ComplaintRecord {
   complaint_id: string;
@@ -19,7 +19,6 @@ interface RecentComplaintsTableProps {
 }
 
 const RecentComplaintsTable: React.FC<RecentComplaintsTableProps> = ({ data, thresholdDays = 60 }) => {
-  // Use new Date() for current date; you can override for testing.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const today = new Date();
 
@@ -32,55 +31,55 @@ const RecentComplaintsTable: React.FC<RecentComplaintsTableProps> = ({ data, thr
     });
   }, [data, thresholdDays, today]);
 
-  const columns = [
-    {
-      title: 'Complaint ID',
-      dataIndex: 'complaint_id',
-      key: 'complaint_id',
-    },
-    {
-      title: 'Truck ID',
-      dataIndex: 'truck_id',
-      key: 'truck_id',
-    },
-    {
-      title: 'Complaint Description',
-      dataIndex: 'complaint_description',
-      key: 'complaint_description',
-    },
-    {
-      title: 'Complaint Date',
-      dataIndex: 'complaint_date',
-      key: 'complaint_date',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'Days Ago',
-      key: 'days_ago',
-      render: (_: unknown, record: ComplaintRecord) => {
-        const complaintDate = new Date(record.complaint_date);
-        const diffTime = today.getTime() - complaintDate.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
+  const columns: DataCol<ComplaintRecord>[]
+    = [
+      {
+        label: 'Complaint ID',
+        key: 'complaint_id',
+        render: (record: ComplaintRecord) => record.complaint_id,
       },
-    },
-  ];
+      {
+        label: 'Truck ID',
+        key: 'truck_id',
+        render: (record: ComplaintRecord) => record.truck_id,
+      },
+      {
+        label: 'Complaint Description',
+        key: 'complaint_description',
+        render: (record: ComplaintRecord) => record.complaint_description,
+      },
+      {
+        label: 'Complaint Date',
+        key: 'complaint_date',
+        render: (record: ComplaintRecord) => record.complaint_date,
+      },
+      {
+        label: 'Status',
+        key: 'status',
+        render: (record: ComplaintRecord) => record.status,
+      },
+      {
+        label: 'Days Ago',
+        key: 'days_ago',
+        render: (record: ComplaintRecord) => {
+          const complaintDate = new Date(record.complaint_date);
+          const diffTime = today.getTime() - complaintDate.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          return diffDays;
+        },
+      },
+    ];
 
+  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 10 });
   return (
     <div className="container mx-auto mt-6">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-semibold mb-4" >Recent Complaints (Last {thresholdDays} Days)</h2>
-        <Table
-          dataSource={filteredData}
+        <TableComponent
           columns={columns}
-          rowKey="complaint_id"
-          pagination={false}
-          locale={{ emptyText: 'No recent complaints' }}
-          className="modern-table"
+          data={filteredData}
+          pagination={pagination}
+          setPagination={setPagination}
         />
       </div>
     </div >

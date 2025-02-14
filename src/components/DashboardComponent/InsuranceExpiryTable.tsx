@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Table } from 'antd';
+import React, { useMemo, useState } from 'react';
+import TableComponent, { DataCol } from '../TableComponent';
 
 interface InsuranceRecord {
     insurance_id: string;
@@ -20,8 +20,6 @@ interface InsuranceExpiryTableProps {
 }
 
 const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thresholdDays = 60 }) => {
-    // Use new Date() for current date, or for testing override as below:
-    // const today = new Date("2025-02-14");
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const today = new Date();
 
@@ -34,36 +32,36 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thres
         });
     }, [data, thresholdDays, today]);
 
-    const columns = [
+    const columns: DataCol<InsuranceRecord>[] = [
         {
-            title: 'Insurance ID',
-            dataIndex: 'insurance_id',
+            label: 'Insurance ID',
             key: 'insurance_id',
+            render: (record: InsuranceRecord) => record.insurance_id,
         },
         {
-            title: 'Vehicle ID',
-            dataIndex: 'vehicle_id',
+            label: 'Vehicle ID',
             key: 'vehicle_id',
+            render: (record: InsuranceRecord) => record.vehicle_id
         },
         {
-            title: 'Insurance Number',
-            dataIndex: 'insurance_number',
+            label: 'Insurance Number',
             key: 'insurance_number',
+            render: (record: InsuranceRecord) => record.insurance_number,
         },
         {
-            title: 'Insurance Name',
-            dataIndex: 'insurance_name',
+            label: 'Insurance Name',
             key: 'insurance_name',
+            render: (record: InsuranceRecord) => record.insurance_name,
         },
         {
-            title: 'Expiry Date',
-            dataIndex: 'expiry_date',
+            label: 'Expiry Date',
             key: 'expiry_date',
+            render: (record: InsuranceRecord) => record.expiry_date,
         },
         {
-            title: 'Days Left',
+            label: 'Days Left',
             key: 'days_left',
-            render: (_: unknown, record: InsuranceRecord) => {
+            render: (record: InsuranceRecord) => {
                 const expiry = new Date(record.expiry_date);
                 const diffTime = expiry.getTime() - today.getTime();
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -72,18 +70,19 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thres
         },
     ];
 
+    const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 10 });
+
     return (
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto">
             <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-4">Insurances Near Expiry</h2>
-            <Table
-                dataSource={filteredData}
-                columns={columns}
-                rowKey="insurance_id"
-                pagination={false}
-                locale={{ emptyText: 'No insurances nearing expiry' }}
-                className="modern-table"
-            />
+                <h2 className="text-2xl font-semibold mb-4">Insurances Near Expiry</h2>
+                <TableComponent
+                    data={filteredData}
+                    columns={columns}
+                    pagination={pagination}
+                    setPagination={setPagination}
+
+                />
             </div>
         </div>
     );

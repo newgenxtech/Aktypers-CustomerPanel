@@ -1,60 +1,59 @@
-import React, { useMemo } from 'react';
-import { Table } from 'antd';
-import { ITyrePressure } from '@/pages/TyprePressure/Tyre';
+import React, { useMemo, useState } from "react";
+import TableComponent, { DataCol } from "@/components/TableComponent";
+import { ITyrePressure } from "@/pages/TyprePressure/Tyre";
 
 interface TyreConditionTableProps {
     data: ITyrePressure[];
 }
 
 const TyreConditionTable: React.FC<TyreConditionTableProps> = ({ data }) => {
-    const filteredData = useMemo(() => {
-        return data.filter(record => {
-            return record.pressure_status === "Bad";
-        });
-    }, [data]);
-    
-    const columns = [
+    // Filter for records with "Bad" pressure status.
+    const filteredData = useMemo(() => data.filter((record) => record.pressure_status === "Bad"), [data]);
+
+    // Define columns for the AG Grid table.
+    const columns: DataCol<ITyrePressure>[] = [
         {
-            title: 'Truck ID',
-            dataIndex: 'truck_id',
-            key: 'truck_id',
+            label: "Truck ID",
+            key: "truck_id",
+            render: (e) => e.truck_id,
         },
         {
-            title: 'Tyre Position',
-            dataIndex: 'tyre_position',
-            key: 'tyre_position',
+            label: "Tyre Position",
+            key: "tyre_position",
+            render: (e) => e.tyre_position,
         },
         {
-            title: 'Tyre Pressure',
-            dataIndex: 'tyre_pressure',
-            key: 'tyre_pressure',
+            label: "Tyre Pressure",
+            key: "tyre_pressure",
+            render: (e) => e.tyre_pressure,
         },
         {
-            title: 'Recorded At',
-            dataIndex: 'recorded_at',
-            key: 'recorded_at',
+            label: "Recorded At",
+            key: "recorded_at",
+            render: (e) => e.recorded_at,
         },
         {
-            title: 'Pressure Status',
-            dataIndex: 'pressure_status',
-            key: 'pressure_status',
+            label: "Pressure Status",
+            key: "pressure_status",
+            render: (e) => e.pressure_status,
         },
     ];
 
+    // Manage pagination state.
+    const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 10 });
+
     return (
-        <div className="container mx-auto mt-6">
+        <div className="container mx-auto">
             <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold mb-4" >Bad Tyre List</h2>
-                <Table
-                    dataSource={filteredData}
+                <h2 className="text-2xl font-semibold mb-4">Bad Tyre List</h2>
+                <TableComponent
                     columns={columns}
-                    rowKey="complaint_id"
-                    pagination={false}
-                    locale={{ emptyText: 'No recent Bad Tyres' }}
-                    className="modern-table"
+                    data={filteredData}
+                    pagination={pagination}
+                    setPagination={setPagination}
                 />
             </div>
-        </div >
+        </div>
     );
 };
 
