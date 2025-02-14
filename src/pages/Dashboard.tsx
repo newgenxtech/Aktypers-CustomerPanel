@@ -25,6 +25,7 @@ import {
 import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
 import RecentComplaintsTable from "@/components/DashboardComponent/RecentComplaintsTable";
+import TyreConditionTable from "@/components/DashboardComponent/TyreConditionTable";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement);
 
@@ -244,6 +245,12 @@ const Dashboard: React.FC = () => {
         {insuranceData && (
           <InsuranceExpiryTable data={insuranceData.body} thresholdDays={60} />
         )}
+
+        {
+          !tyreAnalyticsLoading && tyreAnalyticsData && (
+            <TyreConditionTable data={tyreAnalyticsData.body} />
+          )
+        }
       </div>
     </div>
   );

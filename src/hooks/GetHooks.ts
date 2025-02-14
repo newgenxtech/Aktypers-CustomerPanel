@@ -11,6 +11,7 @@ import { InsuranceMaster } from "@/pages/Insurance/Insurance.d";
 import { ComplaintsMaster } from "@/pages/Compliant/Compliant.d";
 import axios from "axios";
 import { message } from "antd";
+import { ITyrePressure } from "@/pages/TyprePressure/Tyre";
 export const useGetDriverData = (customer_id: string) => {
   return useQuery<GetApiResponse<DriverMaster>>({
     queryKey: ["drivers"],
@@ -196,7 +197,6 @@ export const useGetPaymentAnalytics = (customer_id: string) => {
 }
 
 // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getTyreAnalytics&customer_id=1001
-
 // {
 //   "itemCount": 12,
 //   "body": [
@@ -387,6 +387,7 @@ export const useGetPaymentAnalytics = (customer_id: string) => {
 export const useGetTyreAnalytics = (customer_id: string) => {
   return useQuery<
     {
+      body: ITyrePressure[];
       analytics: {
         bad: number;
         good: number;

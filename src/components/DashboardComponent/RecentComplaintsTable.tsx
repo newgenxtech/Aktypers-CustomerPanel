@@ -20,6 +20,7 @@ interface RecentComplaintsTableProps {
 
 const RecentComplaintsTable: React.FC<RecentComplaintsTableProps> = ({ data, thresholdDays = 60 }) => {
   // Use new Date() for current date; you can override for testing.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const today = new Date();
 
   const filteredData = useMemo(() => {
