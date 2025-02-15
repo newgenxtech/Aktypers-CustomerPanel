@@ -1,11 +1,13 @@
-import { useState, useCallback } from 'react';
-import { Input, Modal, Select } from 'antd';
-import { DatePicker } from 'antd';
+import { useState, useCallback, useRef } from 'react';
+import { Input, Modal, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
 import { useGetTripData } from '@/hooks/GetHooks';
-import { Edit } from 'lucide-react';
+import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
+import { Button } from '@/components/ui/button';
+import { CustomCellRendererProps } from 'ag-grid-react';
+
 interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
     returnDate: dayjs.Dayjs | null;
@@ -14,13 +16,16 @@ interface FilterData {
     returnDriver: string;
 }
 const SummaryListPage = () => {
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [searchText, setSearchText] = useState<string>('');
+    const gridRef = useRef<any>(null);
 
     const {
         data: tripData,
         isLoading: tripDataLoading,
     } = useGetTripData(
         localStorage.getItem("customer_id") || ""
-    )
+    );
 
     const [filterData, setFilterData] = useState<FilterData>({
         arrivalDate: null,
@@ -30,116 +35,191 @@ const SummaryListPage = () => {
         returnDriver: ''
     });
 
-    const columnDefs: ColDef[]
-        = [
-            { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true },
-            { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
-            { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
-            { field: 'return_driver_name', headerName: 'Return Driver name', sortable: true, filter: true },
-            { field: 'loading_date', headerName: 'Loading Date', sortable: true, filter: true },
-            { field: 'unloading_date', headerName: 'Unloading Date', sortable: true, filter: true },
-            { field: 'from', headerName: 'From', sortable: true, filter: true },
-            { field: 'to', headerName: 'To', sortable: true, filter: true },
-            { field: 'total', headerName: 'Total', sortable: true, filter: true },
-            {
-                headerName: 'Actions',
-                cellRenderer: () => (
-                    <div
-                        className='cursor-pointer flex justify-center items-center'
-                    >
-                        <Edit
-                            onClick={
-                                () => {
-                                    Modal.info({
-                                        title: 'Edit Trip',
-                                        content: (
-                                            <div>
-                                                <p>Edit Trip</p>
-                                            </div>
-                                        ),
-                                        onOk() { },
-                                    });
-                                }
-                            }
-                        />
-                    </div>
-                ),
-                width: 100
-            },
-        ];
+    const columnDefs: ColDef[] = [
+        { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true, width: 80 },
+        { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
+        { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
+        { field: 'return_driver_name', headerName: 'Return Driver name', sortable: true, filter: true },
+        {
+            field: 'loading_date',
+            headerName: 'Loading Date',
+            sortable: true,
+            filter: true,
+            valueFormatter: (params) => dayjs(params.value).format('DD/MM/YYYY')
+        },
+        {
+            field: 'unloading_date',
+            headerName: 'Unloading Date',
+            sortable: true,
+            filter: true,
+            valueFormatter: (params) => dayjs(params.value).format('DD/MM/YYYY')
+        },
+        { field: 'from', headerName: 'From', sortable: true, filter: true },
+        { field: 'to', headerName: 'To', sortable: true, filter: true },
+        { field: 'total', headerName: 'Total', sortable: true, filter: true },
+        {
+            headerName: 'Actions',
+            cellRenderer: (params: CustomCellRendererProps) => (
+                <div className='cursor-pointer flex justify-center items-center'>
+                    <Edit
+                        className="h-4 w-4 text-gray-600 hover:text-blue-600"
+                        onClick={() => handleEdit(params.data)}
+                    />
+                </div>
+            ),
+            width: 100,
+            suppressMenu: true,
+            sortable: false,
+            filter: false,
+        }
+    ];
+
+    const handleEdit = (data: any) => {
+        Modal.info({
+            title: 'Edit Trip',
+            width: 600,
+            content: (
+                <div className="p-4">
+                    {/* Add your edit form here */}
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                </div>
+            ),
+            onOk() { },
+        });
+    };
 
     const handleSearch = useCallback((value: string) => {
-        // Implement search functionality
+        setSearchText(value);
+        if (gridRef.current) {
+            gridRef.current.api.setQuickFilter(value);
+        }
     }, []);
 
+    const handleFilter = useCallback(() => {
+        if (!gridRef.current) return;
+
+        const filterModel: any = {};
+
+        if (filterData.truck) {
+            filterModel.truck_no = {
+                type: 'contains',
+                filter: filterData.truck
+            };
+        }
+
+        if (filterData.driver) {
+            filterModel.driver_name = {
+                type: 'contains',
+                filter: filterData.driver
+            };
+        }
+
+        if (filterData.returnDriver) {
+            filterModel.return_driver_name = {
+                type: 'contains',
+                filter: filterData.returnDriver
+            };
+        }
+
+        if (filterData.arrivalDate) {
+            filterModel.loading_date = {
+                type: 'equals',
+                dateFrom: filterData.arrivalDate.startOf('day').toISOString()
+            };
+        }
+
+        if (filterData.returnDate) {
+            filterModel.unloading_date = {
+                type: 'equals',
+                dateFrom: filterData.returnDate.startOf('day').toISOString()
+            };
+        }
+
+        gridRef.current.api.setFilterModel(filterModel);
+    }, [filterData]);
+
     return (
-        <div className='summary'>
-            <div className="flex flex-col space-y-4 p-4">
-                <div className="flex flex-wrap gap-4 items-center">
+        <div className='summary bg-white rounded-lg shadow-sm'>
+            <div className="flex flex-col space-y-4 p-6">
+
+                <div className="flex justify-between items-center border-b pb-4">
+                    <h2 className="text-xl font-bold text-gray-800">Summary Details</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <DatePicker
                         placeholder="Arrival Date"
                         onChange={(date) => setFilterData({ ...filterData, arrivalDate: date })}
+                        className="w-full"
                     />
                     <DatePicker
                         placeholder="Return Date"
                         onChange={(date) => setFilterData({ ...filterData, returnDate: date })}
+                        className="w-full"
                     />
                     <Input
                         placeholder="Select Truck"
                         onChange={(e) => setFilterData({ ...filterData, truck: e.target.value })}
-                        className="max-w-[200px]"
+                        className="w-full"
                     />
                     <Input
                         placeholder="Select Driver"
                         onChange={(e) => setFilterData({ ...filterData, driver: e.target.value })}
-                        className="max-w-[200px]"
+                        className="w-full"
                     />
-                    <Input
-                        placeholder="Select Return Driver"
-                        onChange={(e) => setFilterData({ ...filterData, returnDriver: e.target.value })}
-                        className="max-w-[200px]"
-                    />
+                    <div className="flex gap-2">
+                        <Input
+                            placeholder="Select Return Driver"
+                            onChange={(e) => setFilterData({ ...filterData, returnDriver: e.target.value })}
+                            className="w-full"
+                        />
+                        <Button
+                            onClick={handleFilter}
+                            className="bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                            Filter
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="flex items-center">
-                    <h2 className="text-xl font-bold">Summary Details</h2>
-                </div>
-
-                <div className="flex items-center">
-                    <Input
-                        placeholder="Search"
-                        onChange={(e) => handleSearch(e.target.value)}
-                        className="max-w-[200px]"
-                    />
+                <div className="flex justify-between items-center">
+                    <div className="relative">
+                        <Input
+                            placeholder="Search"
+                            onChange={(e) => handleSearch(e.target.value)}
+                            className="w-full pl-8"
+                        />
+                        <Search className="h-4 w-4 absolute left-2 top-2 text-gray-400" />
+                    </div>
                     <Select
-                        className="ml-4"
-                        defaultValue="10"
-                        style={{ width: 200 }}
+                        className="w-[150px]"
+                        defaultValue={pageSize}
+                        onChange={setPageSize}
                     >
-                        <Select.Option value="10">10 entries per page</Select.Option>
-                        <Select.Option value="25">25 entries per page</Select.Option>
-                        <Select.Option value="50">50 entries per page</Select.Option>
+                        <Select.Option value={10}>10 per page</Select.Option>
+                        <Select.Option value={25}>25 per page</Select.Option>
+                        <Select.Option value={50}>50 per page</Select.Option>
                     </Select>
                 </div>
+
                 <AgGridTable
-                    data={
-                        tripData?.body.map((trip, index) => ({
-                            sl_no: index + 1,
-                            truck_no: trip.truck_no,
-                            driver_name: trip.driver,
-                            return_driver_name: trip.Rdriver,
-                            loading_date: trip.trip_date,
-                            unloading_date: trip.reverse_date,
-                            from: trip.Rfrom,
-                            to: trip.Rto,
-                            total: trip.supertotal
-                        })) || []
-                    }
+                    data={tripData?.body.map((trip, index) => ({
+                        sl_no: index + 1,
+                        truck_no: trip.truck_no,
+                        driver_name: trip.driver,
+                        return_driver_name: trip.Rdriver,
+                        loading_date: trip.trip_date,
+                        unloading_date: trip.reverse_date,
+                        from: trip.Rfrom,
+                        to: trip.Rto,
+                        total: trip.supertotal
+                    })) || []}
                     columns={columnDefs}
                     isLoading={tripDataLoading}
                     defaultColDef={{
-                        flex: 0,
-                        autoHeight: true,
+                        flex: 1,
+                        minWidth: 100,
+                        resizable: true,
                     }}
                 />
             </div>
