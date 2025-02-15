@@ -1,21 +1,26 @@
 import { useState, useCallback } from 'react';
-import { Input, Select } from 'antd';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { Button } from '@/components/ui/button';
+import { Input, Modal, Select } from 'antd';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-
+import { useGetTripData } from '@/hooks/GetHooks';
+import { Edit } from 'lucide-react';
+import AgGridTable from '@/components/AgGridTable';
+interface FilterData {
+    arrivalDate: dayjs.Dayjs | null;
+    returnDate: dayjs.Dayjs | null;
+    truck: string;
+    driver: string;
+    returnDriver: string;
+}
 const SummaryListPage = () => {
-    interface FilterData {
-        arrivalDate: dayjs.Dayjs | null;
-        returnDate: dayjs.Dayjs | null;
-        truck: string;
-        driver: string;
-        returnDriver: string;
-    }
+
+    const {
+        data: tripData,
+        isLoading: tripDataLoading,
+    } = useGetTripData(
+        localStorage.getItem("customer_id") || ""
+    )
 
     const [filterData, setFilterData] = useState<FilterData>({
         arrivalDate: null,
@@ -27,18 +32,6 @@ const SummaryListPage = () => {
 
     const columnDefs: ColDef[]
         = [
-            {
-                headerName: 'Actions',
-                cellRenderer: () => (
-                    <Button
-                        onClick={() => { }}
-                        className="bg-[#69C6DE] text-white hover:bg-[#69C6DE] hover:text-white"
-                    >
-                        EDIT
-                    </Button>
-                ),
-                width: 100
-            },
             { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true },
             { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
             { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
@@ -47,30 +40,33 @@ const SummaryListPage = () => {
             { field: 'unloading_date', headerName: 'Unloading Date', sortable: true, filter: true },
             { field: 'from', headerName: 'From', sortable: true, filter: true },
             { field: 'to', headerName: 'To', sortable: true, filter: true },
-            { field: 'total', headerName: 'Total', sortable: true, filter: true }
+            { field: 'total', headerName: 'Total', sortable: true, filter: true },
+            {
+                headerName: 'Actions',
+                cellRenderer: () => (
+                    <div
+                        className='cursor-pointer flex justify-center items-center'
+                    >
+                        <Edit
+                            onClick={
+                                () => {
+                                    Modal.info({
+                                        title: 'Edit Trip',
+                                        content: (
+                                            <div>
+                                                <p>Edit Trip</p>
+                                            </div>
+                                        ),
+                                        onOk() { },
+                                    });
+                                }
+                            }
+                        />
+                    </div>
+                ),
+                width: 100
+            },
         ];
-
-    const defaultColDef = {
-        flex: 1,
-        minWidth: 100,
-        resizable: true,
-    };
-
-    // Sample data - Replace this with your actual API data
-    const rowData = [
-        {
-            sl_no: '1',
-            truck_no: 'ABC123',
-            driver_name: 'John Doe',
-            return_driver_name: 'John Doe',
-            loading_date: '2024-09-18',
-            unloading_date: '2024-09-24',
-            from: 'Vellore',
-            to: 'Chennai',
-            total: 498
-        },
-        // Add more data as needed
-    ];
 
     const handleSearch = useCallback((value: string) => {
         // Implement search functionality
@@ -125,17 +121,27 @@ const SummaryListPage = () => {
                         <Select.Option value="50">50 entries per page</Select.Option>
                     </Select>
                 </div>
-
-                <div className="ag-theme-alpine w-full h-[600px]">
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        pagination={true}
-                        paginationPageSize={10}
-                        animateRows={true}
-                    />
-                </div>
+                <AgGridTable
+                    data={
+                        tripData?.body.map((trip, index) => ({
+                            sl_no: index + 1,
+                            truck_no: trip.truck_no,
+                            driver_name: trip.driver,
+                            return_driver_name: trip.Rdriver,
+                            loading_date: trip.trip_date,
+                            unloading_date: trip.reverse_date,
+                            from: trip.Rfrom,
+                            to: trip.Rto,
+                            total: trip.supertotal
+                        })) || []
+                    }
+                    columns={columnDefs}
+                    isLoading={tripDataLoading}
+                    defaultColDef={{
+                        flex: 0,
+                        autoHeight: true,
+                    }}
+                />
             </div>
         </div>
     );
