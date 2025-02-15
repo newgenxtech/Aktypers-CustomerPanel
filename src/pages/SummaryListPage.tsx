@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useRef } from 'react';
-import { Input, Modal, Select, DatePicker } from 'antd';
+import { Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
 import { useGetTripData } from '@/hooks/GetHooks';
@@ -7,6 +8,7 @@ import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
+import TripModal from '@/components/Summary/TripModal';
 
 interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
@@ -19,6 +21,9 @@ const SummaryListPage = () => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [searchText, setSearchText] = useState<string>('');
     const gridRef = useRef<any>(null);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTrip, setSelectedTrip] = useState<any>(null);
 
     const {
         data: tripData,
@@ -74,19 +79,6 @@ const SummaryListPage = () => {
         }
     ];
 
-    const handleEdit = (data: any) => {
-        Modal.info({
-            title: 'Edit Trip',
-            width: 600,
-            content: (
-                <div className="p-4">
-                    {/* Add your edit form here */}
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
-                </div>
-            ),
-            onOk() { },
-        });
-    };
 
     const handleSearch = useCallback((value: string) => {
         setSearchText(value);
@@ -137,6 +129,24 @@ const SummaryListPage = () => {
 
         gridRef.current.api.setFilterModel(filterModel);
     }, [filterData]);
+
+
+    const handleEdit = (data: any) => {
+        setSelectedTrip(data);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setSelectedTrip(null);
+    };
+
+    const handleModalSubmit = (values: any) => {
+        console.log('Form values:', values);
+        // Implement your update logic here
+        setIsModalOpen(false);
+        setSelectedTrip(null);
+    };
 
     return (
         <div className='summary bg-white rounded-lg shadow-sm'>
@@ -221,6 +231,13 @@ const SummaryListPage = () => {
                         minWidth: 100,
                         resizable: true,
                     }}
+                />
+
+                <TripModal
+                    isOpen={isModalOpen}
+                    onClose={handleModalClose}
+                    onSubmit={handleModalSubmit}
+                    initialData={selectedTrip}
                 />
             </div>
         </div>
