@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from "./hooks/queryClient";
 import { store } from "./store/store";
+import SummaryListPage from "./pages/SummaryListPage";
 
 // Layouts
 const BaseLayout = lazy(() => import("./layouts/BaseLayout"));
@@ -147,6 +148,15 @@ const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <CompliantListPage />
+                    </Suspense>
+                ),
+            },
+            {
+                // summary
+                path: "summary",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <SummaryListPage />
                     </Suspense>
                 ),
             }
