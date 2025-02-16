@@ -1,11 +1,13 @@
-import { Form, Input, DatePicker, Radio, Modal, InputNumber, Button, Select } from 'antd';
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Form, Input, DatePicker, Modal, InputNumber, Button, Select, Space, Table } from 'antd';
+import { Key, useState } from 'react';
+import toast from 'react-hot-toast';
 
 interface TripModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (values: unknown) => void;
-    initialData?: unknown;
+    initialData?: any;
 }
 
 const TripModal = ({ isOpen, onClose, onSubmit, initialData }: TripModalProps) => {
@@ -13,13 +15,23 @@ const TripModal = ({ isOpen, onClose, onSubmit, initialData }: TripModalProps) =
     const [tripType, setTripType] = useState('single');
     const [basicItems, setBasicItems] = useState([{ key: 0 }]);
     const [expenseItems, setExpenseItems] = useState([{ key: 0 }]);
+    const [selectedBasicItems, setSelectedBasicItems] = useState<Key[]>([]);
+    const [selectedExpenseItems, setSelectedExpenseItems] = useState<Key[]>([]);
+
+
+
 
     const addBasicItem = () => {
         setBasicItems([...basicItems, { key: basicItems.length }]);
     };
 
     const removeBasicItem = (key: number) => {
-        setBasicItems(basicItems.filter(item => item.key !== key));
+        if (selectedBasicItems) {
+            setSelectedBasicItems(selectedBasicItems.filter(item => item !== key));
+        } else {
+            setBasicItems(basicItems.filter(item => item.key !== key));
+        }
+        return toast.success('Item removed successfully');
     };
 
     const addExpenseItem = () => {
@@ -27,16 +39,148 @@ const TripModal = ({ isOpen, onClose, onSubmit, initialData }: TripModalProps) =
     };
 
     const removeExpenseItem = (key: number) => {
-        setExpenseItems(expenseItems.filter(item => item.key !== key));
+        if (selectedExpenseItems) {
+            setSelectedExpenseItems(selectedExpenseItems.filter(item => item !== key));
+        } else {
+            setExpenseItems(expenseItems.filter(item => item.key !== key));
+        }
+        return toast.success('Item removed successfully');
     };
+
+
+    // Columns for Basic Items Table (inline editing)
+    const basicColumns = [
+        {
+            // s.no
+            title: 'S.No',
+            dataIndex: 'key',
+            key: 'key',
+            render: (_: any, record: any) => record.key + 1,
+        },
+        {
+            title: 'Item',
+            dataIndex: 'item',
+            key: 'item',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['items', record.key, 'item']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <Input placeholder="Item" />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Weight (in tons)',
+            dataIndex: 'weight',
+            key: 'weight',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['items', record.key, 'weight']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <InputNumber placeholder="Weight (in tons)" style={{ width: '100%' }} />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Tonage Rate (Rs.)',
+            dataIndex: 'tonageRate',
+            key: 'tonageRate',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['items', record.key, 'tonageRate']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <InputNumber placeholder="Tonage Rate (Rs.)" style={{ width: '100%' }} />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Total (Rs.)',
+            dataIndex: 'total',
+            key: 'total',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['items', record.key, 'total']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <InputNumber placeholder="Total (Rs.)" style={{ width: '100%' }} />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Remarks',
+            dataIndex: 'remarks',
+            key: 'remarks',
+            render: (_: any, record: any) => (
+                <Form.Item name={['items', record.key, 'remarks']} style={{ margin: 0 }}>
+                    <Input placeholder="Remarks" />
+                </Form.Item>
+            ),
+        },
+    ];
+
+    // Columns for Expenses Table (inline editing)
+    const expenseColumns = [
+        {
+            title: 'S.No',
+            dataIndex: 'key',
+            key: 'key',
+            render: (_: any, record: any) => record.key + 1,
+        },
+        {
+            title: 'Item',
+            dataIndex: 'item',
+            key: 'item',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['expenses', record.key, 'item']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <Input placeholder="Item" />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            key: 'amount',
+            render: (_: any, record: any) => (
+                <Form.Item
+                    name={['expenses', record.key, 'amount']}
+                    rules={[{ required: true, message: 'Required' }]}
+                    style={{ margin: 0 }}
+                >
+                    <InputNumber placeholder="Amount" style={{ width: '100%' }} />
+                </Form.Item>
+            ),
+        },
+        {
+            title: 'Remarks',
+            dataIndex: 'remarks',
+            key: 'remarks',
+            render: (_: any, record: any) => (
+                <Form.Item name={['expenses', record.key, 'remarks']} style={{ margin: 0 }}>
+                    <Input placeholder="Remarks" />
+                </Form.Item>
+            ),
+        },
+    ];
 
     return (
         <Modal
             title="Trip Details"
             open={isOpen}
             onCancel={onClose}
-            width={1000}
             footer={null}
+            width={1000}
+            className='h-[70vh] overflow-auto rounded-md'
         >
             <Form
                 form={form}
@@ -44,21 +188,9 @@ const TripModal = ({ isOpen, onClose, onSubmit, initialData }: TripModalProps) =
                 initialValues={initialData}
                 onFinish={onSubmit}
             >
-                <div className="bg-[#5B77A0] text-white p-3 mb-4">
+                <div className="bg-[#5B77A0] text-white p-3 mb-4 rounded-md">
                     <div className="text-sm">Petrol Price in Perambalur: ₹93.32 / Ltr - 0.32</div>
                 </div>
-
-                <div className="bg-[#5B77A0] text-white p-3 mb-4">BASIC DETAILS</div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <Form.Item name="tripType">
-                        <Radio.Group onChange={(e) => setTripType(e.target.value)} value={tripType}>
-                            <Radio value="single">Single way</Radio>
-                            <Radio value="double">Double way</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                     <Form.Item
                         label="Current Mileage"
@@ -124,61 +256,86 @@ const TripModal = ({ isOpen, onClose, onSubmit, initialData }: TripModalProps) =
 
                 {/* Basic Items Table */}
                 <div className="mb-4">
-                    <div className="flex gap-2 mb-2">
-                        <button type="button" onClick={addBasicItem} className="px-3 py-1 bg-blue-600 text-white rounded">
+                    <Space style={{ marginBottom: 16 }}>
+                        <Button type="primary" onClick={addBasicItem}>
                             Add Item
-                        </button>
-                        <button type="button" onClick={() => removeBasicItem(basicItems.length - 1)} className="px-3 py-1 bg-red-600 text-white rounded">
+                        </Button>
+                        <Button danger onClick={() => removeBasicItem(basicItems[basicItems.length - 1]?.key)}>
                             Delete Item
-                        </button>
-                    </div>
-
-                    {basicItems.map((item) => (
-                        <div key={item.key} className="grid grid-cols-5 gap-4 mb-2">
-                            <Form.Item name={['items', item.key, 'item']}>
-                                <Input placeholder="Item" />
-                            </Form.Item>
-                            <Form.Item name={['items', item.key, 'weight']}>
-                                <InputNumber placeholder="Weight (in tons)" className="w-full" />
-                            </Form.Item>
-                            <Form.Item name={['items', item.key, 'tonageRate']}>
-                                <InputNumber placeholder="Tonage Rate (Rs.)" className="w-full" />
-                            </Form.Item>
-                            <Form.Item name={['items', item.key, 'total']}>
-                                <InputNumber placeholder="Total (Rs.)" className="w-full" />
-                            </Form.Item>
-                            <Form.Item name={['items', item.key, 'remarks']}>
-                                <Input placeholder="Remarks" />
-                            </Form.Item>
-                        </div>
-                    ))}
+                        </Button>
+                    </Space>
+                    <Table
+                        dataSource={basicItems}
+                        columns={basicColumns}
+                        rowKey="key"
+                        rowSelection={{
+                            type: 'checkbox',
+                            onChange: (selectedRowKeys, selectedRows) => {
+                                console.log(selectedRowKeys, selectedRows);
+                                setSelectedBasicItems(selectedRowKeys);
+                            }
+                        }}
+                        size='small'
+                        pagination={{
+                            showQuickJumper: true,
+                            showSizeChanger: true,
+                            pageSizeOptions: ['10', '20', '50', '100', '200'],
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            total: basicItems.length,
+                            pageSize: 10
+                        }}
+                        footer={
+                            () => (
+                                <div className="flex justify-end gap-2">
+                                    <div className="text-lg font-bold">Total Amount:</div>
+                                    <div className="text-lg font-bold">₹ 0.00</div>
+                                </div>
+                            )
+                        }
+                    />
                 </div>
 
-                {/* Expenses Table */}
+                {/* Expenses Table with AntD Table and inline editing */}
                 <div className="mb-4">
                     <div className="text-lg font-bold mb-2">EXPENSES</div>
-                    <div className="flex gap-2 mb-2">
-                        <button type="button" onClick={addExpenseItem} className="px-3 py-1 bg-blue-600 text-white rounded">
+                    <Space style={{ marginBottom: 16 }}>
+                        <Button type="primary" onClick={addExpenseItem}>
                             Add Item
-                        </button>
-                        <button type="button" onClick={() => removeExpenseItem(expenseItems.length - 1)} className="px-3 py-1 bg-red-600 text-white rounded">
+                        </Button>
+                        <Button danger onClick={() => removeExpenseItem(expenseItems[expenseItems.length - 1]?.key)}>
                             Delete Item
-                        </button>
-                    </div>
-
-                    {expenseItems.map((item) => (
-                        <div key={item.key} className="grid grid-cols-3 gap-4 mb-2">
-                            <Form.Item name={['expenses', item.key, 'item']}>
-                                <Input placeholder="Item" />
-                            </Form.Item>
-                            <Form.Item name={['expenses', item.key, 'amount']}>
-                                <InputNumber placeholder="Amount" className="w-full" />
-                            </Form.Item>
-                            <Form.Item name={['expenses', item.key, 'remarks']}>
-                                <Input placeholder="Remarks" />
-                            </Form.Item>
-                        </div>
-                    ))}
+                        </Button>
+                    </Space>
+                    <Table
+                        dataSource={expenseItems}
+                        columns={expenseColumns}
+                        rowKey="key"
+                        rowSelection={{
+                            type: 'checkbox',
+                            onChange: (selectedRowKeys, selectedRows) => {
+                                console.log(selectedRowKeys, selectedRows);
+                                setSelectedExpenseItems(selectedRowKeys);
+                            }
+                        }}
+                        size='small'
+                        pagination={{
+                            showQuickJumper: true,
+                            showSizeChanger: true,
+                            pageSizeOptions: ['10', '20', '50', '100', '200'],
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            total: basicItems.length,
+                            pageSize: 10
+                        }}
+                        // show total amount of expenses
+                        footer={
+                            () => (
+                                <div className="flex justify-end gap-2">
+                                    <div className="text-lg font-bold">Total Expenses:</div>
+                                    <div className="text-lg font-bold">₹ 0.00</div>
+                                </div>
+                            )
+                        }
+                    />
                 </div>
 
                 {tripType === 'double' && (

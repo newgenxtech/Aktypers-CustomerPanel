@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
 import TripModal from '@/components/Summary/TripModal';
 
-interface FilterData {
+export interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
     returnDate: dayjs.Dayjs | null;
     truck: string;
@@ -65,17 +65,28 @@ const SummaryListPage = () => {
         {
             headerName: 'Actions',
             cellRenderer: (params: CustomCellRendererProps) => (
-                <div className='cursor-pointer flex justify-center items-center'>
-                    <Edit
-                        className="h-4 w-4 text-gray-600 hover:text-blue-600"
-                        onClick={() => handleEdit(params.data)}
-                    />
+                <div
+                    onClick={() => handleEdit(params.data)}
+                    style={{
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Edit className=" text-gray-600 hover:text-blue-600" />
                 </div>
             ),
             width: 100,
             suppressMenu: true,
             sortable: false,
             filter: false,
+            headerClass: 'text-center',
+            cellStyle: {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }
         }
     ];
 
