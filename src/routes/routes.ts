@@ -49,6 +49,8 @@ export const routes = {
             update: `${base}?route=updateTrip`,
             uploadTripFile: `${base}?route=uploadtripFile`,
             getTrip: `${base}?route=gettrip`,
+            createTrip: `${base}?route=createTrip`,
+            createTripDetail: `${base}?route=createTripDetail`,
         },
         file: {
             upload: `${base}`,

@@ -3,7 +3,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-import { useGetTripData } from '@/hooks/GetHooks';
+import { useGetDriverData, useGetTripData } from '@/hooks/GetHooks';
 import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ const SummaryListPage = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTrip, setSelectedTrip] = useState<any>(null);
+    const [isEdit, setIsEdit] = useState(false);
 
     const {
         data: tripData,
@@ -31,6 +32,13 @@ const SummaryListPage = () => {
     } = useGetTripData(
         localStorage.getItem("customer_id") || ""
     );
+
+    const {
+        data: driverData,
+        isLoading: driverDataLoading,
+    } = useGetDriverData(
+        localStorage.getItem("customer_id") || ""
+    )
 
     const [filterData, setFilterData] = useState<FilterData>({
         arrivalDate: null,
@@ -143,8 +151,10 @@ const SummaryListPage = () => {
 
 
     const handleEdit = (data: any) => {
+        console.log('Edit data:', data);
         setSelectedTrip(data);
         setIsModalOpen(true);
+        setIsEdit(true);
     };
 
     const handleModalClose = () => {
@@ -212,15 +222,15 @@ const SummaryListPage = () => {
                         />
                         <Search className="h-4 w-4 absolute left-2 top-2 text-gray-400" />
                     </div>
-                    <Select
-                        className="w-[150px]"
-                        defaultValue={pageSize}
-                        onChange={setPageSize}
+                    <Button
+                        onClick={() => {
+                            setIsModalOpen(true)
+                            setIsEdit(false)
+                        }}
+                        className="bg-blue-600 text-white hover:bg-blue-700"
                     >
-                        <Select.Option value={10}>10 per page</Select.Option>
-                        <Select.Option value={25}>25 per page</Select.Option>
-                        <Select.Option value={50}>50 per page</Select.Option>
-                    </Select>
+                        Add Summary
+                    </Button>
                 </div>
 
                 <AgGridTable
@@ -249,6 +259,10 @@ const SummaryListPage = () => {
                     onClose={handleModalClose}
                     onSubmit={handleModalSubmit}
                     initialData={selectedTrip}
+                    driverData={driverData?.body || []}
+                    driverLoading={driverDataLoading}
+                    isEdit={isEdit}
+                    setIsEdit={setIsEdit}
                 />
             </div>
         </div>

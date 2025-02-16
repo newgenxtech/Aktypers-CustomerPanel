@@ -9,16 +9,23 @@ import {
     InputNumber,
     Select,
     Space,
-    Table
+    Table,
+    Divider
 } from 'antd';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { DriverMaster } from '@/pages/Driver/Driver.d';
+
 
 interface TripModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (values: any) => void;
     initialData?: any;
+    driverData: DriverMaster[];
+    driverLoading: boolean;
+    isEdit?: boolean;
+    setIsEdit?: (value: boolean) => void;
 }
 
 interface FormValues {
@@ -26,6 +33,7 @@ interface FormValues {
     closingMileage: number;
     date: any;
     driverName: string;
+    truckNumber: string;
     from: string;
     to: string;
     tripType?: 'single' | 'double';
@@ -46,7 +54,11 @@ interface FormValues {
     returnTo?: string;
 }
 
-const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initialData }) => {
+const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initialData,
+    driverData,
+    driverLoading,
+    isEdit
+}) => {
     const {
         control,
         handleSubmit,
@@ -212,11 +224,12 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             className="h-[70vh] overflow-auto rounded-md"
         >
             <form onSubmit={handleSubmit(onFormSubmit)}>
-                <div className="bg-[#5B77A0] text-white p-3 mb-4 rounded-md">
+                <Divider />
+                {/* <div className="bg-[#5B77A0] text-white p-3 mb-4 rounded-md">
                     <div className="text-sm">
                         Petrol Price in Perambalur: ₹93.32 / Ltr - 0.32
                     </div>
-                </div>
+                </div> */}
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
@@ -239,7 +252,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-3 gap-4 mb-4">
                     <div>
                         <label>Date</label>
                         <Controller
@@ -256,10 +269,48 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             control={control}
                             rules={{ required: 'Required' }}
                             render={({ field }) => (
-                                <Select placeholder="Select driver" className="w-full" {...field}>
-                                    {/* Options here */}
-                                </Select>
+                                <Select
+                                    placeholder="Select driver"
+                                    className="w-full"
+                                    options={
+                                        driverData &&
+                                        driverData?.map((driver) => ({
+                                            label: driver.name,
+                                            value: driver.id
+                                        }))
+                                    }
+                                    loading={driverLoading}
+                                    {...field}
+                                />
                             )}
+                        />
+                    </div>
+                    {/* 
+                        Truck Number
+                    */}
+                    <div>
+                        <label>Truck Number</label>
+                        <Controller
+                            name="truckNumber"
+                            control={control}
+                            rules={{ required: 'Required' }}
+                            render={({ field }) => (
+                                <Select
+                                    placeholder="Select truck"
+                                    className="w-full"
+                                    options={
+                                        driverData &&
+                                        driverData?.map((driver) => ({
+                                            label: driver.name,
+                                            value: driver.id
+                                        }))
+                                    }
+                                    loading={driverLoading}
+                                    {...field}
+                                />
+                            )}
+                            defaultValue={initialData?.truckNumber}
+                            disabled={isEdit}
                         />
                     </div>
                 </div>
@@ -285,7 +336,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                {/* <div className="grid grid-cols-3 gap-4 mb-4">
                     <div>
                         <label>Calculated Distance</label>
                         <Input disabled />
@@ -298,7 +349,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <label>Expected Amount</label>
                         <InputNumber className="w-full" placeholder="Expected Amount" disabled />
                     </div>
-                </div>
+                </div> */}
 
                 {/* Basic Items Table */}
                 <div className="mb-4">
@@ -387,7 +438,11 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 </Space>
                                 <div className="flex justify-end gap-2">
                                     <div className="text-lg font-bold">Total Expenses:</div>
-                                    <div className="text-lg font-bold">₹ 0.00</div>
+                                    <div className="text-lg font-bold">
+                                        {expenseFields.reduce((acc, _item, index) => acc +
+                                            watch(`expenses.${index
+                                                }.amount`) || 0, 0)}
+                                    </div>
                                 </div>
                             </div>
                         )}
