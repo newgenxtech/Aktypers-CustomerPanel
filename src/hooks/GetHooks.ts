@@ -387,13 +387,18 @@ export const useCreateTripDetail = () => {
           routes.backend.trip.createTripDetail,
           data,
         );
+        if (!res.data) {
+          throw new Error('No data returned from server');
+        }
         return res.data;
       } catch (error) {
         console.error("Error creating trip detail:", error);
-        message.error("Error creating trip detail");
         throw error;
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trips'] });
+    }
   });
 }
 

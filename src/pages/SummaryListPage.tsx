@@ -32,10 +32,7 @@ const SummaryListPage = () => {
 
     const createTrip = useCreateTrip();
 
-    const {
-        mutate: createTripDetail,
-        isSuccess: tripDetailSuccess
-    } = useCreateTripDetail();
+    const createTripDetail = useCreateTripDetail();
 
     const {
         data: tripData,
@@ -187,41 +184,35 @@ const SummaryListPage = () => {
         });
 
         try {
-            // Create the trip and await its response
-            await createTrip.mutate({
+            // Create the trip
+            const tripResponse = await createTrip.mutateAsync({
                 truck_no: values.truckNumber,
                 driverid: values.driverId,
                 to_location: values.to,
                 from_location: values.from,
-                trip_date: values.date,
-                current_km: values.currentMileage.toLocaleString(),
+                trip_date: dayjs(values.date).format('YYYY-MM-DD'),
+                current_km: values.currentMileage.toString(),
                 customerid: localStorage.getItem("customer_id") || "",
                 supertotal: values.items
                     .reduce((acc, item) => acc + item.weight * item.tonageRate, 0).toString(),
-                // trip_items: JSON.stringify(values.items)
             });
-            console.log('Trip response:', createTrip.data);
 
-            if (createTrip.data) {
-                const tripId = createTrip.data?.trip_details?.id;
-                if (!tripId) {
-                    throw new Error('Trip creation failed. No trip ID returned.');
-                }
-
+            if (tripResponse?.trip_details?.id) {
                 // Prepare Normal and Expense items
                 const NormalItems = values.items.map((item) => ({
                     ...item,
                     is_single: 0,
-                    tripid: tripId,
+                    tripid: tripResponse.trip_details.id,
                     tonnage_rate: item.tonageRate.toString(),
                     weight: item.weight.toString(),
                     total: item.weight * item.tonageRate,
                     remarks: item.remarks ?? ""
                 }));
+
                 const ExpensesItems = values.expenses.map((item) => ({
                     ...item,
                     is_single: 1,
-                    tripid: tripId,
+                    tripid: tripResponse.trip_details.id,
                     weight: "0",
                     tonnage_rate: "0",
                     total: item.amount,
@@ -229,11 +220,14 @@ const SummaryListPage = () => {
                 }));
 
                 // Create trip details
-                await createTripDetail([...NormalItems, ...ExpensesItems]);
+                await createTripDetail.mutateAsync([...NormalItems, ...ExpensesItems]);
+
                 toast.success('Trip Created Successfully', {
                     id: 'tripDataloading',
                     duration: 2000
                 });
+                setIsModalOpen(false);
+                setSelectedTrip(null);
             }
         } catch (error) {
             console.error('Error creating trip:', error);
@@ -241,9 +235,6 @@ const SummaryListPage = () => {
                 id: 'tripDataloading',
                 duration: 2000
             });
-        } finally {
-            setIsModalOpen(false);
-            setSelectedTrip(null);
         }
     };
 
