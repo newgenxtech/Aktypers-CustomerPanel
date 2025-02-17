@@ -3,12 +3,12 @@ import { useState, useCallback, useRef } from 'react';
 import { Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-import { useGetDriverData, useGetTripData } from '@/hooks/GetHooks';
+import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetTripData } from '@/hooks/GetHooks';
 import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
-import TripModal from '@/components/Summary/TripModal';
+import TripModal, { FormValues } from '@/components/Summary/TripModal';
 
 export interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
@@ -26,6 +26,16 @@ const SummaryListPage = () => {
     const [selectedTrip, setSelectedTrip] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
 
+    const {
+        mutate: createTrip,
+        isSuccess: tripSuccess,
+        data: tripDataResponse
+    } = useCreateTrip();
+
+    const {
+        mutate: createTripDetail,
+        isSuccess: tripDetailSuccess
+    } = useCreateTripDetail()
     const {
         data: tripData,
         isLoading: tripDataLoading,
@@ -162,9 +172,93 @@ const SummaryListPage = () => {
         setSelectedTrip(null);
     };
 
-    const handleModalSubmit = (values: any) => {
+    const handleModalSubmit = (values: FormValues) => {
         console.log('Form values:', values);
         // Implement your update logic here
+
+        createTrip({
+            truck_no: values.truckNumber,
+            driver: values.driverName,
+            to_location: values.to,
+            from_location: values.from,
+            trip_date: values.date,
+            current_km: values.currentMileage.toLocaleString(),
+            // mobile_number: values.,
+            driverexpense: JSON.stringify(values.expenses),
+            supertotal: (values.items.reduce((acc, item) => acc + ((item.weight * item.tonageRate)), 0)).toLocaleString(),
+            trip_items: JSON.stringify(values.items)
+        })
+
+        if (tripSuccess) {
+            const NormalItems = values.items.map((item) => {
+                return {
+                    ...item,
+                    is_single: 0,
+                    tripid: tripDataResponse?.body.id,
+                    tonnage_rate: item.tonageRate,
+                    total: item.tonageRate * item.weight
+                }
+            })
+
+            const ExpensesItems = values.expenses.map((item) => {
+                return {
+                    ...item,
+                    is_single: 1,
+                    tripid: tripDataResponse?.body.id,
+                    total: item.amount,
+                }
+            })
+            createTripDetail(
+                [...NormalItems, ...ExpensesItems]
+            )
+        }
+
+        // values =
+        // {
+        //     "currentMileage": 10,
+        //     "closingMileage": 12,
+        //     "date": "2025-02-16T18:15:39.600Z",
+        //     "driverName": "3",
+        //     "from": "Chennai",
+        //     "to": "Cuddalore",
+        //     "tripType": "single",
+        //     "items": [
+        //         {
+        //             "item": "Sand",
+        //             "weight": 4,
+        //             "tonageRate": 700,
+        //             "remarks": "",
+        //             "total": 2800
+        //         },
+        //         {
+        //             "item": "Jalli",
+        //             "weight": 5,
+        //             "tonageRate": 400,
+        //             "remarks": "",
+        //             "total": 2000
+        //         }
+        //     ],
+        //     "expenses": [
+        //         {
+        //             "item": "Fuel",
+        //             "amount": 1500,
+        //             "remarks": ""
+        //         }
+        //     ]
+        // }
+
+
+        // Data that i need to bind
+        // {
+        //     item: string;
+        //     weight: string;
+        //     is_single: number;
+        //     tripid: string;
+        //     tonnage_rate: string;
+        //     total: number;
+        //     remarks: string;
+        // }
+
         setIsModalOpen(false);
         setSelectedTrip(null);
     };

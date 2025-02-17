@@ -28,7 +28,7 @@ interface TripModalProps {
     setIsEdit?: (value: boolean) => void;
 }
 
-interface FormValues {
+export interface FormValues {
     currentMileage: number;
     closingMileage: number;
     date: any;

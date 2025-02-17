@@ -236,7 +236,7 @@ export const useGetTruckIdsAndGroupByBrand = (customer_id: string) => {
 }
 
 interface TripData {
-  id: string;
+  id?: string;
   truck_no: string;
   driver: string;
   Rdriver?: string;
@@ -246,18 +246,18 @@ interface TripData {
   reverse_date?: string;
   Rfrom?: string;
   Rto?: string;
-  remark: string;
+  remark?: string;
   reverse_remark?: string;
   current_km: string;
   fuel_level?: string;
-  complaint: string;
-  tyre_condition: string;
-  mobile_number: string;
+  complaint?: string;
+  tyre_condition?: string;
+  mobile_numbe?: string;
   Rmobile_number?: string;
   broker?: string;
   broker1?: string;
   driverexpense: string;
-  Rdriverexpense: string;
+  Rdriverexpense?: string;
   supertotal: string;
   trip_items: string;
 }
