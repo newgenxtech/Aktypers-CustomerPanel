@@ -323,6 +323,9 @@ export const useCreateTrip = () => {
           routes.backend.trip.createTrip,
           data,
         );
+        if (!res.data) {
+          throw new Error('No data returned from server');
+        }
         return res.data;
       } catch (error) {
         console.error("Error creating trip:", error);
@@ -330,8 +333,12 @@ export const useCreateTrip = () => {
         throw error;
       }
     },
-    async onSuccess() {
+    async onSuccess(data) {
       await queryClient.invalidateQueries({ queryKey: ['trips'], exact: true });
+      return data; // Explicitly return the success data
+    },
+    onError: (error) => {
+      return error; // Return error for error handling
     }
   });
 }

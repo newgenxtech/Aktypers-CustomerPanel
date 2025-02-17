@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//// filepath: /Users/adhavant/Documents/Freelance/Aktypers-CustomerPanel/src/components/Summary/TripModal.tsx
 import React from 'react';
 import {
     Modal,
@@ -17,7 +16,8 @@ import toast from 'react-hot-toast';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { ITruckData } from '@/pages/Truck/Truck.d';
 import ItemMasterSelectDropDown from './ItemMasterSelectDropDown';
-import { TripDetails } from '@/pages/Trip/Trip.d';
+import dayjs from 'dayjs';
+import { TripDetails } from '@/pages/Trip/Trip';
 
 
 interface TripModalProps {
@@ -79,19 +79,32 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         watch
     } = useForm<FormValues>({
         defaultValues: initialData ? {
-            currentMileage: Number(initialData.current_km),
-            date: initialData.loading_date,
-            driverId: initialData.driver ? Number(initialData.driver) : 0,
-            truckNumber: initialData.truck_no,
-            from: initialData.from,
-            to: initialData.to,
-            // tripType: initialData.tripType,
-            items: initialData.trip_items ? JSON.parse(initialData.trip_items) : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-            expenses: []
+            currentMileage: initialData.current_km ? Number(initialData.current_km) : undefined,
+            date: initialData.loading_date ? dayjs(initialData.loading_date) : null,
+            driverId: initialData.driver ? Number(initialData.driver) : undefined,
+            truckNumber: initialData.truck_no || '',
+            from: initialData.from || '',
+            to: initialData.to || '',
+            items: initialData.trip_items
+                ? JSON.parse(initialData.trip_items).map((item: any) => ({
+                    item: item.item || '',
+                    weight: Number(item.weight) || 0,
+                    tonageRate: Number(item.tonageRate) || 0,
+                    remarks: item.remarks || ''
+                }))
+                : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
+            expenses: initialData.expenses
+                ? JSON.parse(initialData.expenses).map((expense: any) => ({
+                    item: expense.item || '',
+                    amount: Number(expense.amount) || 0,
+                    remarks: expense.remarks || ''
+                }))
+                : [{ item: '', amount: 0, remarks: '' }]
         } : {
             currentMileage: undefined,
             date: null,
-            driverId: 0,
+            driverId: undefined,
+            truckNumber: '',
             from: '',
             to: '',
             items: [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
@@ -314,6 +327,10 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                             value: driver.id
                                         }))
                                     }
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                     loading={driverLoading}
                                     {...field}
                                 />
@@ -333,6 +350,10 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 <Select
                                     placeholder="Select truck"
                                     className="w-full"
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                     options={
                                         truckData &&
                                         truckData?.map((truck) => ({

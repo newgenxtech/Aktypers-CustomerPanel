@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
 import TripModal, { FormValues } from '@/components/Summary/TripModal';
 import toast from 'react-hot-toast';
-import { TripDetails } from './Trip/Trip.d';
+import { TripDetails } from './Trip/Trip';
+
 
 export interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
@@ -19,7 +20,7 @@ export interface FilterData {
     driver: string;
     returnDriver: string;
 }
-  
+
 const SummaryListPage = () => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [searchText, setSearchText] = useState<string>('');
@@ -29,11 +30,7 @@ const SummaryListPage = () => {
     const [selectedTrip, setSelectedTrip] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const {
-        mutate: createTrip,
-        isSuccess: tripSuccess,
-        data: tripDataResponse
-    } = useCreateTrip();
+    const createTrip = useCreateTrip();
 
     const {
         mutate: createTripDetail,
@@ -170,7 +167,7 @@ const SummaryListPage = () => {
     }, [filterData]);
 
 
-    const handleEdit = (data:TripDetails ) => {
+    const handleEdit = (data: TripDetails) => {
         console.log('Edit data:', data);
         setSelectedTrip(data);
         setIsModalOpen(true);
@@ -191,7 +188,7 @@ const SummaryListPage = () => {
 
         try {
             // Create the trip and await its response
-            await createTrip({
+            await createTrip.mutate({
                 truck_no: values.truckNumber,
                 driverid: values.driverId,
                 to_location: values.to,
@@ -203,10 +200,10 @@ const SummaryListPage = () => {
                     .reduce((acc, item) => acc + item.weight * item.tonageRate, 0).toString(),
                 // trip_items: JSON.stringify(values.items)
             });
-            console.log('Trip response:', tripDataResponse);
+            console.log('Trip response:', createTrip.data);
 
-            if (tripDataResponse) {
-                const tripId = tripDataResponse?.trip_details?.id;
+            if (createTrip.data) {
+                const tripId = createTrip.data?.trip_details?.id;
                 if (!tripId) {
                     throw new Error('Trip creation failed. No trip ID returned.');
                 }
@@ -233,7 +230,6 @@ const SummaryListPage = () => {
 
                 // Create trip details
                 await createTripDetail([...NormalItems, ...ExpensesItems]);
-
                 toast.success('Trip Created Successfully', {
                     id: 'tripDataloading',
                     duration: 2000
