@@ -15,6 +15,7 @@ import {
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
+import { ITruckData } from '@/pages/Truck/Truck.d';
 
 
 interface TripModalProps {
@@ -26,6 +27,8 @@ interface TripModalProps {
     driverLoading: boolean;
     isEdit?: boolean;
     setIsEdit?: (value: boolean) => void;
+    truckData: ITruckData[]
+    truckLoading: boolean
 }
 
 export interface FormValues {
@@ -57,7 +60,9 @@ export interface FormValues {
 const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initialData,
     driverData,
     driverLoading,
-    isEdit
+    isEdit,
+    truckData,
+    truckLoading
 }) => {
     const {
         control,
@@ -299,13 +304,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                     placeholder="Select truck"
                                     className="w-full"
                                     options={
-                                        driverData &&
-                                        driverData?.map((driver) => ({
-                                            label: driver.name,
-                                            value: driver.id
+                                        truckData &&
+                                        truckData?.map((truck) => ({
+                                            label: truck.registration_number,
+                                            value: truck.id
                                         }))
                                     }
-                                    loading={driverLoading}
+                                    loading={truckLoading}
                                     {...field}
                                 />
                             )}

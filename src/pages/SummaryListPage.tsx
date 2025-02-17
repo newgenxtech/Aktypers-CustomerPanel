@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useRef } from 'react';
-import { Input, Select, DatePicker } from 'antd';
+import { Input, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetTripData } from '@/hooks/GetHooks';
+import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetTripData, useGetTruckData } from '@/hooks/GetHooks';
 import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
 import TripModal, { FormValues } from '@/components/Summary/TripModal';
+import toast from 'react-hot-toast';
 
 export interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
@@ -47,6 +48,13 @@ const SummaryListPage = () => {
         data: driverData,
         isLoading: driverDataLoading,
     } = useGetDriverData(
+        localStorage.getItem("customer_id") || ""
+    )
+
+    const {
+        data: truckData,
+        isLoading: truckDataLoading,
+    } = useGetTruckData(
         localStorage.getItem("customer_id") || ""
     )
 
@@ -175,7 +183,10 @@ const SummaryListPage = () => {
     const handleModalSubmit = (values: FormValues) => {
         console.log('Form values:', values);
         // Implement your update logic here
-
+        toast.loading('Creating Trip...', {
+            id: 'tripDataloading',
+            duration: 0
+        })
         createTrip({
             truck_no: values.truckNumber,
             driver: values.driverName,
@@ -195,22 +206,42 @@ const SummaryListPage = () => {
                     ...item,
                     is_single: 0,
                     tripid: tripDataResponse?.body.id,
-                    tonnage_rate: item.tonageRate,
-                    total: item.tonageRate * item.weight
+                    tonnage_rate: item.tonageRate.toString(),
+                    weight: item.weight.toString(),
+                    total: item.tonageRate * item.weight,
+                    remarks: item.remarks ?? ""
                 }
             })
-
             const ExpensesItems = values.expenses.map((item) => {
                 return {
                     ...item,
                     is_single: 1,
                     tripid: tripDataResponse?.body.id,
+                    weight: "0",
+                    tonnage_rate: "0",
                     total: item.amount,
+                    remarks: item.remarks ?? ""
                 }
             })
             createTripDetail(
-                [...NormalItems, ...ExpensesItems]
+                [...NormalItems, ...ExpensesItems],
             )
+        }
+
+        if (
+            tripSuccess &&
+            tripDetailSuccess
+        ) {
+            toast.success('Trip Created Successfully', {
+                id: 'tripDataloading',
+                duration: 2000
+            })
+        } else {
+
+            toast.error('Failed to create trip', {
+                id: 'tripDataloading',
+                duration: 2000
+            })
         }
 
         // values =
@@ -355,6 +386,8 @@ const SummaryListPage = () => {
                     initialData={selectedTrip}
                     driverData={driverData?.body || []}
                     driverLoading={driverDataLoading}
+                    truckData={truckData?.body || []}
+                    truckLoading={truckDataLoading}
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                 />
