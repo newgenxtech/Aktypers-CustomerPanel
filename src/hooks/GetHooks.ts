@@ -238,7 +238,7 @@ export const useGetTruckIdsAndGroupByBrand = (customer_id: string) => {
 interface TripData {
   id?: string;
   truck_no: string;
-  driver: string;
+  driver?: string;
   Rdriver?: string;
   from_location: string;
   to_location: string;
@@ -256,10 +256,11 @@ interface TripData {
   Rmobile_number?: string;
   broker?: string;
   broker1?: string;
-  driverexpense: string;
+  driverexpense?: string;
   Rdriverexpense?: string;
   supertotal: string;
-  trip_items: string;
+  trip_items?: string;
+  driverid: number
 }
 
 
@@ -308,10 +309,14 @@ export const useGetTripData = (customer_id: string) => {
 
 
 import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "./queryClient";
 
 export const useCreateTrip = () => {
   return useMutation({
-    mutationFn: async (data: TripData) => {
+    mutationFn: async (data: TripData & {
+      customerid: string
+    }
+    ) => {
       try {
         const res = await axios.post(
           routes.backend.trip.createTrip,
@@ -324,6 +329,9 @@ export const useCreateTrip = () => {
         throw error;
       }
     },
+    async onSuccess() {
+      await queryClient.invalidateQueries({ queryKey: ['trips'], exact: true });
+    }
   });
 }
 
@@ -380,3 +388,76 @@ export const useCreateTripDetail = () => {
     },
   });
 }
+
+
+// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=GoodName
+
+// [
+//   {
+//       "name": "Arvind Blazo",
+//       "customer": 1002
+//   }
+// ]
+
+export const useCreateItem = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      name: string
+      customer: number
+    }[]) => {
+      try {
+        const res = await axios.post(
+          routes.backend.trip.ItemMaster,
+          data,
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error creating trip detail:", error);
+        message.error("Error creating trip detail");
+        throw error;
+      }
+    },
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: ['itemMaster'],
+        exact: true
+      })
+    }
+  });
+}
+
+// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getTruckNames&customer_id=1003
+
+// {
+//     "itemCount": 1,
+//     "body": [
+//         {
+//             "id": "2",
+//             "name": "Tata Prima",
+//             "customer": "1003"
+//         }
+//     ]
+// }
+
+
+export const useGetItemMaster = (customerid: string) => {
+  return useQuery<GetApiResponse<{
+    id: number
+    name: string
+    customer: number
+  }>>({
+    queryKey: ['itemMaster'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(
+          routes.backend.trip.GetItemMaster + '&customer_id=' + customerid,
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        message.error("Error fetching Item Master");
+        return [];
+      }
+    },
+  });
+} 

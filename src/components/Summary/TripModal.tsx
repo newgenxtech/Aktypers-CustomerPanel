@@ -16,6 +16,7 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { ITruckData } from '@/pages/Truck/Truck.d';
+import ItemMasterSelectDropDown from './ItemMasterSelectDropDown';
 
 
 interface TripModalProps {
@@ -29,13 +30,17 @@ interface TripModalProps {
     setIsEdit?: (value: boolean) => void;
     truckData: ITruckData[]
     truckLoading: boolean
+    itemMasterData: {
+        name: string
+        customer: number
+    }[]
+    itemMasterLoading: boolean
 }
 
 export interface FormValues {
     currentMileage: number;
-    closingMileage: number;
     date: any;
-    driverName: string;
+    driverId: number;
     truckNumber: string;
     from: string;
     to: string;
@@ -62,7 +67,9 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     driverLoading,
     isEdit,
     truckData,
-    truckLoading
+    truckLoading,
+    itemMasterData,
+    itemMasterLoading
 }) => {
     const {
         control,
@@ -131,7 +138,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                     name={`items.${index}.item`}
                     control={control}
                     rules={{ required: 'Required' }}
-                    render={({ field }) => <Input placeholder="Item" {...field} />}
+                    render={({ field }) =>
+                        <ItemMasterSelectDropDown
+                            itemMasterData={itemMasterData}
+                            itemMasterLoading={itemMasterLoading}
+                            {...field}
+                        />
+                    }
                 />
             )
         },
@@ -247,18 +260,6 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         />
                     </div>
                     <div>
-                        <label>Closing Mileage</label>
-                        <Controller
-                            name="closingMileage"
-                            control={control}
-                            rules={{ required: 'Required' }}
-                            render={({ field }) => <InputNumber placeholder="Closing Mileage" className="w-full" {...field} />}
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div>
                         <label>Date</label>
                         <Controller
                             name="date"
@@ -267,10 +268,23 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             render={({ field }) => <DatePicker className="w-full" format="DD/MM/YYYY" {...field} />}
                         />
                     </div>
+                    {/* <div>
+                        <label>Closing Mileage</label>
+                        <Controller
+                            name="closingMileage"
+                            control={control}
+                            rules={{ required: 'Required' }}
+                            render={({ field }) => <InputNumber placeholder="Closing Mileage" className="w-full" {...field} />}
+                        />
+                    </div> */}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+
                     <div>
                         <label>Driver Name</label>
                         <Controller
-                            name="driverName"
+                            name="driverId"
                             control={control}
                             rules={{ required: 'Required' }}
                             render={({ field }) => (
@@ -314,7 +328,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                     {...field}
                                 />
                             )}
-                            defaultValue={initialData?.truckNumber}
+                            // defaultValue={initialData?.truckNumber} 
                             disabled={isEdit}
                         />
                     </div>

@@ -3,7 +3,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Input, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetTripData, useGetTruckData } from '@/hooks/GetHooks';
+import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetItemMaster, useGetTripData, useGetTruckData } from '@/hooks/GetHooks';
 import { Edit, Search } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,8 @@ const SummaryListPage = () => {
     const {
         mutate: createTripDetail,
         isSuccess: tripDetailSuccess
-    } = useCreateTripDetail()
+    } = useCreateTripDetail();
+
     const {
         data: tripData,
         isLoading: tripDataLoading,
@@ -55,6 +56,13 @@ const SummaryListPage = () => {
         data: truckData,
         isLoading: truckDataLoading,
     } = useGetTruckData(
+        localStorage.getItem("customer_id") || ""
+    )
+
+    const {
+        data: itemMasterData,
+        isLoading: itemMasterLoading
+    } = useGetItemMaster(
         localStorage.getItem("customer_id") || ""
     )
 
@@ -180,118 +188,74 @@ const SummaryListPage = () => {
         setSelectedTrip(null);
     };
 
-    const handleModalSubmit = (values: FormValues) => {
+    const handleModalSubmit = async (values: FormValues) => {
         console.log('Form values:', values);
-        // Implement your update logic here
         toast.loading('Creating Trip...', {
             id: 'tripDataloading',
             duration: 0
-        })
-        createTrip({
-            truck_no: values.truckNumber,
-            driver: values.driverName,
-            to_location: values.to,
-            from_location: values.from,
-            trip_date: values.date,
-            current_km: values.currentMileage.toLocaleString(),
-            // mobile_number: values.,
-            driverexpense: JSON.stringify(values.expenses),
-            supertotal: (values.items.reduce((acc, item) => acc + ((item.weight * item.tonageRate)), 0)).toLocaleString(),
-            trip_items: JSON.stringify(values.items)
-        })
+        });
 
-        if (tripSuccess) {
-            const NormalItems = values.items.map((item) => {
-                return {
+        try {
+            // Create the trip and await its response
+            await createTrip({
+                truck_no: values.truckNumber,
+                driverid: values.driverId,
+                to_location: values.to,
+                from_location: values.from,
+                trip_date: values.date,
+                current_km: values.currentMileage.toLocaleString(),
+                customerid: localStorage.getItem("customer_id") || "",
+                supertotal: values.items
+                    .reduce((acc, item) => acc + item.weight * item.tonageRate, 0)
+                    .toLocaleString(),
+                // trip_items: JSON.stringify(values.items)
+            });
+            console.log('Trip response:', tripDataResponse);
+
+            if (tripDataResponse) {
+                const tripId = tripDataResponse?.trip_details?.id;
+                if (!tripId) {
+                    throw new Error('Trip creation failed. No trip ID returned.');
+                }
+
+                // Prepare Normal and Expense items
+                const NormalItems = values.items.map((item) => ({
                     ...item,
                     is_single: 0,
-                    tripid: tripDataResponse?.body.id,
+                    tripid: tripId,
                     tonnage_rate: item.tonageRate.toString(),
                     weight: item.weight.toString(),
-                    total: item.tonageRate * item.weight,
+                    total: item.weight * item.tonageRate,
                     remarks: item.remarks ?? ""
-                }
-            })
-            const ExpensesItems = values.expenses.map((item) => {
-                return {
+                }));
+                const ExpensesItems = values.expenses.map((item) => ({
                     ...item,
                     is_single: 1,
-                    tripid: tripDataResponse?.body.id,
+                    tripid: tripId,
                     weight: "0",
                     tonnage_rate: "0",
                     total: item.amount,
                     remarks: item.remarks ?? ""
-                }
-            })
-            createTripDetail(
-                [...NormalItems, ...ExpensesItems],
-            )
-        }
+                }));
 
-        if (
-            tripSuccess &&
-            tripDetailSuccess
-        ) {
-            toast.success('Trip Created Successfully', {
-                id: 'tripDataloading',
-                duration: 2000
-            })
-        } else {
+                // Create trip details
+                await createTripDetail([...NormalItems, ...ExpensesItems]);
 
+                toast.success('Trip Created Successfully', {
+                    id: 'tripDataloading',
+                    duration: 2000
+                });
+            }
+        } catch (error) {
+            console.error('Error creating trip:', error);
             toast.error('Failed to create trip', {
                 id: 'tripDataloading',
                 duration: 2000
-            })
+            });
+        } finally {
+            setIsModalOpen(false);
+            setSelectedTrip(null);
         }
-
-        // values =
-        // {
-        //     "currentMileage": 10,
-        //     "closingMileage": 12,
-        //     "date": "2025-02-16T18:15:39.600Z",
-        //     "driverName": "3",
-        //     "from": "Chennai",
-        //     "to": "Cuddalore",
-        //     "tripType": "single",
-        //     "items": [
-        //         {
-        //             "item": "Sand",
-        //             "weight": 4,
-        //             "tonageRate": 700,
-        //             "remarks": "",
-        //             "total": 2800
-        //         },
-        //         {
-        //             "item": "Jalli",
-        //             "weight": 5,
-        //             "tonageRate": 400,
-        //             "remarks": "",
-        //             "total": 2000
-        //         }
-        //     ],
-        //     "expenses": [
-        //         {
-        //             "item": "Fuel",
-        //             "amount": 1500,
-        //             "remarks": ""
-        //         }
-        //     ]
-        // }
-
-
-        // Data that i need to bind
-        // {
-        //     item: string;
-        //     weight: string;
-        //     is_single: number;
-        //     tripid: string;
-        //     tonnage_rate: string;
-        //     total: number;
-        //     remarks: string;
-        // }
-
-        setIsModalOpen(false);
-        setSelectedTrip(null);
     };
 
     return (
@@ -390,6 +354,8 @@ const SummaryListPage = () => {
                     truckLoading={truckDataLoading}
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    itemMasterData={itemMasterData?.body || []}
+                    itemMasterLoading={itemMasterLoading}
                 />
             </div>
         </div>

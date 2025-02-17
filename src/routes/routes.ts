@@ -51,6 +51,8 @@ export const routes = {
             getTrip: `${base}?route=gettrip`,
             createTrip: `${base}?route=createTrip`,
             createTripDetail: `${base}?route=createTripDetail`,
+            ItemMaster: `${base}?route=GoodName`,
+            GetItemMaster: `${base}?route=getTruckNames`
         },
         file: {
             upload: `${base}`,
