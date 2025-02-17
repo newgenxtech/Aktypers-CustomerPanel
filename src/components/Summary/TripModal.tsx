@@ -17,13 +17,14 @@ import toast from 'react-hot-toast';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { ITruckData } from '@/pages/Truck/Truck.d';
 import ItemMasterSelectDropDown from './ItemMasterSelectDropDown';
+import { TripDetails } from '@/pages/Trip/Trip.d';
 
 
 interface TripModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (values: any) => void;
-    initialData?: any;
+    initialData?: TripDetails;
     driverData: DriverMaster[];
     driverLoading: boolean;
     isEdit?: boolean;
@@ -44,7 +45,7 @@ export interface FormValues {
     truckNumber: string;
     from: string;
     to: string;
-    tripType?: 'single' | 'double';
+    // tripType?: 'single' | 'double';
     items: {
         item: string;
         weight: number;
@@ -71,19 +72,28 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     itemMasterData,
     itemMasterLoading
 }) => {
+    console.log('initialData', initialData);
     const {
         control,
         handleSubmit,
         watch
     } = useForm<FormValues>({
-        defaultValues: initialData || {
+        defaultValues: initialData ? {
+            currentMileage: Number(initialData.current_km),
+            date: initialData.loading_date,
+            driverId: initialData.driver ? Number(initialData.driver) : 0,
+            truckNumber: initialData.truck_no,
+            from: initialData.from,
+            to: initialData.to,
+            // tripType: initialData.tripType,
+            items: initialData.trip_items ? JSON.parse(initialData.trip_items) : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
+            expenses: []
+        } : {
             currentMileage: undefined,
-            closingMileage: undefined,
             date: null,
-            driverName: '',
+            driverId: 0,
             from: '',
             to: '',
-            tripType: 'single',
             items: [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
             expenses: [{ item: '', amount: 0, remarks: '' }]
         }
@@ -203,7 +213,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                     name={`expenses.${index}.item`}
                     control={control}
                     rules={{ required: 'Required' }}
-                    render={({ field }) => <Input placeholder="Item" {...field} />}
+                    render={({ field }) =>
+                        <ItemMasterSelectDropDown
+                            itemMasterData={itemMasterData}
+                            itemMasterLoading={itemMasterLoading}
+                            {...field}
+                        />
+                    }
                 />
             )
         },
@@ -467,74 +483,6 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         )}
                     />
                 </div>
-
-                {/* Optionally show return details for double trips */}
-                {watch('tripType') === 'double' && (
-                    <>
-                        <div className="bg-[#5B77A0] text-white p-3 mb-4">RETURN DETAILS</div>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label>Return Date</label>
-                                <Controller
-                                    name="returnDate"
-                                    control={control}
-                                    rules={{ required: 'Required' }}
-                                    render={({ field }) => <DatePicker className="w-full" format="DD/MM/YYYY" {...field} />}
-                                />
-                            </div>
-                            <div>
-                                <label>Return Driver Name</label>
-                                <Controller
-                                    name="returnDriverName"
-                                    control={control}
-                                    rules={{ required: 'Required' }}
-                                    render={({ field }) => (
-                                        <Select placeholder="Select driver" className="w-full" {...field}>
-                                            {/* Options here */}
-                                        </Select>
-                                    )}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label>Return From</label>
-                                <Controller
-                                    name="returnFrom"
-                                    control={control}
-                                    rules={{ required: 'Required' }}
-                                    render={({ field }) => <Input placeholder="Return From" {...field} />}
-                                />
-                            </div>
-                            <div>
-                                <label>Return To</label>
-                                <Controller
-                                    name="returnTo"
-                                    control={control}
-                                    rules={{ required: 'Required' }}
-                                    render={({ field }) => <Input placeholder="Return To" {...field} />}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-4 mb-4">
-                            <div>
-                                <label>Calculated Distance</label>
-                                <Input disabled />
-                            </div>
-                            <div>
-                                <label>Mileage</label>
-                                <InputNumber className="w-full" placeholder="Mileage" />
-                            </div>
-                            <div>
-                                <label>Expected Amount</label>
-                                <InputNumber className="w-full" placeholder="Expected Amount" disabled />
-                            </div>
-                        </div>
-                    </>
-                )}
-
                 <div className="flex justify-end gap-2 mt-4">
                     <Button onClick={onClose}>Reset</Button>
                     <Button type="primary" htmlType="submit">

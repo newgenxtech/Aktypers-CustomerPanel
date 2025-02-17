@@ -310,6 +310,7 @@ export const useGetTripData = (customer_id: string) => {
 
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
+import toast from "react-hot-toast";
 
 export const useCreateTrip = () => {
   return useMutation({
@@ -403,7 +404,7 @@ export const useCreateItem = () => {
   return useMutation({
     mutationFn: async (data: {
       name: string
-      customer: number
+      customer: string
     }[]) => {
       try {
         const res = await axios.post(
@@ -412,17 +413,21 @@ export const useCreateItem = () => {
         );
         return res.data;
       } catch (error) {
-        console.error("Error creating trip detail:", error);
-        message.error("Error creating trip detail");
+        console.error("Error creating Item:", error);
+        message.error("Error creating Item");
         throw error;
       }
     },
     async onSuccess() {
+      toast.success('Item added successfully', {
+        id: 'addItem',
+        duration: 2000
+      });
       await queryClient.invalidateQueries({
         queryKey: ['itemMaster'],
         exact: true
       })
-    }
+    },
   });
 }
 

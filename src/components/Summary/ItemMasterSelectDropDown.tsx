@@ -3,8 +3,9 @@ import { Button, Divider, Input, Select, Space } from 'antd';
 import type { InputRef, SelectProps } from 'antd';
 import { Plus } from 'lucide-react';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useCreateItem } from '@/hooks/GetHooks';
+import toast from 'react-hot-toast';
 
-let index = 0;
 interface ItemMasterSelectDropDownProps extends Omit<SelectProps, keyof ControllerRenderProps>, ControllerRenderProps {
     itemMasterData: {
         name: string;
@@ -18,9 +19,12 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
     itemMasterLoading,
     ...props
 }) => {
-    const [items, setItems] = useState(['jack', 'lucy']);
     const [name, setName] = useState('');
     const inputRef = useRef<InputRef>(null);
+
+    const {
+        mutate: createItem,
+    } = useCreateItem();
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -28,11 +32,19 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
 
     const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
-        setItems([...items, name || `New item ${index++}`]);
-        setName('');
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
+        toast.loading('Adding item...', {
+            duration: 2000,
+            id: 'addItem'
+        });
+        // setItems([...items, name || `New item ${index++}`]);
+        // setName('');
+        // setTimeout(() => {
+        //     inputRef.current?.focus();
+        // }, 0);
+        createItem([{
+            customer: localStorage.getItem("customer_id") || "",
+            name: name
+        }]);
     };
 
     return (
@@ -41,6 +53,7 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
             style={{ width: 300 }}
             loading={itemMasterLoading}
             placeholder="custom dropdown render"
+            showSearch
             dropdownRender={(menu) => (
                 <>
                     {menu}

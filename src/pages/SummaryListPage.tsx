@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
 import TripModal, { FormValues } from '@/components/Summary/TripModal';
 import toast from 'react-hot-toast';
+import { TripDetails } from './Trip/Trip.d';
 
 export interface FilterData {
     arrivalDate: dayjs.Dayjs | null;
@@ -18,6 +19,7 @@ export interface FilterData {
     driver: string;
     returnDriver: string;
 }
+  
 const SummaryListPage = () => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [searchText, setSearchText] = useState<string>('');
@@ -78,17 +80,9 @@ const SummaryListPage = () => {
         { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true, width: 80 },
         { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
         { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
-        { field: 'return_driver_name', headerName: 'Return Driver name', sortable: true, filter: true },
         {
             field: 'loading_date',
             headerName: 'Loading Date',
-            sortable: true,
-            filter: true,
-            valueFormatter: (params) => dayjs(params.value).format('DD/MM/YYYY')
-        },
-        {
-            field: 'unloading_date',
-            headerName: 'Unloading Date',
             sortable: true,
             filter: true,
             valueFormatter: (params) => dayjs(params.value).format('DD/MM/YYYY')
@@ -176,7 +170,7 @@ const SummaryListPage = () => {
     }, [filterData]);
 
 
-    const handleEdit = (data: any) => {
+    const handleEdit = (data:TripDetails ) => {
         console.log('Edit data:', data);
         setSelectedTrip(data);
         setIsModalOpen(true);
@@ -206,8 +200,7 @@ const SummaryListPage = () => {
                 current_km: values.currentMileage.toLocaleString(),
                 customerid: localStorage.getItem("customer_id") || "",
                 supertotal: values.items
-                    .reduce((acc, item) => acc + item.weight * item.tonageRate, 0)
-                    .toLocaleString(),
+                    .reduce((acc, item) => acc + item.weight * item.tonageRate, 0).toString(),
                 // trip_items: JSON.stringify(values.items)
             });
             console.log('Trip response:', tripDataResponse);
@@ -325,14 +318,13 @@ const SummaryListPage = () => {
                 <AgGridTable
                     data={tripData?.body.map((trip, index) => ({
                         sl_no: index + 1,
-                        truck_no: trip.truck_no,
-                        driver_name: trip.driver,
-                        return_driver_name: trip.Rdriver,
+                        truck_no: trip.registeration_no,
+                        driver_name: trip.driver_name,
                         loading_date: trip.trip_date,
-                        unloading_date: trip.reverse_date,
-                        from: trip.Rfrom,
-                        to: trip.Rto,
-                        total: trip.supertotal
+                        from: trip.from_location,
+                        to: trip.to_location,
+                        total: trip.supertotal,
+                        ...trip
                     })) || []}
                     columns={columnDefs}
                     isLoading={tripDataLoading}
