@@ -77,7 +77,7 @@ const Truck: React.FC<TruckProps> = ({
   wheelRadius,
   wheelWidth,
   wheelPositions,
-  axlesData,
+  // axlesData,
   TyrePressureData,
 }) => {
   const renderWheels = () => {
@@ -132,22 +132,22 @@ const Truck: React.FC<TruckProps> = ({
     });
   };
 
-  const renderAxles = (truckData: IAxcelsData[]) => {
-    return truckData.map(
-      ({ axlePositions, axleRadius, axleLength, rotation }) => {
-        return axlePositions.map((position, index) => (
-          <Cylinder
-            key={index}
-            args={[axleRadius, axleRadius, axleLength, 32]}
-            position={position}
-            rotation={rotation}
-          >
-            <meshStandardMaterial color="#71B9FF" />
-          </Cylinder>
-        ));
-      },
-    );
-  };
+  // const renderAxles = (truckData: IAxcelsData[]) => {
+  //   return truckData.map(
+  //     ({ axlePositions, axleRadius, axleLength, rotation }) => {
+  //       return axlePositions.map((position, index) => (
+  //         <Cylinder
+  //           key={index}
+  //           args={[axleRadius, axleRadius, axleLength, 32]}
+  //           position={position}
+  //           rotation={rotation}
+  //         >
+  //           <meshStandardMaterial color="#71B9FF" />
+  //         </Cylinder>
+  //       ));
+  //     },
+  //   );
+  // };
 
   return (
     <group>
@@ -162,7 +162,7 @@ const Truck: React.FC<TruckProps> = ({
       </Box>
 
       {/* Axles */}
-      {renderAxles(axlesData)}
+      {/* {renderAxles(axlesData)} */}
 
       {/* Wheels */}
       {renderWheels()}

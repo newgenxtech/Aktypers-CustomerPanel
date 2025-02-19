@@ -282,30 +282,36 @@ const SummaryListPage = () => {
                         placeholder="Arrival Date"
                         onChange={(date) => setFilterData({ ...filterData, arrivalDate: date })}
                         className="w-full"
+                        disabled
                     />
                     <DatePicker
                         placeholder="Return Date"
                         onChange={(date) => setFilterData({ ...filterData, returnDate: date })}
                         className="w-full"
+                        disabled
                     />
                     <Input
                         placeholder="Select Truck"
                         onChange={(e) => setFilterData({ ...filterData, truck: e.target.value })}
+                        disabled
                         className="w-full"
                     />
                     <Input
                         placeholder="Select Driver"
                         onChange={(e) => setFilterData({ ...filterData, driver: e.target.value })}
                         className="w-full"
+                        disabled
                     />
                     <div className="flex gap-2">
                         <Input
                             placeholder="Select Return Driver"
                             onChange={(e) => setFilterData({ ...filterData, returnDriver: e.target.value })}
+                            disabled
                             className="w-full"
                         />
                         <Button
                             onClick={handleFilter}
+                            disabled
                             className="bg-blue-600 text-white hover:bg-blue-700"
                         >
                             Filter
@@ -319,6 +325,7 @@ const SummaryListPage = () => {
                             placeholder="Search"
                             onChange={(e) => handleSearch(e.target.value)}
                             className="w-full pl-8"
+                            disabled
                         />
                         <Search className="h-4 w-4 absolute left-2 top-2 text-gray-400" />
                     </div>
