@@ -32,6 +32,7 @@ interface TripModalProps {
     truckData: ITruckData[]
     truckLoading: boolean
     itemMasterData: {
+        id: number
         name: string
         customer: number
     }[]
@@ -47,13 +48,13 @@ export interface FormValues {
     to: string;
     // tripType?: 'single' | 'double';
     items: {
-        item: string;
+        item: number;
         weight: number;
         tonageRate: number;
         remarks?: string;
     }[];
     expenses: {
-        item: string;
+        item: number;
         amount: number;
         remarks?: string;
     }[];
@@ -73,6 +74,17 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     itemMasterLoading
 }) => {
     console.log('initialData', initialData);
+    const parseJsonSafely = (jsonString: string | null | undefined, defaultValue: any[] = []) => {
+        if (!jsonString || jsonString === '[]') return defaultValue;
+        try {
+            return JSON.parse(jsonString);
+        } catch (error) {
+            console.error('JSON Parse Error:', error);
+            console.log('Invalid JSON string:', jsonString);
+            return defaultValue;
+        }
+    };
+
     const {
         control,
         handleSubmit,
@@ -86,30 +98,27 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             truckNumber: initialData.truck_no || '',
             from: initialData.from_location || '',
             to: initialData.to_location || '',
-            items: initialData.trip_items && initialData.trip_items !== '[]'
-                ? JSON.parse(initialData.trip_items).map((item: any) => ({
-                    item: item.item || '',
-                    weight: Number(item.weight) || 0,
-                    tonageRate: Number(item.tonnage_rate) || 0,
-                    remarks: item.remarks || ''
-                }))
-                : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-            expenses: initialData.driverexpense && initialData.driverexpense !== '[]'
-                ? JSON.parse(initialData.driverexpense).map((expense: any) => ({
-                    item: expense.item || '',
-                    amount: Number(expense.amount) || 0,
-                    remarks: expense.remarks || ''
-                }))
-                : [{ item: '', amount: 0, remarks: '' }]
+            items:
+                initialData.trip_items && initialData.trip_items !== '[]' && initialData.trip_items !== "[null]"
+                    ? parseJsonSafely(initialData.trip_items).map((item: any) => ({
+                        item: Number(item.item) || 0,
+                        weight: Number(item.weight) || 0,
+                        tonageRate: Number(item.tonnage_rate) || 0,
+                        remarks: item.remarks || ''
+                    })) :
+                    [],
+            expenses:
+                initialData.driverexpense && initialData.driverexpense !== '[]' && initialData.driverexpense !== "[null]"
+                    ? parseJsonSafely(initialData.driverexpense).map((expense: any) => ({
+                        item: Number(expense.item) || 0,
+                        amount: Number(expense.amount) || 0,
+                        remarks: expense.remarks || ''
+
+                    })) : []
         } : {
-            currentMileage: 0,
-            date: null,
-            driverId: undefined,
-            truckNumber: '',
-            from: '',
-            to: '',
-            items: [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-            expenses: [{ item: '', amount: 0, remarks: '' }]
+            // ... default values remain the same
+            items: [{ item: 0, weight: 0, tonageRate: 0, remarks: '' }],
+            expenses: [{ item: 0, amount: 0, remarks: '' }]
         }
     });
 
@@ -123,7 +132,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 truckNumber: initialData.truck_no || '',
                 from: initialData.from_location || '',
                 to: initialData.to_location || '',
-                items: initialData.trip_items && initialData.trip_items !== '[]'
+                items: initialData.trip_items && initialData.trip_items !== '[]' && initialData.trip_items !== "[null]"
                     ? JSON.parse(initialData.trip_items).map((item: any) => ({
                         item: item.item || '',
                         weight: Number(item.weight) || 0,
@@ -131,7 +140,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         remarks: item.remarks || ''
                     }))
                     : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-                expenses: initialData.driverexpense && initialData.driverexpense !== '[]'
+                expenses: initialData.driverexpense && initialData.driverexpense !== '[]' && initialData.driverexpense !== "[null]"
                     ? JSON.parse(initialData.driverexpense).map((expense: any) => ({
                         item: expense.item || '',
                         amount: Number(expense.amount) || 0,
@@ -458,7 +467,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 className='flex justify-between gap-2'
                             >
                                 <Space>
-                                    <Button type="primary" onClick={() => appendItem({ item: '', weight: 0, tonageRate: 0, remarks: '' })}>
+                                    <Button type="primary" onClick={() => appendItem({ item: 0, weight: 0, tonageRate: 0, remarks: '' })}>
                                         Add Item
                                     </Button>
                                     <Button
@@ -507,7 +516,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 className='flex justify-between gap-2'
                             >
                                 <Space>
-                                    <Button type="primary" onClick={() => appendExpense({ item: '', amount: 0, remarks: '' })}>
+                                    <Button type="primary" onClick={() => appendExpense({ item: 0, amount: 0, remarks: '' })}>
                                         Add Item
                                     </Button>
                                     <Button

@@ -211,7 +211,7 @@ const SummaryListPage = () => {
             if (tripResponse?.trip_details?.id) {
                 // Prepare Normal and Expense items
                 const NormalItems = values.items.map((item) => ({
-                    "item": item.item ?? "",
+                    "item": item.item ?? 0,
                     "driver_advance": 0,
                     "balance": 0,
                     "is_single": 0,
@@ -222,7 +222,7 @@ const SummaryListPage = () => {
                     "remarks": item.remarks ?? ""
                 }));
                 const ExpensesItems = values.expenses.map((item) => ({
-                    "item": item.item ?? "",
+                    "item": item.item ?? 0,
                     "driver_advance": 0,
                     "balance": 0,
                     "is_single": 1,

@@ -371,7 +371,7 @@ export const useCreateTrip = () => {
 // ]
 
 interface TripDetailData {
-  item: string;
+  item: number;
   weight: string;
   is_single: number;
   tripid: string;

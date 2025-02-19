@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 interface ItemMasterSelectDropDownProps extends Omit<SelectProps, keyof ControllerRenderProps>, ControllerRenderProps {
     itemMasterData: {
+        id: number;
         name: string;
         customer: number;
     }[];
@@ -72,7 +73,7 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
                     </Space>
                 </>
             )}
-            options={itemMasterData.map((item) => ({ label: item.name, value: item.name }))}
+            options={itemMasterData.map((item) => ({ label: item.name, value: item.id }))}
         />
     );
 };
