@@ -231,7 +231,7 @@ const SummaryListPage = () => {
                 // Prepare Normal and Expense items
                 const NormalItems = values.items.map((item) => ({
                     "item": item.item ?? 0,
-
+                    "id": item.existingId ?? undefined, 
                     "is_single": 0,
                     "tripid": tripResponse.trip_details.id,
                     "tonnage_rate": item.tonageRate.toString(),
@@ -241,6 +241,7 @@ const SummaryListPage = () => {
                 }));
                 const ExpensesItems = values.expenses.map((item) => ({
                     "item": item.item ?? 0,
+                    "id": item.existingId?? undefined,
                     "is_single": 1,
                     "tripid": tripResponse.trip_details.id,
                     "weight": "0",

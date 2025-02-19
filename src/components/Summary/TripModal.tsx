@@ -49,12 +49,14 @@ export interface FormValues {
     to: string;
     // tripType?: 'single' | 'double';
     items: {
+        existingId?: number | undefined;
         item: number;
         weight: number;
         tonageRate: number;
         remarks?: string;
     }[];
     expenses: {
+        existingId?: number | undefined;
         item: number;
         amount: number;
         remarks?: string;
