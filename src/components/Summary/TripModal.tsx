@@ -18,6 +18,7 @@ import { ITruckData } from '@/pages/Truck/Truck.d';
 import ItemMasterSelectDropDown from './ItemMasterSelectDropDown';
 import dayjs from 'dayjs';
 import { TripDetails } from '@/pages/Trip/Trip';
+import { useDeleteTripDetail } from '@/hooks/GetHooks';
 
 
 interface TripModalProps {
@@ -84,6 +85,18 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             return defaultValue;
         }
     };
+
+    const [selectedTripitems, setSelectedTripitems] = React.useState<{
+        item: number;
+        weight: number;
+        tonageRate: number;
+        remarks?: string;
+    }[]>([]);
+    const [selectedTripExpenses, setSelectedTripExpenses] = React.useState<{
+        item: number;
+        amount: number;
+        remarks?: string;
+    }[]>([]);
 
     const {
         control,
@@ -298,6 +311,8 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         }
     ];
 
+    const deleteItem = useDeleteTripDetail();
+
     return (
         <Modal
             title="Trip Details"
@@ -430,6 +445,21 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             total: itemFields.length,
                             pageSize: 10
                         }}
+                        rowSelection={
+                            itemFields.length > 0
+                                ? {
+                                    type: 'checkbox' as const,
+                                    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                                        setSelectedTripitems(selectedRows);
+                                    },
+                                    // onSelect: (record: any, selected: boolean, selectedRows: any[]) => {
+                                    //     console.log(record, selected, selectedRows);
+                                    //     setSelectedTripExpenses(selectedRows);
+                                    // },
+                                }
+                                : undefined
+                        }
                         footer={() => (
                             <div
                                 className='flex justify-between gap-2'
@@ -442,7 +472,14 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         danger
                                         onClick={() => {
                                             if (itemFields.length > 0) {
-                                                removeItem(itemFields.length - 1);
+                                                // removeItem(itemFields.length - 1);
+                                                const selectedItemIds = selectedTripitems.map((item: any) => item.id);
+
+                                                // Call the deleteTripDetail mutation
+                                                deleteItem.mutateAsync(selectedItemIds)
+                                                removeItem(
+                                                    selectedTripitems.map((item: any) => item.id)
+                                                );
                                                 toast.success('Item removed successfully');
                                             }
                                         }}
@@ -479,6 +516,21 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             total: expenseFields.length,
                             pageSize: 10
                         }}
+                        rowSelection={
+                            expenseFields.length > 0
+                                ? {
+                                    type: 'checkbox' as const,
+                                    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                                        setSelectedTripExpenses(selectedRows);
+                                    },
+                                    // onSelect: (record: any, selected: boolean, selectedRows: any[]) => {
+                                    //     console.log(record, selected, selectedRows);
+                                    //     setSelectedTripExpenses(selectedRows);
+                                    // },
+                                }
+                                : undefined
+                        }
                         footer={() => (
                             <div
                                 className='flex justify-between gap-2'
@@ -491,7 +543,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         danger
                                         onClick={() => {
                                             if (expenseFields.length > 0) {
-                                                removeExpense(expenseFields.length - 1);
+                                                console.log('selectedTripExpenses: ', selectedTripExpenses);
+                                                const expenseIds = selectedTripExpenses.map((expense: any) => (expense.id));
+
+                                                deleteItem.mutateAsync(expenseIds);
+                                                removeExpense(
+                                                    selectedTripExpenses.map((expense: any) => expense.id)
+                                                );
                                                 toast.success('Item removed successfully');
                                             }
                                         }}

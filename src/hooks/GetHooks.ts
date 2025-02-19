@@ -495,4 +495,30 @@ export const useGetItemMaster = (customerid: string) => {
       }
     },
   });
-} 
+}
+
+
+// deleteTripDetail
+
+export const useDeleteTripDetail = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      id: number
+    }[]) => {
+      try {
+        const res = await axios.post(
+          routes.backend.trip.deleteTripDetail,
+          data,
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error deleting data:", error);
+        message.error("Error deleting data");
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trips'] });
+    }
+  });
+}
