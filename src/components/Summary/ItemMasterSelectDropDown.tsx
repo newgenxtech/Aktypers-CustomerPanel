@@ -38,11 +38,6 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
             duration: 2000,
             id: 'addItem'
         });
-        // setItems([...items, name || `New item ${index++}`]);
-        // setName('');
-        // setTimeout(() => {
-        //     inputRef.current?.focus();
-        // }, 0);
         createItem([{
             customer: localStorage.getItem("customer_id") || "",
             name: name

@@ -74,7 +74,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     itemMasterData,
     itemMasterLoading
 }) => {
-    console.log('initialData', initialData);
+    console.table(initialData);
     const parseJsonSafely = (jsonString: string | null | undefined, defaultValue: any[] = []) => {
         if (!jsonString || jsonString === '[]') return defaultValue;
         try {
@@ -114,6 +114,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             items: parseJsonSafely(initialData.trip_items)
                 .filter((item: any) => item !== null)  // Filter out null values
                 .map((item: any) => ({
+                    ...item,
                     item: Number(item.item) || 0,
                     weight: Number(item.weight) || 0,
                     tonageRate: Number(item.tonnage_rate) || 0,
@@ -122,6 +123,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             expenses: parseJsonSafely(initialData.expense_items)  // Changed from driverexpense to expense_items
                 .filter((expense: any) => expense !== null)  // Filter out null values
                 .map((expense: any) => ({
+                    ...expense,
                     item: Number(expense.item) || 0,
                     amount: Number(expense.total) || 0,  // Changed from amount to total
                     remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
@@ -146,6 +148,8 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 items: parseJsonSafely(initialData.trip_items)
                     .filter((item: any) => item !== null)
                     .map((item: any) => ({
+                        ...item,
+                        existingId: item.id,
                         item: Number(item.item) || 0,
                         weight: Number(item.weight) || 0,
                         tonageRate: Number(item.tonnage_rate) || 0,
@@ -154,6 +158,8 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 expenses: parseJsonSafely(initialData.expense_items)
                     .filter((expense: any) => expense !== null)
                     .map((expense: any) => ({
+                        ...expense,
+                        existingId: expense.id,
                         item: Number(expense.item) || 0,
                         amount: Number(expense.total) || 0,
                         remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
@@ -473,10 +479,15 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         onClick={() => {
                                             if (itemFields.length > 0) {
                                                 // removeItem(itemFields.length - 1);
-                                                const selectedItemIds = selectedTripitems.map((item: any) => item.id);
+                                                const selectedItemIds = selectedTripitems.map((item: any) => item.existingId);
 
+                                                if (selectedItemIds.length === 0) {
+                                                    toast.error('Please select an item to delete');
+                                                    return;
+                                                }
                                                 // Call the deleteTripDetail mutation
                                                 deleteItem.mutateAsync(selectedItemIds)
+
                                                 removeItem(
                                                     selectedTripitems.map((item: any) => item.id)
                                                 );
@@ -544,8 +555,11 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         onClick={() => {
                                             if (expenseFields.length > 0) {
                                                 console.log('selectedTripExpenses: ', selectedTripExpenses);
-                                                const expenseIds = selectedTripExpenses.map((expense: any) => (expense.id));
-
+                                                const expenseIds = selectedTripExpenses.map((expense: any) => (expense.existingId));
+                                                if (expenseIds.length === 0) {
+                                                    toast.error('Please select an item to delete');
+                                                    return;
+                                                }
                                                 deleteItem.mutateAsync(expenseIds);
                                                 removeExpense(
                                                     selectedTripExpenses.map((expense: any) => expense.id)
