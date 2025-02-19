@@ -193,7 +193,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Item',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.item`}
                     control={control}
@@ -210,7 +210,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Weight (in tons)',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.weight`}
                     control={control}
@@ -223,7 +223,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Tonage Rate (Rs.)',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.tonageRate`}
                     control={control}
@@ -236,11 +236,11 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Total (Rs.)',
-            render: (_: any, record: any, index: number) => <div>{renderTotal(index)}</div>
+            render: (_: any, _record: any, index: number) => <div>{renderTotal(index)}</div>
         },
         {
             title: 'Remarks',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.remarks`}
                     control={control}
@@ -258,7 +258,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Item',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.item`}
                     control={control}
@@ -275,7 +275,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Amount',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.amount`}
                     control={control}
@@ -288,7 +288,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         },
         {
             title: 'Remarks',
-            render: (_: any, record: any, index: number) => (
+            render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.remarks`}
                     control={control}

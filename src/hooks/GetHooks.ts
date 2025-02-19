@@ -282,6 +282,21 @@ export const useGetTripData = (customer_id: string) => {
   });
 }
 
+// getTruckMakersByCustomerId
+
+export const useGetTruckMakers = (customer_id: string) => {
+  return useQuery<GetApiResponse<{
+    make: string,
+    count: string
+  }>>({
+    queryKey: ["truckMakers"],
+    queryFn: () =>
+      GetApiCustomerRoutes(
+        routes.backend.truck.getTruckMakersByCustomerId + customer_id,
+        "DummyToken",
+      ).then((res) => res),
+  });
+}
 
 // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=createTrip
 

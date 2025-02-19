@@ -22,8 +22,8 @@ export interface FilterData {
 }
 
 const SummaryListPage = () => {
-    const [pageSize, setPageSize] = useState<number>(10);
-    const [searchText, setSearchText] = useState<string>('');
+    // const [pageSize, setPageSize] = useState<number>(10);
+    const [, setSearchText] = useState<string>('');
     const gridRef = useRef<any>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);

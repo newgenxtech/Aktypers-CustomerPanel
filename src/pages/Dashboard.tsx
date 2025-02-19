@@ -17,10 +17,10 @@ import {
   useGetTyreData,
   useGetPaymentAnalytics,
   useGetTyreAnalytics,
-  useGetTruckMakers,
   useGetTruckIdsAndGroupByBrand,
   useGetInsuranceData,
   useGetComplaintsData,
+  useGetTruckMakers,
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
