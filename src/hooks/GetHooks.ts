@@ -261,6 +261,7 @@ interface TripData {
   supertotal: string;
   trip_items?: string;
   driverid: number
+  total_expense?: string;
 }
 
 
@@ -327,15 +328,15 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
 
-export const useCreateTrip = () => {
+export const useCreateTrip = (
+  isEdit: boolean) => {
   return useMutation({
     mutationFn: async (data: TripData & {
-      customerid: string
-    }
-    ) => {
+      customerid: string,
+    }) => {
       try {
         const res = await axios.post(
-          routes.backend.trip.createTrip,
+          isEdit ? routes.backend.trip.editTrip : routes.backend.trip.createTrip,
           data,
         );
         if (!res.data) {
@@ -394,12 +395,14 @@ interface TripDetailData {
   total: number;
   remarks: string;
 }
-export const useCreateTripDetail = () => {
+export const useCreateTripDetail = (
+  isEdit: boolean
+) => {
   return useMutation({
     mutationFn: async (data: TripDetailData[]) => {
       try {
         const res = await axios.post(
-          routes.backend.trip.createTripDetail,
+          isEdit ? routes.backend.trip.editTripDetail : routes.backend.trip.createTripDetail,
           data,
         );
         if (!res.data) {

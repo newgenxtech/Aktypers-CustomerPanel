@@ -101,7 +101,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             items: parseJsonSafely(initialData.trip_items)
                 .filter((item: any) => item !== null)  // Filter out null values
                 .map((item: any) => ({
-                    item: Number(item.item),
+                    item: Number(item.item) || 0,
                     weight: Number(item.weight) || 0,
                     tonageRate: Number(item.tonnage_rate) || 0,
                     remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
@@ -109,7 +109,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             expenses: parseJsonSafely(initialData.expense_items)  // Changed from driverexpense to expense_items
                 .filter((expense: any) => expense !== null)  // Filter out null values
                 .map((expense: any) => ({
-                    item: Number(expense.item),
+                    item: Number(expense.item) || 0,
                     amount: Number(expense.total) || 0,  // Changed from amount to total
                     remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
                 })) || []
@@ -133,7 +133,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 items: parseJsonSafely(initialData.trip_items)
                     .filter((item: any) => item !== null)
                     .map((item: any) => ({
-                        item: Number(item.item),
+                        item: Number(item.item) || 0,
                         weight: Number(item.weight) || 0,
                         tonageRate: Number(item.tonnage_rate) || 0,
                         remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
@@ -141,7 +141,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 expenses: parseJsonSafely(initialData.expense_items)
                     .filter((expense: any) => expense !== null)
                     .map((expense: any) => ({
-                        item: Number(expense.item),
+                        item: Number(expense.item) || 0,
                         amount: Number(expense.total) || 0,
                         remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
                     })) || [{ item: 0, amount: 0, remarks: '' }]

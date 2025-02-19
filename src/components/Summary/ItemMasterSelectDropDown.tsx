@@ -18,6 +18,7 @@ interface ItemMasterSelectDropDownProps extends Omit<SelectProps, keyof Controll
 const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
     itemMasterData,
     itemMasterLoading,
+    value,
     ...props
 }) => {
     const [name, setName] = useState('');
@@ -48,13 +49,20 @@ const ItemMasterSelectDropDown: React.FC<ItemMasterSelectDropDownProps> = ({
         }]);
     };
 
+    const selectedItem = itemMasterData.find(item => item.id === value.toString());
+    console.log("selectedItem", selectedItem)
     return (
         <Select
             {...props}
             style={{ width: 300 }}
+            value={value ? { label: selectedItem?.name || 'Unknown', value: value } : undefined}
             loading={itemMasterLoading}
             placeholder="custom dropdown render"
             showSearch
+            labelRender={(value) => {
+                console.log(value);
+                return value.label || 'Please select';
+            }}
             dropdownRender={(menu) => (
                 <>
                     {menu}

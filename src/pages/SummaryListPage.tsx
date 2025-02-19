@@ -30,9 +30,9 @@ const SummaryListPage = () => {
     const [selectedTrip, setSelectedTrip] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const createTrip = useCreateTrip();
+    const createTrip = useCreateTrip(isEdit);
 
-    const createTripDetail = useCreateTripDetail();
+    const createTripDetail = useCreateTripDetail(isEdit);
 
     const {
         data: tripData,
@@ -83,7 +83,23 @@ const SummaryListPage = () => {
         },
         { field: 'from', headerName: 'From', sortable: true, filter: true },
         { field: 'to', headerName: 'To', sortable: true, filter: true },
-        { field: 'total', headerName: 'Total', sortable: true, filter: true },
+        {
+            field: 'total',
+            headerName: 'Received',
+            sortable: true, filter: true
+        },
+        {
+            field: "total_expense", headerName: "Total Expense", sortable: true, filter: true,
+        },
+        // Profit = Total - Total Expense
+        {
+            field: "profit", headerName: "Profit", sortable: true, filter: true,
+            valueGetter: (params) => {
+                const total = parseFloat(params.data.total) || 0;
+                const totalExpense = parseFloat(params.data.total_expense) || 0;
+                return total - totalExpense;
+            }
+        },
         {
             headerName: 'Actions',
             cellRenderer: (params: CustomCellRendererProps) => (
@@ -197,6 +213,7 @@ const SummaryListPage = () => {
         try {
             // Create the trip
             const tripResponse = await createTrip.mutateAsync({
+                id: isEdit ? selectedTrip?.id : undefined,
                 truck_no: values.truckNumber,
                 driverid: values.driverId,
                 to_location: values.to,
@@ -206,14 +223,15 @@ const SummaryListPage = () => {
                 customerid: localStorage.getItem("customer_id") || "",
                 supertotal: values.items
                     .reduce((acc, item) => acc + item.weight * item.tonageRate, 0).toString(),
+                total_expense: values.expenses
+                    .reduce((acc, item) => acc + item.amount, 0).toString(),
             });
 
             if (tripResponse?.trip_details?.id) {
                 // Prepare Normal and Expense items
                 const NormalItems = values.items.map((item) => ({
                     "item": item.item ?? 0,
-                    "driver_advance": 0,
-                    "balance": 0,
+
                     "is_single": 0,
                     "tripid": tripResponse.trip_details.id,
                     "tonnage_rate": item.tonageRate.toString(),
@@ -223,8 +241,6 @@ const SummaryListPage = () => {
                 }));
                 const ExpensesItems = values.expenses.map((item) => ({
                     "item": item.item ?? 0,
-                    "driver_advance": 0,
-                    "balance": 0,
                     "is_single": 1,
                     "tripid": tripResponse.trip_details.id,
                     "weight": "0",
