@@ -76,32 +76,33 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     const {
         control,
         handleSubmit,
-        watch
+        watch,
+        reset
     } = useForm<FormValues>({
         defaultValues: initialData ? {
-            currentMileage: initialData.current_km ? Number(initialData.current_km) : undefined,
-            date: initialData.loading_date ? dayjs(initialData.loading_date) : null,
-            driverId: initialData.driver ? Number(initialData.driver) : undefined,
+            currentMileage: Number(initialData.current_km) || 0,
+            date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
+            driverId: Number(initialData.driver) || undefined,
             truckNumber: initialData.truck_no || '',
-            from: initialData.from || '',
-            to: initialData.to || '',
-            items: initialData.trip_items
+            from: initialData.from_location || '',
+            to: initialData.to_location || '',
+            items: initialData.trip_items && initialData.trip_items !== '[]'
                 ? JSON.parse(initialData.trip_items).map((item: any) => ({
                     item: item.item || '',
                     weight: Number(item.weight) || 0,
-                    tonageRate: Number(item.tonageRate) || 0,
+                    tonageRate: Number(item.tonnage_rate) || 0,
                     remarks: item.remarks || ''
                 }))
                 : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-            expenses: initialData.expenses
-                ? JSON.parse(initialData.expenses).map((expense: any) => ({
+            expenses: initialData.driverexpense && initialData.driverexpense !== '[]'
+                ? JSON.parse(initialData.driverexpense).map((expense: any) => ({
                     item: expense.item || '',
                     amount: Number(expense.amount) || 0,
                     remarks: expense.remarks || ''
                 }))
                 : [{ item: '', amount: 0, remarks: '' }]
         } : {
-            currentMileage: undefined,
+            currentMileage: 0,
             date: null,
             driverId: undefined,
             truckNumber: '',
@@ -111,6 +112,35 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
             expenses: [{ item: '', amount: 0, remarks: '' }]
         }
     });
+
+    // Add useEffect to reset form when initialData changes
+    React.useEffect(() => {
+        if (initialData) {
+            reset({
+                currentMileage: Number(initialData.current_km) || 0,
+                date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
+                driverId: Number(initialData.driver) || undefined,
+                truckNumber: initialData.truck_no || '',
+                from: initialData.from_location || '',
+                to: initialData.to_location || '',
+                items: initialData.trip_items && initialData.trip_items !== '[]'
+                    ? JSON.parse(initialData.trip_items).map((item: any) => ({
+                        item: item.item || '',
+                        weight: Number(item.weight) || 0,
+                        tonageRate: Number(item.tonnage_rate) || 0,
+                        remarks: item.remarks || ''
+                    }))
+                    : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
+                expenses: initialData.driverexpense && initialData.driverexpense !== '[]'
+                    ? JSON.parse(initialData.driverexpense).map((expense: any) => ({
+                        item: expense.item || '',
+                        amount: Number(expense.amount) || 0,
+                        remarks: expense.remarks || ''
+                    }))
+                    : [{ item: '', amount: 0, remarks: '' }]
+            });
+        }
+    }, [initialData, reset]);
 
     // For basic items
     const {

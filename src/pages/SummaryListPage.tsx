@@ -166,7 +166,18 @@ const SummaryListPage = () => {
 
     const handleEdit = (data: TripDetails) => {
         console.log('Edit data:', data);
-        setSelectedTrip(data);
+        const formattedData = {
+            ...data,
+            current_km: data.current_km,
+            loading_date: data.trip_date,
+            driver: data.driver,
+            truck_no: data.truck_no,
+            from_location: data.from_location,
+            to_location: data.to_location,
+            trip_items: data.trip_items || '[]',
+            expenses: data.driverexpense || '[]'
+        };
+        setSelectedTrip(formattedData);
         setIsModalOpen(true);
         setIsEdit(true);
     };
@@ -200,23 +211,26 @@ const SummaryListPage = () => {
             if (tripResponse?.trip_details?.id) {
                 // Prepare Normal and Expense items
                 const NormalItems = values.items.map((item) => ({
-                    ...item,
-                    is_single: 0,
-                    tripid: tripResponse.trip_details.id,
-                    tonnage_rate: item.tonageRate.toString(),
-                    weight: item.weight.toString(),
-                    total: item.weight * item.tonageRate,
-                    remarks: item.remarks ?? ""
+                    "item": item.item ?? "",
+                    "driver_advance": 0,
+                    "balance": 0,
+                    "is_single": 0,
+                    "tripid": tripResponse.trip_details.id,
+                    "tonnage_rate": item.tonageRate.toString(),
+                    "weight": item.weight.toString(),
+                    "total": item.weight * item.tonageRate,
+                    "remarks": item.remarks ?? ""
                 }));
-
                 const ExpensesItems = values.expenses.map((item) => ({
-                    ...item,
-                    is_single: 1,
-                    tripid: tripResponse.trip_details.id,
-                    weight: "0",
-                    tonnage_rate: "0",
-                    total: item.amount,
-                    remarks: item.remarks ?? ""
+                    "item": item.item ?? "",
+                    "driver_advance": 0,
+                    "balance": 0,
+                    "is_single": 1,
+                    "tripid": tripResponse.trip_details.id,
+                    "weight": "0",
+                    "tonnage_rate": "0",
+                    "total": item.amount,
+                    "remarks": item.remarks ?? ""
                 }));
 
                 // Create trip details
