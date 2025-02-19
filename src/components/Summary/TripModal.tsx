@@ -94,27 +94,25 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         defaultValues: initialData ? {
             currentMileage: Number(initialData.current_km) || 0,
             date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
-            driverId: Number(initialData.driver) || undefined,
+            driverId: Number(initialData.driverid) || undefined,
             truckNumber: initialData.truck_no || '',
             from: initialData.from_location || '',
             to: initialData.to_location || '',
-            items:
-                initialData.trip_items && initialData.trip_items !== '[]' && initialData.trip_items !== "[null]"
-                    ? parseJsonSafely(initialData.trip_items).map((item: any) => ({
-                        item: Number(item.item) || 0,
-                        weight: Number(item.weight) || 0,
-                        tonageRate: Number(item.tonnage_rate) || 0,
-                        remarks: item.remarks || ''
-                    })) :
-                    [],
-            expenses:
-                initialData.driverexpense && initialData.driverexpense !== '[]' && initialData.driverexpense !== "[null]"
-                    ? parseJsonSafely(initialData.driverexpense).map((expense: any) => ({
-                        item: Number(expense.item) || 0,
-                        amount: Number(expense.amount) || 0,
-                        remarks: expense.remarks || ''
-
-                    })) : []
+            items: parseJsonSafely(initialData.trip_items)
+                .filter((item: any) => item !== null)  // Filter out null values
+                .map((item: any) => ({
+                    item: Number(item.item),
+                    weight: Number(item.weight) || 0,
+                    tonageRate: Number(item.tonnage_rate) || 0,
+                    remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
+                })) || [],
+            expenses: parseJsonSafely(initialData.expense_items)  // Changed from driverexpense to expense_items
+                .filter((expense: any) => expense !== null)  // Filter out null values
+                .map((expense: any) => ({
+                    item: Number(expense.item),
+                    amount: Number(expense.total) || 0,  // Changed from amount to total
+                    remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
+                })) || []
         } : {
             // ... default values remain the same
             items: [{ item: 0, weight: 0, tonageRate: 0, remarks: '' }],
@@ -122,31 +120,31 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         }
     });
 
-    // Add useEffect to reset form when initialData changes
+    // Update useEffect reset logic as well
     React.useEffect(() => {
         if (initialData) {
             reset({
                 currentMileage: Number(initialData.current_km) || 0,
                 date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
-                driverId: Number(initialData.driver) || undefined,
+                driverId: Number(initialData.driverid) || undefined,
                 truckNumber: initialData.truck_no || '',
                 from: initialData.from_location || '',
                 to: initialData.to_location || '',
-                items: initialData.trip_items && initialData.trip_items !== '[]' && initialData.trip_items !== "[null]"
-                    ? JSON.parse(initialData.trip_items).map((item: any) => ({
-                        item: item.item || '',
+                items: parseJsonSafely(initialData.trip_items)
+                    .filter((item: any) => item !== null)
+                    .map((item: any) => ({
+                        item: Number(item.item),
                         weight: Number(item.weight) || 0,
                         tonageRate: Number(item.tonnage_rate) || 0,
-                        remarks: item.remarks || ''
-                    }))
-                    : [{ item: '', weight: 0, tonageRate: 0, remarks: '' }],
-                expenses: initialData.driverexpense && initialData.driverexpense !== '[]' && initialData.driverexpense !== "[null]"
-                    ? JSON.parse(initialData.driverexpense).map((expense: any) => ({
-                        item: expense.item || '',
-                        amount: Number(expense.amount) || 0,
-                        remarks: expense.remarks || ''
-                    }))
-                    : [{ item: '', amount: 0, remarks: '' }]
+                        remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
+                    })) || [{ item: 0, weight: 0, tonageRate: 0, remarks: '' }],
+                expenses: parseJsonSafely(initialData.expense_items)
+                    .filter((expense: any) => expense !== null)
+                    .map((expense: any) => ({
+                        item: Number(expense.item),
+                        amount: Number(expense.total) || 0,
+                        remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
+                    })) || [{ item: 0, amount: 0, remarks: '' }]
             });
         }
     }, [initialData, reset]);
@@ -311,12 +309,6 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         >
             <form onSubmit={handleSubmit(onFormSubmit)}>
                 <Divider />
-                {/* <div className="bg-[#5B77A0] text-white p-3 mb-4 rounded-md">
-                    <div className="text-sm">
-                        Petrol Price in Perambalur: ₹93.32 / Ltr - 0.32
-                    </div>
-                </div> */}
-
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label>Current Mileage</label>
@@ -336,15 +328,6 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             render={({ field }) => <DatePicker className="w-full" format="DD/MM/YYYY" {...field} />}
                         />
                     </div>
-                    {/* <div>
-                        <label>Closing Mileage</label>
-                        <Controller
-                            name="closingMileage"
-                            control={control}
-                            rules={{ required: 'Required' }}
-                            render={({ field }) => <InputNumber placeholder="Closing Mileage" className="w-full" {...field} />}
-                        />
-                    </div> */}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -430,21 +413,6 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         />
                     </div>
                 </div>
-
-                {/* <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <label>Calculated Distance</label>
-                        <Input disabled />
-                    </div>
-                    <div>
-                        <label>Mileage</label>
-                        <InputNumber className="w-full" placeholder="Mileage" />
-                    </div>
-                    <div>
-                        <label>Expected Amount</label>
-                        <InputNumber className="w-full" placeholder="Expected Amount" disabled />
-                    </div>
-                </div> */}
 
                 {/* Basic Items Table */}
                 <div className="mb-4">
@@ -543,8 +511,8 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         )}
                     />
                 </div>
+                <Divider />
                 <div className="flex justify-end gap-2 mt-4">
-                    <Button onClick={onClose}>Reset</Button>
                     <Button type="primary" htmlType="submit">
                         Save
                     </Button>

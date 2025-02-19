@@ -170,12 +170,12 @@ const SummaryListPage = () => {
             ...data,
             current_km: data.current_km,
             loading_date: data.trip_date,
-            driver: data.driver,
+            driver: data.driverid,
             truck_no: data.truck_no,
             from_location: data.from_location,
             to_location: data.to_location,
             trip_items: data.trip_items || '[]',
-            expenses: data.driverexpense || '[]'
+            expenses: data.expense_items || '[]'
         };
         setSelectedTrip(formattedData);
         setIsModalOpen(true);
@@ -219,7 +219,7 @@ const SummaryListPage = () => {
                     "tonnage_rate": item.tonageRate.toString(),
                     "weight": item.weight.toString(),
                     "total": item.weight * item.tonageRate,
-                    "remarks": item.remarks ?? ""
+                    "remarks": item.remarks && item.remarks.length > 0 ? item.remarks : ""
                 }));
                 const ExpensesItems = values.expenses.map((item) => ({
                     "item": item.item ?? 0,
@@ -230,7 +230,7 @@ const SummaryListPage = () => {
                     "weight": "0",
                     "tonnage_rate": "0",
                     "total": item.amount,
-                    "remarks": item.remarks ?? ""
+                    "remarks": item.remarks && item.remarks.length > 0 ? item.remarks : ""
                 }));
 
                 // Create trip details
@@ -317,16 +317,18 @@ const SummaryListPage = () => {
                 </div>
 
                 <AgGridTable
-                    data={tripData?.body.map((trip, index) => ({
-                        sl_no: index + 1,
-                        truck_no: trip.registeration_no,
-                        driver_name: trip.driver_name,
-                        loading_date: trip.trip_date,
-                        from: trip.from_location,
-                        to: trip.to_location,
-                        total: trip.supertotal,
-                        ...trip
-                    })) || []}
+                    data={
+                        tripData && tripData.body &&
+                        tripData?.body.map((trip, index) => ({
+                            sl_no: index + 1,
+                            registration_number: truckData?.body.find((truck) => truck.id === trip.truck_no)?.registration_number,
+                            driver_name: driverData?.body.find((driver) => driver.id === trip.driverid)?.name,
+                            loading_date: trip.trip_date,
+                            from: trip.from_location,
+                            to: trip.to_location,
+                            total: trip.supertotal,
+                            ...trip
+                        })) || []}
                     columns={columnDefs}
                     isLoading={tripDataLoading}
                     defaultColDef={{
