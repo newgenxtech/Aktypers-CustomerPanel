@@ -15,5 +15,6 @@ export interface TripDetails {
   supertotal: string;
   trip_items: string | null;
   expense_items: string | null;
+  customer?: string;
 }
 

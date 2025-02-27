@@ -333,6 +333,7 @@ export const useCreateTrip = (
   return useMutation({
     mutationFn: async (data: TripData & {
       customerid: string,
+      customer: string
     }) => {
       try {
         const res = await axios.post(

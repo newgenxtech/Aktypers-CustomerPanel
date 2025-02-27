@@ -74,6 +74,7 @@ const SummaryListPage = () => {
         { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true, width: 80 },
         { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
         { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
+        { field: 'customer', headerName: 'Customer Name', sortable: true, filter: true },
         {
             field: 'loading_date',
             headerName: 'Loading Date',
@@ -221,6 +222,7 @@ const SummaryListPage = () => {
                 trip_date: dayjs(values.date).format('YYYY-MM-DD'),
                 current_km: values.currentMileage.toString(),
                 customerid: localStorage.getItem("customer_id") || "",
+                customer: values.customer,
                 supertotal: values.items
                     .reduce((acc, item) => acc + item.weight * item.tonageRate, 0).toString(),
                 total_expense: values.expenses

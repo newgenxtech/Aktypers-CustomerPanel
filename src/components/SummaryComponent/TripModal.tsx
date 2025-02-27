@@ -42,12 +42,13 @@ interface TripModalProps {
 
 export interface FormValues {
     currentMileage: number;
+    customer: string;
     date: any;
     driverId: number;
     truckNumber: string;
     from: string;
     to: string;
-    // tripType?: 'single' | 'double';
+    customerName: string;
     items: {
         existingId?: number | undefined;
         item: number;
@@ -107,6 +108,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         reset
     } = useForm<FormValues>({
         defaultValues: initialData ? {
+            customer: initialData.customer || '',
             currentMileage: Number(initialData.current_km) || 0,
             date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
             driverId: Number(initialData.driverid) || undefined,
@@ -141,6 +143,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     React.useEffect(() => {
         if (initialData) {
             reset({
+                customer: initialData.customer || '',
                 currentMileage: Number(initialData.current_km) || 0,
                 date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
                 driverId: Number(initialData.driverid) || undefined,
@@ -505,12 +508,12 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 <Divider />
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label>Current Name</label>
+                        <label>Customer Name</label>
                         <Controller
-                            name="currentMileage"
+                            name="customer"
                             control={control}
                             rules={{ required: 'Required' }}
-                            render={({ field }) => <InputNumber placeholder="Current Mileage" className="w-full" {...field} />}
+                            render={({ field }) => <Input placeholder="Enter Customer Name" className="w-full" {...field} />}
                         />
                     </div>
                 </div>
