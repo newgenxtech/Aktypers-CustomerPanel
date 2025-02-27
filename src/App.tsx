@@ -153,7 +153,7 @@ const router = createBrowserRouter([
             },
             {
                 // summary
-                path: "summary",
+                path: "tripDetails",
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <SummaryMasterListPage />

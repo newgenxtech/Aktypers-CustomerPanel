@@ -91,6 +91,10 @@ export const routes = {
         complaints: {
             getComplaintsByCustomerId: `${base}?route=getComplaintsByCustomerId&customer_id=`,
         },
+        dashboard: {
+            // https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=analyticsOfTyre&customer_id=1001
+            analyticsOfTyre: `${base}?route=analyticsOfTyre&customer_id=`,
+        }
 
     },
 };

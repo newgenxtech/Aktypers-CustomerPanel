@@ -321,6 +321,177 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
 
     const deleteItem = useDeleteTripDetail();
 
+    const handlePrintPreview = () => {
+        const includeExpenses = window.confirm("Do you want to include expenses in the print preview?");
+
+        // Calculate totals
+        const basicItemsTotal = itemFields.reduce((total, item, index) => {
+            const weight = watch(`items.${index}.weight`) || 0;
+            const tonageRate = watch(`items.${index}.tonageRate`) || 0;
+            return total + (weight * tonageRate);
+        }, 0);
+
+        const expensesTotal = expenseFields.reduce((total, expense, index) => {
+            return total + (watch(`expenses.${index}.amount`) || 0);
+        }, 0);
+
+        const printWindow = window.open('', '_blank');
+
+        if (printWindow) {
+            printWindow.document.write(`
+            <html>
+            <head>
+                <title>Trip Details</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 30px;
+                        padding-bottom: 10px;
+                        border-bottom: 2px solid #333;
+                    }
+                    .details {
+                        margin-bottom: 30px;
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 15px;
+                    }
+                    .details p {
+                        margin: 5px 0;
+                    }
+                    .items-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 30px;
+                    }
+                    .items-table th,
+                    .items-table td {
+                        border: 1px solid #ddd;
+                        padding: 12px 8px;
+                        text-align: left;
+                    }
+                    .items-table th {
+                        background-color: #f5f5f5;
+                        font-weight: bold;
+                    }
+                    .total-row {
+                        background-color: #f9f9f9;
+                        font-weight: bold;
+                    }
+                    .grand-total {
+                        margin-top: 20px;
+                        text-align: right;
+                        font-size: 1.1em;
+                        font-weight: bold;
+                    }
+                    @media print {
+                        body { print-color-adjust: exact; }
+                        .no-print { display: none; }
+                        @page { margin: 2cm; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 style="margin: 0;">Trip Details</h1>
+                        <p style="margin: 5px 0; color: #666;">Generated on: ${dayjs().format('DD-MM-YYYY HH:mm')}</p>
+                    </div>
+                    <div class="details">
+                        <div>
+                            <p><strong>Date:</strong> ${watch('date')?.format('DD-MM-YYYY') || 'N/A'}</p>
+                            <p><strong>Driver:</strong> ${driverData.find(d => d.id === watch('driverId'))?.name || 'N/A'}</p>
+                            <p><strong>Current Mileage:</strong> ${watch('currentMileage') || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p><strong>Truck Number:</strong> ${truckData.find(t => t.id === watch('truckNumber'))?.registration_number || 'N/A'}</p>
+                            <p><strong>From:</strong> ${watch('from') || 'N/A'}</p>
+                            <p><strong>To:</strong> ${watch('to') || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <h2>Basic Items</h2>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Item</th>
+                                <th>Weight (tons)</th>
+                                <th>Rate (Rs.)</th>
+                                <th>Total (Rs.)</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${watch('items').map((item: any, index: number) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${itemMasterData?.find(m => m.id === (item.item.toString()))?.name || 'N/A'}</td>
+                                    <td>${item.weight || 0}</td>
+                                    <td>${item.tonageRate || 0}</td>
+                                    <td>${(item.weight || 0) * (item.tonageRate || 0)}</td>
+                                    <td>${item.remarks || ''}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="4" style="text-align: right;"><strong>Items Total:</strong></td>
+                                <td colspan="2"><strong>Rs. ${basicItemsTotal.toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    ${includeExpenses ? `
+                        <h2>Expenses</h2>
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Item</th>
+                                    <th>Amount (Rs.)</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${watch('expenses').map((expense: any, index: number) => `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${itemMasterData?.find(m => m.id === expense.item.toString())?.name || 'N/A'}</td>
+                                        <td>${expense.amount || 0}</td>
+                                        <td>${expense.remarks || ''}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2" style="text-align: right;"><strong>Expenses Total:</strong></td>
+                                    <td colspan="2"><strong>Rs. ${expensesTotal.toFixed(2)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="grand-total">
+                            <p>Grand Total: Rs. ${(basicItemsTotal + expensesTotal).toFixed(2)}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </body>
+            </html>
+        `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    };
     return (
         <Modal
             title="Trip Details"
@@ -334,7 +505,18 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 <Divider />
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label>Current Mileage</label>
+                        <label>Current Name</label>
+                        <Controller
+                            name="currentMileage"
+                            control={control}
+                            rules={{ required: 'Required' }}
+                            render={({ field }) => <InputNumber placeholder="Current Mileage" className="w-full" {...field} />}
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label>Current Kilometer</label>
                         <Controller
                             name="currentMileage"
                             control={control}
@@ -587,6 +769,10 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 </div>
                 <Divider />
                 <div className="flex justify-end gap-2 mt-4">
+                    {/* Print Preview Or save as Pdf */}
+                    <Button type="primary" onClick={handlePrintPreview}>
+                        Print Preview
+                    </Button>
                     <Button type="primary" htmlType="submit">
                         Save
                     </Button>

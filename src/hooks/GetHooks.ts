@@ -522,3 +522,52 @@ export const useDeleteTripDetail = () => {
     }
   });
 }
+
+// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=analyticsOfTyre&customer_id=1001
+
+
+
+interface Tyre {
+  wheels: string;
+  axtyre: string;
+  total_tyres: string;
+  total_axles: string;
+  pressure_id: string;
+  truck_id: string;
+  tyre_position: string;
+  tyre_pressure: string;
+  recorded_at: string;
+  Depth: string;
+  Toberun: string;
+}
+
+interface Analytics {
+  name: string;
+  value: number;
+}
+
+interface Response {
+  tyres: Tyre[];
+  analytics: Analytics[];
+}
+
+export const useGetTyreAnalyticsByCustomer = (customer_id: string) => {
+  return useQuery<{
+    body: Tyre[];
+    analytics: Analytics[];
+  }>({
+    queryKey: ['tyreAnalyticsByCustomer'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(
+          routes.backend.dashboard.analyticsOfTyre + '&customer_id=' + customer_id,
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        message.error("Error fetching tyre analytics");
+        return [];
+      }
+    },
+  });
+}

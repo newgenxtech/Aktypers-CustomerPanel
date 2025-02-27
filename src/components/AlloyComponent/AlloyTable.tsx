@@ -33,10 +33,10 @@ const AlloyTable: React.FC<AlloyTableProps> = ({ data, isLoading }) => {
           </span>
         ),
       },
-      {
-        headerName: "Cus ID",
-        field: "customerid",
-      },
+      // {
+      //   headerName: "Cus ID",
+      //   field: "customerid",
+      // },
       {
         headerName: "Date",
         field: "date",

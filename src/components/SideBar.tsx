@@ -72,8 +72,8 @@ const menuItems: MenuItem[] = [
     },
     {
         // Summary 
-        label: 'Summary',
-        path: '/summary',
+        label: 'Trip Details',
+        path: '/tripDetails',
         icon: <FileSpreadsheet />,
     }
 ];

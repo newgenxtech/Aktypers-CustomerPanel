@@ -21,6 +21,7 @@ import {
   useGetInsuranceData,
   useGetComplaintsData,
   useGetTruckMakers,
+  useGetTyreAnalyticsByCustomer,
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
@@ -63,6 +64,10 @@ const Dashboard: React.FC = () => {
   const { data: complaintsData } = useGetComplaintsData(
     localStorage.getItem("customer_id") || ""
   );
+
+  const { data: tyreAnalyticsByCustomer } = useGetTyreAnalyticsByCustomer(
+    localStorage.getItem("customer_id") || ""
+  )
 
   // Prepare chart data for Bar chart
   const makers = [
@@ -206,7 +211,7 @@ const Dashboard: React.FC = () => {
                   Tyre Maintenance Trends
                 </h2>
                 <div className="w-full h-[550px]">
-                  <Pie
+                  {/* <Pie
                     data={{
                       labels: Object.keys(tyreAnalyticsData?.analytics || {}),
                       datasets: [
@@ -235,6 +240,73 @@ const Dashboard: React.FC = () => {
                     }}
                     key={JSON.stringify(tyreAnalyticsData?.analytics)}
                     redraw={true}
+                  /> */}
+
+                  {/* <Bar
+                    data={{
+                      labels:
+                        tyreAnalyticsByCustomer?.body?.[0].analytics?.map((truck) =>
+                          truck.name
+                        ) || [],
+                      datasets: tyreAnalyticsByCustomer?.body?.[0]?.analytics?.map((truck) => ({
+                        label: truck.name ?? '',
+                        data: truck.value ?? 0,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderWidth: 1,
+                      })) || [],
+                    }}
+                    width={window.innerWidth < 768 ? "100%" : undefined}
+                    height={window.innerWidth < 768 ? "100%" : undefined}
+                  /> */}
+
+
+                  <Bar
+                    data={{
+                      labels: tyreAnalyticsByCustomer?.analytics?.map((item) => item.name) || [],
+                      datasets: [{
+                        label: 'Tyre Condition Distribution',
+                        data: tyreAnalyticsByCustomer?.analytics?.map((item) => item.value) || [],
+                        backgroundColor: [
+                          'rgba(75, 192, 192, 0.6)',  // 100-80: Good (Green)
+                          'rgba(255, 206, 86, 0.6)',  // 80-60: Warning (Yellow)
+                          'rgba(255, 159, 64, 0.6)',  // 60-40: Caution (Orange)
+                          'rgba(255, 99, 132, 0.6)',  // 40-20: Critical (Red)
+                          'rgba(169, 169, 169, 0.6)'  // 20-0: Danger (Gray)
+                        ],
+                        borderWidth: 1,
+                        borderColor: [
+                          'rgb(75, 192, 192)',
+                          'rgb(255, 206, 86)',
+                          'rgb(255, 159, 64)',
+                          'rgb(255, 99, 132)',
+                          'rgb(169, 169, 169)'
+                        ]
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          title: {
+                            display: true,
+                            text: 'Number of Tyres'
+                          }
+                        }
+                      },
+                      plugins: {
+                        legend: {
+                          display: true,
+                          position: 'top'
+                        },
+                        title: {
+                          display: true,
+                          text: 'Tyre Condition Distribution'
+                        }
+                      }
+                    }}
+                    width={window.innerWidth < 768 ? "100%" : undefined}
+                    height={window.innerWidth < 768 ? "100%" : undefined}
                   />
                 </div>
               </div>

@@ -274,7 +274,7 @@ const SummaryListPage = () => {
             <div className="flex flex-col space-y-4 p-6">
 
                 <div className="flex justify-between items-center border-b pb-4">
-                    <h2 className="text-xl font-bold text-gray-800">Summary Details</h2>
+                    <h2 className="text-xl font-bold text-gray-800">Trip Details</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -336,7 +336,7 @@ const SummaryListPage = () => {
                         }}
                         className="bg-blue-600 text-white hover:bg-blue-700"
                     >
-                        Add Summary
+                        Add Trip Details
                     </Button>
                 </div>
 
