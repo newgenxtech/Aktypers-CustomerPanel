@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import TableComponent, { DataCol } from '../TableComponent';
 
 interface InsuranceRecord {
@@ -19,18 +19,18 @@ interface InsuranceExpiryTableProps {
     thresholdDays?: number; // Days within which an insurance is considered near expiry
 }
 
-const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data, thresholdDays = 60 }) => {
+const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const today = new Date();
 
-    const filteredData = useMemo(() => {
-        return data.filter(record => {
-            const expiry = new Date(record.expiry_date);
-            const diffTime = expiry.getTime() - today.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            return diffDays >= 0 && diffDays <= thresholdDays;
-        });
-    }, [data, thresholdDays, today]);
+    // const filteredData = useMemo(() => {
+    //     return data.filter(record => {
+    //         const expiry = new Date(record.expiry_date);
+    //         const diffTime = expiry.getTime() - today.getTime();
+    //         const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    //         return diffDays >= 0 && diffDays <= thresholdDays;
+    //     });
+    // }, [data, thresholdDays, today]);
 
     const columns: DataCol<InsuranceRecord>[] = [
         {

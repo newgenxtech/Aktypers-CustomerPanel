@@ -546,10 +546,6 @@ interface Analytics {
   value: number;
 }
 
-interface Response {
-  tyres: Tyre[];
-  analytics: Analytics[];
-}
 
 export const useGetTyreAnalyticsByCustomer = (customer_id: string) => {
   return useQuery<{
@@ -566,6 +562,75 @@ export const useGetTyreAnalyticsByCustomer = (customer_id: string) => {
       } catch (error) {
         console.error("Error fetching data:", error);
         message.error("Error fetching tyre analytics");
+        return [];
+      }
+    },
+  });
+}
+
+
+// getdatbyaktyresByCustomerId
+
+// {
+//   "itemCount": 2,
+//   "body": {
+//       "product": [
+//           {
+//               "name": "paper"
+//           },
+//           {
+//               "name": "paper"
+//           }
+//       ],
+//       "quantity": [
+//           {
+//               "name": 1
+//           },
+//           {
+//               "name": 2
+//           }
+//       ],
+//       "rate": [
+//           {
+//               "name": 20000
+//           },
+//           {
+//               "name": 40000
+//           }
+//       ]
+//   }
+// }
+
+interface Product {
+  name: string;
+}
+interface Quantity {
+  name: number;
+}
+interface Rate {
+  name: number;
+}
+interface AnalyticsData {
+  product: Product[];
+  quantity: Quantity[];
+  rate: Rate[];
+}
+
+export const useGetAnalyticsByCustomer = (customer_id: string) => {
+  return useQuery<{
+    itemCount: number;
+    body: AnalyticsData;
+  }>({
+    queryKey: ['analyticsByCustomer'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(
+          routes.backend.dashboard.getdatbyaktyresByCustomerId + '&customer_id=' + customer_id,
+        );
+        return res.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        message.error("Error fetching analytics");
         return [];
       }
     },

@@ -325,13 +325,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         const includeExpenses = window.confirm("Do you want to include expenses in the print preview?");
 
         // Calculate totals
-        const basicItemsTotal = itemFields.reduce((total, item, index) => {
+        const basicItemsTotal = itemFields.reduce((total, _item, index) => {
             const weight = watch(`items.${index}.weight`) || 0;
             const tonageRate = watch(`items.${index}.tonageRate`) || 0;
             return total + (weight * tonageRate);
         }, 0);
 
-        const expensesTotal = expenseFields.reduce((total, expense, index) => {
+        const expensesTotal = expenseFields.reduce((total, _expense, index) => {
             return total + (watch(`expenses.${index}.amount`) || 0);
         }, 0);
 

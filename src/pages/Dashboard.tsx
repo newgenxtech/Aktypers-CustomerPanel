@@ -1,5 +1,5 @@
 import React, { useMemo, Suspense } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart,
   BarElement,
@@ -22,6 +22,7 @@ import {
   useGetComplaintsData,
   useGetTruckMakers,
   useGetTyreAnalyticsByCustomer,
+  useGetAnalyticsByCustomer,
 } from "@/hooks/GetHooks";
 import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
@@ -68,6 +69,12 @@ const Dashboard: React.FC = () => {
   const { data: tyreAnalyticsByCustomer } = useGetTyreAnalyticsByCustomer(
     localStorage.getItem("customer_id") || ""
   )
+
+  const {
+    data: analyticsByCustomer,
+  } = useGetAnalyticsByCustomer(
+    localStorage.getItem("customer_id") || ""
+  );
 
   // Prepare chart data for Bar chart
   const makers = [
@@ -129,6 +136,12 @@ const Dashboard: React.FC = () => {
 
       {/* Metrics Row */}
       <div className="metrics-row">
+        <Suspense fallback={<Spin size="large" />}>
+          <div className="metric-card">
+            <h2>Total amt purchased - AKTyres</h2>
+            <p className="text-2xl font-bold">{analyticsByCustomer?.body.quantity.reduce((acc, item) => acc + (item.name), 0) ?? 0}</p>
+          </div>
+        </Suspense>
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Pending Balance To Pay</h2>
