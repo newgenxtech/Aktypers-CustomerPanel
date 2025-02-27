@@ -149,14 +149,14 @@ const Sidebar = () => {
                                         marginLeft: '1.2rem',
                                     }} />
                                 </a> */}
-                                {/* <a href='https://stockarea.io' target="_blank">
+                                <a href='https://stockarea.io' target="_blank">
                                     <img src={AccountIcon} alt="docs" className="icon" style={{
                                         width: '30px',
                                         height: '30px',
                                         marginBottom: '1rem',
                                         marginLeft: '1.2rem',
                                     }} />
-                                </a> */}
+                                </a>
                                 {/* <NavUser
                                     user={{
                                         name: 'John Doe',

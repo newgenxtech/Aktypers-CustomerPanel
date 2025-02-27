@@ -610,7 +610,7 @@ interface Quantity {
 interface Rate {
   name: number;
 }
-interface AnalyticsData {
+export interface AnalyticsData {
   product: Product[];
   quantity: Quantity[];
   rate: Rate[];

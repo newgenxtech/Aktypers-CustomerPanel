@@ -28,6 +28,7 @@ import { DatePicker, Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
 import RecentComplaintsTable from "@/components/DashboardComponent/RecentComplaintsTable";
 import TyreConditionTable from "@/components/DashboardComponent/TyreConditionTable";
+import AktyrePurchasedTable from "@/components/DashboardComponent/AktyrePurchasedTable";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement);
 
@@ -138,7 +139,7 @@ const Dashboard: React.FC = () => {
       <div className="metrics-row">
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
-            <h2>Total amt purchased - AKTyres</h2>
+            <h2>Tyres purchased - AKTyres</h2>
             <p className="text-2xl font-bold">{analyticsByCustomer?.body.quantity.reduce((acc, item) => acc + (item.name), 0) ?? 0}</p>
           </div>
         </Suspense>
@@ -211,20 +212,16 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
-        {complaintsData && (
-          <RecentComplaintsTable data={complaintsData.body} thresholdDays={60} />
-        )}
-        {/* Pie Chart Section */}
-        <Suspense fallback={<Spin size="large" />}>
-          {!tyreAnalyticsLoading && tyreAnalyticsData && (
-            <div className="my-6">
-              <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 h-[690px] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                  Tyre Maintenance Trends
-                </h2>
-                <div className="w-full h-[550px]">
-                  {/* <Pie
+      {/* Pie Chart Section */}
+      <Suspense fallback={<Spin size="large" />}>
+        {!tyreAnalyticsLoading && tyreAnalyticsData && (
+          <div className="my-6">
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 h-[690px] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                Tyre Maintenance Trends
+              </h2>
+              <div className="w-full h-[550px]">
+                {/* <Pie
                     data={{
                       labels: Object.keys(tyreAnalyticsData?.analytics || {}),
                       datasets: [
@@ -255,7 +252,7 @@ const Dashboard: React.FC = () => {
                     redraw={true}
                   /> */}
 
-                  {/* <Bar
+                {/* <Bar
                     data={{
                       labels:
                         tyreAnalyticsByCustomer?.body?.[0].analytics?.map((truck) =>
@@ -273,59 +270,71 @@ const Dashboard: React.FC = () => {
                   /> */}
 
 
-                  <Bar
-                    data={{
-                      labels: tyreAnalyticsByCustomer?.analytics?.map((item) => item.name) || [],
-                      datasets: [{
-                        label: 'Tyre Condition Distribution',
-                        data: tyreAnalyticsByCustomer?.analytics?.map((item) => item.value) || [],
-                        backgroundColor: [
-                          'rgba(75, 192, 192, 0.6)',  // 100-80: Good (Green)
-                          'rgba(255, 206, 86, 0.6)',  // 80-60: Warning (Yellow)
-                          'rgba(255, 159, 64, 0.6)',  // 60-40: Caution (Orange)
-                          'rgba(255, 99, 132, 0.6)',  // 40-20: Critical (Red)
-                          'rgba(169, 169, 169, 0.6)'  // 20-0: Danger (Gray)
-                        ],
-                        borderWidth: 1,
-                        borderColor: [
-                          'rgb(75, 192, 192)',
-                          'rgb(255, 206, 86)',
-                          'rgb(255, 159, 64)',
-                          'rgb(255, 99, 132)',
-                          'rgb(169, 169, 169)'
-                        ]
-                      }]
-                    }}
-                    options={{
-                      responsive: true,
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          title: {
-                            display: true,
-                            text: 'Number of Tyres'
-                          }
-                        }
-                      },
-                      plugins: {
-                        legend: {
-                          display: true,
-                          position: 'top'
-                        },
+                <Bar
+                  data={{
+                    labels: tyreAnalyticsByCustomer?.analytics?.map((item) => item.name) || [],
+                    datasets: [{
+                      label: 'Tyre Condition Distribution',
+                      data: tyreAnalyticsByCustomer?.analytics?.map((item) => item.value) || [],
+                      backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',  // 100-80: Good (Green)
+                        'rgba(255, 206, 86, 0.6)',  // 80-60: Warning (Yellow)
+                        'rgba(255, 159, 64, 0.6)',  // 60-40: Caution (Orange)
+                        'rgba(255, 99, 132, 0.6)',  // 40-20: Critical (Red)
+                        'rgba(169, 169, 169, 0.6)'  // 20-0: Danger (Gray)
+                      ],
+                      borderWidth: 1,
+                      borderColor: [
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 206, 86)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 99, 132)',
+                        'rgb(169, 169, 169)'
+                      ]
+                    }]
+                  }}
+                  options={{
+                    responsive: true,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
                         title: {
                           display: true,
-                          text: 'Tyre Condition Distribution'
+                          text: 'Number of Tyres'
                         }
                       }
-                    }}
-                    width={window.innerWidth < 768 ? "100%" : undefined}
-                    height={window.innerWidth < 768 ? "100%" : undefined}
-                  />
-                </div>
+                    },
+                    plugins: {
+                      legend: {
+                        display: true,
+                        position: 'top'
+                      },
+                      title: {
+                        display: true,
+                        text: 'Tyre Condition Distribution'
+                      }
+                    }
+                  }}
+                  width={window.innerWidth < 768 ? "100%" : undefined}
+                  height={window.innerWidth < 768 ? "100%" : undefined}
+                />
               </div>
             </div>
-          )}
-        </Suspense>
+          </div>
+        )}
+      </Suspense>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
+        {complaintsData && (
+          <RecentComplaintsTable data={complaintsData?.body} thresholdDays={60} />
+        )}
+        {complaintsData && (
+          <AktyrePurchasedTable data={analyticsByCustomer?.body ?? {
+            quantity: [],
+            product: [],
+            rate: []
+          }} />
+        )}
 
         {insuranceData && (
           <InsuranceExpiryTable data={insuranceData.body} thresholdDays={60} />
