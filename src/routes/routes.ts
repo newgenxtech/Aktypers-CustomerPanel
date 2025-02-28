@@ -27,6 +27,10 @@ export const routes = {
             login: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=login',
             signup: `${base}?route=signup`,
         },
+        profile: {
+            getUserProfile: `${base}?route=getuserprofile&customer_id=`,
+            uploadProfilePicture: `${base}?route=createCustomerFile`,
+        },
         driver: {
             getAll: `${base}?route=getDriver&customer_id=`,
             create: `${base}?route=createDriver`,

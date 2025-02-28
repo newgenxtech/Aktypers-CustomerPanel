@@ -10,8 +10,13 @@ const TyreConditionTable: React.FC<TyreConditionTableProps> = ({ data }) => {
     // Filter for records with "Bad" pressure status.
     const filteredData = useMemo(() => data.filter((record) => record.pressure_status === "Bad"), [data]);
 
-    // Define columns for the AG Grid table.
     const columns: DataCol<ITyrePressure>[] = [
+        // s.no
+        {
+            label: "S.No",
+            key: "s.no",
+            render: (_, index) => index + 1,
+        },
         {
             label: "Truck ID",
             key: "truck_id",
@@ -37,6 +42,19 @@ const TyreConditionTable: React.FC<TyreConditionTableProps> = ({ data }) => {
             key: "pressure_status",
             render: (e) => e.pressure_status,
         },
+        // fixedDep
+        {
+            label: "Fixed Depth",
+            key: "fixedDep",
+            render: (e) => e.fixedDep,
+        },
+        // actualDep
+        {
+            label: "Actual Depth",
+            key: "actualDep",
+            render: (e) => e.actualDep,
+        },
+
     ];
 
     // Manage pagination state.

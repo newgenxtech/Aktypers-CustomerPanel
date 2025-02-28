@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee, BookOpenCheck, FileSpreadsheet } from "lucide-react";
+import { Link, useNavigate } from 'react-router-dom';
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee, BookOpenCheck, FileSpreadsheet, CircleUserRound } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 // import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -149,14 +149,15 @@ const Sidebar = () => {
                                         marginLeft: '1.2rem',
                                     }} />
                                 </a> */}
-                                <a href='https://stockarea.io' target="_blank">
+                                {/* <a href='https://stockarea.io' target="_blank" className='cursor-pointer'>
                                     <img src={AccountIcon} alt="docs" className="icon" style={{
                                         width: '30px',
                                         height: '30px',
                                         marginBottom: '1rem',
                                         marginLeft: '1.2rem',
                                     }} />
-                                </a>
+                                </a> */}
+
                                 {/* <NavUser
                                     user={{
                                         name: 'John Doe',
@@ -164,6 +165,18 @@ const Sidebar = () => {
                                         avatar: 'https://avatars.dicebear.com/api/avataaars/john-doe.svg'
                                     }}
                                 /> */}
+                                <Link to='profile' className='cursor-pointer'>
+                                    <CircleUserRound
+                                        className='icon text-white'
+                                        style={{
+                                            width: '30px',
+                                            height: '30px',
+                                            marginBottom: '1rem',
+                                            marginLeft: '1.2rem',
+                                        }}
+                                    />
+                                </Link>
+
                                 <LogOut
                                     style={{
                                         width: '30px',

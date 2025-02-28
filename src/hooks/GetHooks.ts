@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { GetApiCustomerRoutes, PostApiCustomerRoutes } from "./ApiCustomHook";
-
 import { GetApiResponse } from "@/Interfaces/interface";
 import { routes } from "@/routes/routes";
 
@@ -324,7 +323,7 @@ export const useGetTruckMakers = (customer_id: string) => {
 // }
 
 
-import { useMutation } from "@tanstack/react-query";
+
 import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
 
@@ -637,3 +636,64 @@ export const useGetAnalyticsByCustomer = (customer_id: string) => {
     },
   });
 }
+
+
+interface UserProfile {
+  login_id: string;
+  username: string;
+  email: string;
+  customer_id: string;
+  name: string;
+  companyname: string;
+  companyAddress: string;
+  pic: string;
+}
+
+export const useGetUserProfile = () => {
+  return useQuery<UserProfile>({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      try {
+        const customerId = localStorage.getItem('customer_id') || '1001';
+        const response = await axios.get(
+          routes.backend.profile.getUserProfile + customerId
+        );
+        if (!response.data?.body?.[0]) {
+          throw new Error('Profile data not found');
+        }
+        return response.data.body[0];
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        message.error('Failed to load profile data');
+        throw error;
+      }
+    },
+  });
+};
+
+export const useUploadProfilePicture = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('customer_id', localStorage.getItem('customer_id') || '1001');
+      formData.append('filename', file);
+
+      const response = await axios.post(
+        routes.backend.profile.uploadProfilePicture,
+        formData
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      message.success('Profile picture updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error) => {
+      console.error('Upload error:', error);
+      message.error('Failed to update profile picture');
+    },
+  });
+};
+

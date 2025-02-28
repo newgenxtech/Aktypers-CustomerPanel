@@ -4,7 +4,7 @@ import clsx from "clsx";
 export interface DataCol<T> {
   label: string | React.ReactNode;
   key: string
-  render: (data: T) => React.ReactNode;
+  render: (data: T, index: number) => React.ReactNode;
   sortable?: boolean;
   onSort?: (accessor: string) => void
   className?: string
@@ -77,7 +77,7 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
                   {
                     props.columns && props.columns.map((col, colIndex) => (
                       <td key={colIndex}>
-                        {col.render(rowData)}
+                        {col.render(rowData, rowIndex)}
                       </td>
                     ))
                   }

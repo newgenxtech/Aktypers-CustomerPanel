@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from "./hooks/queryClient";
 import { store } from "./store/store";
 import SummaryMasterListPage from "./pages/Summary/Summary";
+import ProfileMasterListPage from "./pages/Profile/Profile";
 
 // Layouts
 const BaseLayout = lazy(() => import("./layouts/BaseLayout"));
@@ -159,7 +160,16 @@ const router = createBrowserRouter([
                         <SummaryMasterListPage />
                     </Suspense>
                 ),
-            }
+            },
+            // Profile
+            {
+                path: "profile",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ProfileMasterListPage />
+                    </Suspense>
+                ),
+            },
         ],
     },
     {
