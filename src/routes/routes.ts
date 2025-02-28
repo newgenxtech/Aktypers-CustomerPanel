@@ -95,7 +95,7 @@ export const routes = {
         complaints: {
             getComplaintsByCustomerId: `${base}?route=getComplaintsByCustomerId&customer_id=`,
         },
-        dashboard: {           
+        dashboard: {
             analyticsOfTyre: `${base}?route=analyticsOfTyre&customer_id=`,
             getdatbyaktyresByCustomerId: `${base}?route=getdatbyaktyresByCustomerId&customer_id=`,
         }

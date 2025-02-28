@@ -326,6 +326,7 @@ export const useGetTruckMakers = (customer_id: string) => {
 
 import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
+import { readFileAsBase64 } from "@/lib/utils";
 
 export const useCreateTrip = (
   isEdit: boolean) => {
@@ -675,14 +676,17 @@ export const useUploadProfilePicture = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('customer_id', localStorage.getItem('customer_id') || '1001');
-      formData.append('filename', file);
+    mutationFn: async (file: string) => {
+      // const formData = new FormData();
+      // formData.append('customer_id', localStorage.getItem('customer_id') || '1001');
+      // formData.append('filename', file);
 
       const response = await axios.post(
         routes.backend.profile.uploadProfilePicture,
-        formData
+        {
+          customer_id: localStorage.getItem('customer_id'),
+          filename: file,
+        }
       );
       return response.data;
     },
@@ -697,3 +701,25 @@ export const useUploadProfilePicture = () => {
   });
 };
 
+
+
+
+
+export const handleFileUpload = async (file: File) => {
+  try {
+    const base64Data = await readFileAsBase64(file);
+    const response = await axios.post<{ message: string, file_name: string, location: string }[]>(
+      routes.backend.file.upload + '?route=uploaddriverFile',
+      [{
+        filename: file.name,
+        data: base64Data
+      }]
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    message.error('Failed to upload file');
+    return null;
+  }
+};
