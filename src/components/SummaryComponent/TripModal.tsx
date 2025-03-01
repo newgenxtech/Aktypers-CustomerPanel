@@ -513,7 +513,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             name="customer"
                             control={control}
                             rules={{ required: 'Required' }}
-                            render={({ field }) => <Input placeholder="Enter Customer Name" className="w-full" {...field} />}
+                            render={({ field }) => <InputNumber placeholder="Enter Customer Name" className="w-full" {...field} />}
                         />
                     </div>
                 </div>

@@ -24,7 +24,7 @@ import {
   useGetTyreAnalyticsByCustomer,
   useGetAnalyticsByCustomer,
 } from "@/hooks/GetHooks";
-import { DatePicker, Spin } from "antd";
+import { Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
 import RecentComplaintsTable from "@/components/DashboardComponent/RecentComplaintsTable";
 import TyreConditionTable from "@/components/DashboardComponent/TyreConditionTable";
@@ -118,8 +118,8 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       {/* Dashboard Header */}
       <header className="dashboard-header">
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <div className="flex flex-col md:flex-row gap-2">
+        {/* <h1 className="text-2xl font-semibold">Dashboard</h1> */}
+        {/* <div className="flex flex-col md:flex-row gap-2">
           <DatePicker.RangePicker
             className="py-2 w-full md:w-auto"
             allowClear
@@ -132,7 +132,7 @@ const Dashboard: React.FC = () => {
           >
             Download
           </button>
-        </div>
+        </div> */}
       </header>
 
       {/* Metrics Row */}

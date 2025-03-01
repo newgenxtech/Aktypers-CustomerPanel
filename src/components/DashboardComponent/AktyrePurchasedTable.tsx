@@ -19,6 +19,12 @@ const AktyrePurchasedTable: React.FC<AktyrePurchasedTableProps> = ({ data }) => 
     quantity: number;
     rate: number;
   }>[] = [
+      // s.no
+      {
+        label: 'S.No',
+        key: 's.no',
+        render: (_, index) => index + 1,
+      },
       {
         label: 'Product Name',
         key: 'product',

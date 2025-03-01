@@ -33,6 +33,12 @@ const RecentComplaintsTable: React.FC<RecentComplaintsTableProps> = ({ data, thr
 
   const columns: DataCol<ComplaintRecord>[]
     = [
+      // sno
+      {
+        label: 'S.No',
+        key: 's.no',
+        render: (_, index) => index + 1,
+      },
       {
         label: 'Complaint ID',
         key: 'complaint_id',

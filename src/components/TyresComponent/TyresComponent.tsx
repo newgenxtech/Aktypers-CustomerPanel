@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CustomField } from "@/components/FormComponentV2";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { message, DatePicker, Select, Input } from "antd";
+import { message, DatePicker, Select } from "antd";
 import { routes } from "@/routes/routes";
 import axios from "axios";
 import { queryClient } from "@/hooks/queryClient";
@@ -81,9 +81,9 @@ const TyresMasterListPage = () => {
 
   const [open, setOpen] = useState(false);
 
-  const handleSearch = useCallback((data: string) => {
-    console.log(data);
-  }, []);
+  // const handleSearch = useCallback((data: string) => {
+  //   console.log(data);
+  // }, []);
 
   const columns: (ColDef | ColGroupDef)[] = useMemo(
     () => TyresColumns(setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId),
@@ -153,11 +153,11 @@ const TyresMasterListPage = () => {
       <div className="flex flex-col md:flex-row items-center mt-2">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
           <label className="font-bold text-xl md:text-xl">Tyres Master</label>
-          <Input
+          {/* <Input
             placeholder="Search Driver"
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full md:w-1/3"
-          />
+          /> */}
         </div>
         <Button
           onClick={() => {

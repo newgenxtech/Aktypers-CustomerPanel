@@ -1,7 +1,6 @@
 import { Suspense, lazy } from 'react';
 // import { Plus } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
-import { Input } from 'antd';
 import { useGetComplaintsData } from "@/hooks/GetHooks";
 // import { ITruckData } from '@/pages/Truck/Truck.d';
 
@@ -18,10 +17,10 @@ const CompliantListPage = () => {
             <div className="flex flex-col md:flex-row items-center mt-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                     <label className="font-bold text-xl md:text-xl">Complaints Master</label>
-                    <Input
+                    {/* <Input
                         placeholder="Search Complaints"
                         className="lg:w-1/3 md:w-1/3"
-                    />
+                    /> */}
                 </div>
                 {/* <Button
                     onClick={

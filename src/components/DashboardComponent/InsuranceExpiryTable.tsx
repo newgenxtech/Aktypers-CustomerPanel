@@ -33,6 +33,12 @@ const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data }) => 
     // }, [data, thresholdDays, today]);
 
     const columns: DataCol<InsuranceRecord>[] = [
+        // sno
+        {
+            label: 'S.No',
+            key: 's.no',
+            render: (_, index) => index + 1,
+        },
         {
             label: 'Insurance ID',
             key: 'insurance_id',

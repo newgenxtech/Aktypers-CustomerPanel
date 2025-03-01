@@ -1,9 +1,9 @@
 
-import { useCallback, useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlloyMaster } from '@/pages/Alloy/Alloy.d';
-import { DatePicker, Input, message } from 'antd';
+import { DatePicker, message } from 'antd';
 import axios from "axios";
 import { routes } from "@/routes/routes";
 import { useQuery } from "@tanstack/react-query";
@@ -34,9 +34,9 @@ const AlloyListPage = () => {
         }
     );
 
-    const handleSearch = useCallback((data: string) => {
-        console.log(data);
-    }, []);
+    // const handleSearch = useCallback((data: string) => {
+    //     console.log(data);
+    // }, []);
 
     return (
         <div className='warehouse'>
@@ -45,11 +45,11 @@ const AlloyListPage = () => {
                 <div className="flex flex-col md:flex-row items-center mt-2">
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                         <label className="font-bold md:text-xl">Alloy Master</label>
-                        <Input
+                        {/* <Input
                             placeholder="Search Driver"
                             onChange={(e) => handleSearch(e.target.value)}
                             className="lg:w-1/3 md:w-1/3"
-                        />
+                        /> */}
                     </div>
 
                     <Button

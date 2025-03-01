@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Input, DatePicker, message } from 'antd';
+import { DatePicker, message } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { routes } from '@/routes/routes';
@@ -35,10 +35,10 @@ const InvoiceMasterListPage = () => {
             <div className="flex flex-col md:flex-row items-center mt-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                     <label className="font-bold text-xl md:text-xl">Invoice Master</label>
-                    <Input
+                    {/* <Input
                         placeholder="Search Invoice"
                         className="w-full md:w-1/3"
-                    />
+                    /> */}
                 </div>
             </div>
 

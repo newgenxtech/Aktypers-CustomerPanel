@@ -23,7 +23,7 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: <Home /> },
-    { label: 'Drvier', path: '/driver', icon: <Car /> },
+    { label: 'Driver', path: '/driver', icon: <Car /> },
     { label: 'Alloy', path: '/alloy', icon: <Forklift /> },
     {
         label: 'Truck',
