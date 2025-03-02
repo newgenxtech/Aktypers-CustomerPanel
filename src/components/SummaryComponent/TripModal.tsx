@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React from "react";
 import {
     Modal,
     Button,
@@ -9,17 +9,16 @@ import {
     Select,
     Space,
     Table,
-    Divider
-} from 'antd';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { DriverMaster } from '@/pages/Driver/Driver.d';
-import { ITruckData } from '@/pages/Truck/Truck.d';
-import ItemMasterSelectDropDown from './ItemMasterSelectDropDown';
-import dayjs from 'dayjs';
-import { TripDetails } from '@/pages/Trip/Trip';
-import { useDeleteTripDetail } from '@/hooks/GetHooks';
-
+    Divider,
+} from "antd";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import toast from "react-hot-toast";
+import { DriverMaster } from "@/pages/Driver/Driver.d";
+import { ITruckData } from "@/pages/Truck/Truck.d";
+import ItemMasterSelectDropDown from "./ItemMasterSelectDropDown";
+import dayjs from "dayjs";
+import { TripDetails } from "@/pages/Trip/Trip";
+import { useDeleteTripDetail, UserProfile } from "@/hooks/GetHooks";
 
 interface TripModalProps {
     isOpen: boolean;
@@ -30,14 +29,16 @@ interface TripModalProps {
     driverLoading: boolean;
     isEdit?: boolean;
     setIsEdit?: (value: boolean) => void;
-    truckData: ITruckData[]
-    truckLoading: boolean
+    truckData: ITruckData[];
+    truckLoading: boolean;
     itemMasterData: {
-        id: number
-        name: string
-        customer: number
-    }[]
-    itemMasterLoading: boolean
+        id: number;
+        name: string;
+        customer: number;
+    }[];
+    itemMasterLoading: boolean;
+    profileData: UserProfile;
+    profileDataloading: boolean;
 }
 
 export interface FormValues {
@@ -68,88 +69,109 @@ export interface FormValues {
     returnTo?: string;
 }
 
-const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initialData,
+const TripModal: React.FC<TripModalProps> = ({
+    isOpen,
+    onClose,
+    onSubmit,
+    initialData,
     driverData,
     driverLoading,
     isEdit,
     truckData,
     truckLoading,
     itemMasterData,
-    itemMasterLoading
+    itemMasterLoading,
+    profileData,
 }) => {
     console.table(initialData);
-    const parseJsonSafely = (jsonString: string | null | undefined, defaultValue: any[] = []) => {
-        if (!jsonString || jsonString === '[]') return defaultValue;
+    const parseJsonSafely = (
+        jsonString: string | null | undefined,
+        defaultValue: any[] = [],
+    ) => {
+        if (!jsonString || jsonString === "[]") return defaultValue;
         try {
             return JSON.parse(jsonString);
         } catch (error) {
-            console.error('JSON Parse Error:', error);
-            console.log('Invalid JSON string:', jsonString);
+            console.error("JSON Parse Error:", error);
+            console.log("Invalid JSON string:", jsonString);
             return defaultValue;
         }
     };
 
-    const [selectedTripitems, setSelectedTripitems] = React.useState<{
-        item: number;
-        weight: number;
-        tonageRate: number;
-        remarks?: string;
-    }[]>([]);
-    const [selectedTripExpenses, setSelectedTripExpenses] = React.useState<{
-        item: number;
-        amount: number;
-        remarks?: string;
-    }[]>([]);
+    const [selectedTripitems, setSelectedTripitems] = React.useState<
+        {
+            item: number;
+            weight: number;
+            tonageRate: number;
+            remarks?: string;
+        }[]
+    >([]);
+    const [selectedTripExpenses, setSelectedTripExpenses] = React.useState<
+        {
+            item: number;
+            amount: number;
+            remarks?: string;
+        }[]
+    >([]);
 
-    const {
-        control,
-        handleSubmit,
-        watch,
-        reset
-    } = useForm<FormValues>({
-        defaultValues: initialData ? {
-            customer: initialData.customer || '',
-            currentMileage: Number(initialData.current_km) || 0,
-            date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
-            driverId: Number(initialData.driverid) || undefined,
-            truckNumber: initialData.truck_no || '',
-            from: initialData.from_location || '',
-            to: initialData.to_location || '',
-            items: parseJsonSafely(initialData.trip_items)
-                .filter((item: any) => item !== null)  // Filter out null values
-                .map((item: any) => ({
-                    ...item,
-                    item: Number(item.item) || 0,
-                    weight: Number(item.weight) || 0,
-                    tonageRate: Number(item.tonnage_rate) || 0,
-                    remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
-                })) || [],
-            expenses: parseJsonSafely(initialData.expense_items)  // Changed from driverexpense to expense_items
-                .filter((expense: any) => expense !== null)  // Filter out null values
-                .map((expense: any) => ({
-                    ...expense,
-                    item: Number(expense.item) || 0,
-                    amount: Number(expense.total) || 0,  // Changed from amount to total
-                    remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
-                })) || []
-        } : {
-            // ... default values remain the same
-            items: [{ item: 0, weight: 0, tonageRate: 0, remarks: '' }],
-            expenses: [{ item: 0, amount: 0, remarks: '' }]
-        }
+    const { control, handleSubmit, watch, reset } = useForm<FormValues>({
+        defaultValues: initialData
+            ? {
+                customer: initialData.customer || "",
+                currentMileage: Number(initialData.current_km) || 0,
+                date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
+                driverId: Number(initialData.driverid) || undefined,
+                truckNumber: initialData.truck_no || "",
+                from: initialData.from_location || "",
+                to: initialData.to_location || "",
+                items:
+                    parseJsonSafely(initialData.trip_items)
+                        .filter((item: any) => item !== null) // Filter out null values
+                        .map((item: any) => ({
+                            ...item,
+                            item: Number(item.item) || 0,
+                            weight: Number(item.weight) || 0,
+                            tonageRate: Number(item.tonnage_rate) || 0,
+                            remarks:
+                                item.remarks &&
+                                    item.remarks !== undefined &&
+                                    item.remarks !== null
+                                    ? item.remarks
+                                    : "",
+                        })) || [],
+                expenses:
+                    parseJsonSafely(initialData.expense_items) // Changed from driverexpense to expense_items
+                        .filter((expense: any) => expense !== null) // Filter out null values
+                        .map((expense: any) => ({
+                            ...expense,
+                            item: Number(expense.item) || 0,
+                            amount: Number(expense.total) || 0, // Changed from amount to total
+                            remarks:
+                                expense.remarks &&
+                                    expense.remarks !== undefined &&
+                                    expense.remarks !== null
+                                    ? expense.remarks
+                                    : "",
+                        })) || [],
+            }
+            : {
+                // ... default values remain the same
+                items: [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
+                expenses: [{ item: 0, amount: 0, remarks: "" }],
+            },
     });
 
     // Update useEffect reset logic as well
     React.useEffect(() => {
         if (initialData) {
             reset({
-                customer: initialData.customer || '',
+                customer: initialData.customer || "",
                 currentMileage: Number(initialData.current_km) || 0,
                 date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
                 driverId: Number(initialData.driverid) || undefined,
-                truckNumber: initialData.truck_no || '',
-                from: initialData.from_location || '',
-                to: initialData.to_location || '',
+                truckNumber: initialData.truck_no || "",
+                from: initialData.from_location || "",
+                to: initialData.to_location || "",
                 items: parseJsonSafely(initialData.trip_items)
                     .filter((item: any) => item !== null)
                     .map((item: any) => ({
@@ -158,8 +180,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         item: Number(item.item) || 0,
                         weight: Number(item.weight) || 0,
                         tonageRate: Number(item.tonnage_rate) || 0,
-                        remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : ''
-                    })) || [{ item: 0, weight: 0, tonageRate: 0, remarks: '' }],
+                        remarks:
+                            item.remarks &&
+                                item.remarks !== undefined &&
+                                item.remarks !== null
+                                ? item.remarks
+                                : "",
+                    })) || [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
                 expenses: parseJsonSafely(initialData.expense_items)
                     .filter((expense: any) => expense !== null)
                     .map((expense: any) => ({
@@ -167,8 +194,13 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         existingId: expense.id,
                         item: Number(expense.item) || 0,
                         amount: Number(expense.total) || 0,
-                        remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : ''
-                    })) || [{ item: 0, amount: 0, remarks: '' }]
+                        remarks:
+                            expense.remarks &&
+                                expense.remarks !== undefined &&
+                                expense.remarks !== null
+                                ? expense.remarks
+                                : "",
+                    })) || [{ item: 0, amount: 0, remarks: "" }],
             });
         }
     }, [initialData, reset]);
@@ -177,20 +209,20 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     const {
         fields: itemFields,
         append: appendItem,
-        remove: removeItem
+        remove: removeItem,
     } = useFieldArray({
         control,
-        name: 'items'
+        name: "items",
     });
 
     // For expenses items
     const {
         fields: expenseFields,
         append: appendExpense,
-        remove: removeExpense
+        remove: removeExpense,
     } = useFieldArray({
         control,
-        name: 'expenses'
+        name: "expenses",
     });
 
     // Calculate total for a basic item row
@@ -204,7 +236,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
         // Merge calculated totals into each item
         const itemsWithTotal = values.items.map((item, index) => ({
             ...item,
-            total: renderTotal(index)
+            total: renderTotal(index),
         }));
         onSubmit({ ...values, items: itemsWithTotal });
     };
@@ -212,133 +244,149 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
     // Columns for Basic Items Table (inline editing)
     const basicColumns = [
         {
-            title: 'S.No',
-            render: (_: any, __: any, index: number) => index + 1
+            title: "S.No",
+            render: (_: any, __: any, index: number) => index + 1,
         },
         {
-            title: 'Item',
+            title: "Item",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.item`}
                     control={control}
-                    rules={{ required: 'Required' }}
-                    render={({ field }) =>
+                    rules={{ required: "Required" }}
+                    render={({ field }) => (
                         <ItemMasterSelectDropDown
                             itemMasterData={itemMasterData}
                             itemMasterLoading={itemMasterLoading}
                             {...field}
                         />
-                    }
+                    )}
                 />
-            )
+            ),
         },
         {
-            title: 'Weight (in tons)',
+            title: "Weight (in tons)",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.weight`}
                     control={control}
-                    rules={{ required: 'Required' }}
+                    rules={{ required: "Required" }}
                     render={({ field }) => (
-                        <InputNumber placeholder="Weight (in tons)" style={{ width: '100%' }} {...field} />
+                        <InputNumber
+                            placeholder="Weight (in tons)"
+                            style={{ width: "100%" }}
+                            {...field}
+                        />
                     )}
                 />
-            )
+            ),
         },
         {
-            title: 'Tonage Rate (Rs.)',
+            title: "Tonage Rate (Rs.)",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.tonageRate`}
                     control={control}
-                    rules={{ required: 'Required' }}
+                    rules={{ required: "Required" }}
                     render={({ field }) => (
-                        <InputNumber placeholder="Tonage Rate" style={{ width: '100%' }} {...field} />
+                        <InputNumber
+                            placeholder="Tonage Rate"
+                            style={{ width: "100%" }}
+                            {...field}
+                        />
                     )}
                 />
-            )
+            ),
         },
         {
-            title: 'Total (Rs.)',
-            render: (_: any, _record: any, index: number) => <div>{renderTotal(index)}</div>
+            title: "Total (Rs.)",
+            render: (_: any, _record: any, index: number) => (
+                <div>{renderTotal(index)}</div>
+            ),
         },
         {
-            title: 'Remarks',
+            title: "Remarks",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`items.${index}.remarks`}
                     control={control}
                     render={({ field }) => <Input placeholder="Remarks" {...field} />}
                 />
-            )
-        }
+            ),
+        },
     ];
 
     // Columns for Expenses Table (inline editing)
     const expenseColumns = [
         {
-            title: 'S.No',
-            render: (_: any, __: any, index: number) => index + 1
+            title: "S.No",
+            render: (_: any, __: any, index: number) => index + 1,
         },
         {
-            title: 'Item',
+            title: "Item",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.item`}
                     control={control}
-                    rules={{ required: 'Required' }}
-                    render={({ field }) =>
+                    rules={{ required: "Required" }}
+                    render={({ field }) => (
                         <ItemMasterSelectDropDown
                             itemMasterData={itemMasterData}
                             itemMasterLoading={itemMasterLoading}
                             {...field}
                         />
-                    }
+                    )}
                 />
-            )
+            ),
         },
         {
-            title: 'Amount',
+            title: "Amount",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.amount`}
                     control={control}
-                    rules={{ required: 'Required' }}
+                    rules={{ required: "Required" }}
                     render={({ field }) => (
-                        <InputNumber placeholder="Amount" style={{ width: '100%' }} {...field} />
+                        <InputNumber
+                            placeholder="Amount"
+                            style={{ width: "100%" }}
+                            {...field}
+                        />
                     )}
                 />
-            )
+            ),
         },
         {
-            title: 'Remarks',
+            title: "Remarks",
             render: (_: any, _record: any, index: number) => (
                 <Controller
                     name={`expenses.${index}.remarks`}
                     control={control}
                     render={({ field }) => <Input placeholder="Remarks" {...field} />}
                 />
-            )
-        }
+            ),
+        },
     ];
 
     const deleteItem = useDeleteTripDetail();
 
     const handlePrintPreview = () => {
-        const includeExpenses = window.confirm("Do you want to include expenses in the print preview?");
+        const includeExpenses = window.confirm(
+            "Do you want to include expenses in the print preview?",
+        );
 
         // Calculate totals
         const basicItemsTotal = itemFields.reduce((total, _item, index) => {
             const weight = watch(`items.${index}.weight`) || 0;
             const tonageRate = watch(`items.${index}.tonageRate`) || 0;
-            return total + (weight * tonageRate);
+            return total + weight * tonageRate;
         }, 0);
 
         const expensesTotal = expenseFields.reduce((total, _expense, index) => {
             return total + (watch(`expenses.${index}.amount`) || 0);
         }, 0);
 
-        const printWindow = window.open('', '_blank');
+        const printWindow = window.open("", "_blank");
 
         if (printWindow) {
             printWindow.document.write(`
@@ -365,7 +413,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                     .details {
                         margin-bottom: 30px;
                         display: grid;
-                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-columns: repeat(3, 1fr);
                         gap: 15px;
                     }
                     .details p {
@@ -407,18 +455,22 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                 <div class="container">
                     <div class="header">
                         <h1 style="margin: 0;">Trip Details</h1>
-                        <p style="margin: 5px 0; color: #666;">Generated on: ${dayjs().format('DD-MM-YYYY HH:mm')}</p>
+                        <p style="margin: 5px 0; color: #666;">Generated on: ${dayjs().format("DD-MM-YYYY HH:mm")}</p>
                     </div>
                     <div class="details">
                         <div>
-                            <p><strong>Date:</strong> ${watch('date')?.format('DD-MM-YYYY') || 'N/A'}</p>
-                            <p><strong>Driver:</strong> ${driverData.find(d => d.id === watch('driverId'))?.name || 'N/A'}</p>
-                            <p><strong>Current Mileage:</strong> ${watch('currentMileage') || 'N/A'}</p>
+                            <p><strong>Date:</strong> ${watch("date")?.format("DD-MM-YYYY") || "N/A"}</p>
+                            <p><strong>Driver:</strong> ${driverData.find((d) => d.id === watch("driverId"))?.name || "N/A"}</p>
+                            <p><strong>Current Mileage:</strong> ${watch("currentMileage") || "N/A"}</p>
                         </div>
                         <div>
-                            <p><strong>Truck Number:</strong> ${truckData.find(t => t.id === watch('truckNumber'))?.registration_number || 'N/A'}</p>
-                            <p><strong>From:</strong> ${watch('from') || 'N/A'}</p>
-                            <p><strong>To:</strong> ${watch('to') || 'N/A'}</p>
+                            <p><strong>Truck Number:</strong> ${truckData.find((t) => t.id === watch("truckNumber"))?.registration_number || "N/A"}</p>
+                            <p><strong>From:</strong> ${watch("from") || "N/A"}</p>
+                            <p><strong>To:</strong> ${watch("to") || "N/A"}</p>
+                        </div>
+                        <div>
+                            <p><strong>Customer:</strong> ${watch("customer") || "N/A"}</p>
+                            <img src="https://aktyres-in.stackstaging.com/php-truck/class/${profileData?.pic}" alt="Customer Logo" style="max-width: 50px; max-height:50px; border-radius: 50%;"/>
                         </div>
                     </div>
 
@@ -435,16 +487,20 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             </tr>
                         </thead>
                         <tbody>
-                            ${watch('items').map((item: any, index: number) => `
+                            ${watch("items")
+                    .map(
+                        (item: any, index: number) => `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${itemMasterData?.find(m => m.id === (item.item.toString()))?.name || 'N/A'}</td>
+                                    <td>${itemMasterData?.find((m) => m.id === item.item.toString())?.name || "N/A"}</td>
                                     <td>${item.weight || 0}</td>
                                     <td>${item.tonageRate || 0}</td>
                                     <td>${(item.weight || 0) * (item.tonageRate || 0)}</td>
-                                    <td>${item.remarks || ''}</td>
+                                    <td>${item.remarks || ""}</td>
                                 </tr>
-                            `).join('')}
+                            `,
+                    )
+                    .join("")}
                         </tbody>
                         <tfoot>
                             <tr class="total-row">
@@ -454,7 +510,8 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         </tfoot>
                     </table>
 
-                    ${includeExpenses ? `
+                    ${includeExpenses
+                    ? `
                         <h2>Expenses</h2>
                         <table class="items-table">
                             <thead>
@@ -466,14 +523,18 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 </tr>
                             </thead>
                             <tbody>
-                                ${watch('expenses').map((expense: any, index: number) => `
+                                ${watch("expenses")
+                        .map(
+                            (expense: any, index: number) => `
                                     <tr>
                                         <td>${index + 1}</td>
-                                        <td>${itemMasterData?.find(m => m.id === expense.item.toString())?.name || 'N/A'}</td>
+                                        <td>${itemMasterData?.find((m) => m.id === expense.item.toString())?.name || "N/A"}</td>
                                         <td>${expense.amount || 0}</td>
-                                        <td>${expense.remarks || ''}</td>
+                                        <td>${expense.remarks || ""}</td>
                                     </tr>
-                                `).join('')}
+                                `,
+                        )
+                        .join("")}
                             </tbody>
                             <tfoot>
                                 <tr class="total-row">
@@ -486,13 +547,17 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <div class="grand-total">
                             <p>Grand Total: Rs. ${(basicItemsTotal + expensesTotal).toFixed(2)}</p>
                         </div>
-                    ` : ''}
+                    `
+                    : ""
+                }
                 </div>
             </body>
             </html>
         `);
             printWindow.document.close();
-            printWindow.print();
+            setTimeout(() => {
+                printWindow.print();
+            }, 1000);
         }
     };
     return (
@@ -512,8 +577,14 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="customer"
                             control={control}
-                            rules={{ required: 'Required' }}
-                            render={({ field }) => <InputNumber placeholder="Enter Customer Name" className="w-full" {...field} />}
+                            rules={{ required: "Required" }}
+                            render={({ field }) => (
+                                <InputNumber
+                                    placeholder="Enter Customer Name"
+                                    className="w-full"
+                                    {...field}
+                                />
+                            )}
                         />
                     </div>
                 </div>
@@ -523,8 +594,14 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="currentMileage"
                             control={control}
-                            rules={{ required: 'Required' }}
-                            render={({ field }) => <InputNumber placeholder="Current Mileage" className="w-full" {...field} />}
+                            rules={{ required: "Required" }}
+                            render={({ field }) => (
+                                <InputNumber
+                                    placeholder="Current Mileage"
+                                    className="w-full"
+                                    {...field}
+                                />
+                            )}
                         />
                     </div>
                     <div>
@@ -532,20 +609,21 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="date"
                             control={control}
-                            rules={{ required: 'Required' }}
-                            render={({ field }) => <DatePicker className="w-full" format="DD/MM/YYYY" {...field} />}
+                            rules={{ required: "Required" }}
+                            render={({ field }) => (
+                                <DatePicker className="w-full" format="DD/MM/YYYY" {...field} />
+                            )}
                         />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
-
                     <div>
                         <label>Driver Name</label>
                         <Controller
                             name="driverId"
                             control={control}
-                            rules={{ required: 'Required' }}
+                            rules={{ required: "Required" }}
                             render={({ field }) => (
                                 <Select
                                     placeholder="Select driver"
@@ -554,12 +632,14 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         driverData &&
                                         driverData?.map((driver) => ({
                                             label: driver.name,
-                                            value: driver.id
+                                            value: driver.id,
                                         }))
                                     }
                                     showSearch
                                     filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
                                     }
                                     loading={driverLoading}
                                     {...field}
@@ -567,7 +647,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                             )}
                         />
                     </div>
-                    {/* 
+                    {/*
                         Truck Number
                     */}
                     <div>
@@ -575,27 +655,29 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="truckNumber"
                             control={control}
-                            rules={{ required: 'Required' }}
+                            rules={{ required: "Required" }}
                             render={({ field }) => (
                                 <Select
                                     placeholder="Select truck"
                                     className="w-full"
                                     showSearch
                                     filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
                                     }
                                     options={
                                         truckData &&
                                         truckData?.map((truck) => ({
                                             label: truck.registration_number,
-                                            value: truck.id
+                                            value: truck.id,
                                         }))
                                     }
                                     loading={truckLoading}
                                     {...field}
                                 />
                             )}
-                            // defaultValue={initialData?.truckNumber} 
+                            // defaultValue={initialData?.truckNumber}
                             disabled={isEdit}
                         />
                     </div>
@@ -607,7 +689,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="from"
                             control={control}
-                            rules={{ required: 'Required' }}
+                            rules={{ required: "Required" }}
                             render={({ field }) => <Input placeholder="From" {...field} />}
                         />
                     </div>
@@ -616,7 +698,7 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         <Controller
                             name="to"
                             control={control}
-                            rules={{ required: 'Required' }}
+                            rules={{ required: "Required" }}
                             render={({ field }) => <Input placeholder="To" {...field} />}
                         />
                     </div>
@@ -633,17 +715,25 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         pagination={{
                             showQuickJumper: true,
                             showSizeChanger: true,
-                            pageSizeOptions: ['10', '20', '50', '100', '200'],
-                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            pageSizeOptions: ["10", "20", "50", "100", "200"],
+                            showTotal: (total, range) =>
+                                `${range[0]}-${range[1]} of ${total} items`,
                             total: itemFields.length,
-                            pageSize: 10
+                            pageSize: 10,
                         }}
                         rowSelection={
                             itemFields.length > 0
                                 ? {
-                                    type: 'checkbox' as const,
-                                    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                                    type: "checkbox" as const,
+                                    onChange: (
+                                        selectedRowKeys: React.Key[],
+                                        selectedRows: any[],
+                                    ) => {
+                                        console.log(
+                                            `selectedRowKeys: ${selectedRowKeys}`,
+                                            "selectedRows: ",
+                                            selectedRows,
+                                        );
                                         setSelectedTripitems(selectedRows);
                                     },
                                     // onSelect: (record: any, selected: boolean, selectedRows: any[]) => {
@@ -654,11 +744,19 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 : undefined
                         }
                         footer={() => (
-                            <div
-                                className='flex justify-between gap-2'
-                            >
+                            <div className="flex justify-between gap-2">
                                 <Space>
-                                    <Button type="primary" onClick={() => appendItem({ item: 0, weight: 0, tonageRate: 0, remarks: '' })}>
+                                    <Button
+                                        type="primary"
+                                        onClick={() =>
+                                            appendItem({
+                                                item: 0,
+                                                weight: 0,
+                                                tonageRate: 0,
+                                                remarks: "",
+                                            })
+                                        }
+                                    >
                                         Add Item
                                     </Button>
                                     <Button
@@ -666,19 +764,21 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                         onClick={() => {
                                             if (itemFields.length > 0) {
                                                 // removeItem(itemFields.length - 1);
-                                                const selectedItemIds = selectedTripitems.map((item: any) => item.existingId);
+                                                const selectedItemIds = selectedTripitems.map(
+                                                    (item: any) => item.existingId,
+                                                );
 
                                                 if (selectedItemIds.length === 0) {
-                                                    toast.error('Please select an item to delete');
+                                                    toast.error("Please select an item to delete");
                                                     return;
                                                 }
                                                 // Call the deleteTripDetail mutation
-                                                deleteItem.mutateAsync(selectedItemIds)
+                                                deleteItem.mutateAsync(selectedItemIds);
 
                                                 removeItem(
-                                                    selectedTripitems.map((item: any) => item.id)
+                                                    selectedTripitems.map((item: any) => item.id),
                                                 );
-                                                toast.success('Item removed successfully');
+                                                toast.success("Item removed successfully");
                                             }
                                         }}
                                     >
@@ -689,7 +789,10 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 <div className="flex justify-end gap-2">
                                     <div className="text-lg font-bold">Total Amount:</div>
                                     <div className="text-lg font-bold">
-                                        {itemFields.reduce((acc, _item, index) => acc + renderTotal(index), 0)}
+                                        {itemFields.reduce(
+                                            (acc, _item, index) => acc + renderTotal(index),
+                                            0,
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -709,17 +812,25 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                         pagination={{
                             showQuickJumper: true,
                             showSizeChanger: true,
-                            pageSizeOptions: ['10', '20', '50', '100', '200'],
-                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            pageSizeOptions: ["10", "20", "50", "100", "200"],
+                            showTotal: (total, range) =>
+                                `${range[0]}-${range[1]} of ${total} items`,
                             total: expenseFields.length,
-                            pageSize: 10
+                            pageSize: 10,
                         }}
                         rowSelection={
                             expenseFields.length > 0
                                 ? {
-                                    type: 'checkbox' as const,
-                                    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                                    type: "checkbox" as const,
+                                    onChange: (
+                                        selectedRowKeys: React.Key[],
+                                        selectedRows: any[],
+                                    ) => {
+                                        console.log(
+                                            `selectedRowKeys: ${selectedRowKeys}`,
+                                            "selectedRows: ",
+                                            selectedRows,
+                                        );
                                         setSelectedTripExpenses(selectedRows);
                                     },
                                     // onSelect: (record: any, selected: boolean, selectedRows: any[]) => {
@@ -730,28 +841,38 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 : undefined
                         }
                         footer={() => (
-                            <div
-                                className='flex justify-between gap-2'
-                            >
+                            <div className="flex justify-between gap-2">
                                 <Space>
-                                    <Button type="primary" onClick={() => appendExpense({ item: 0, amount: 0, remarks: '' })}>
+                                    <Button
+                                        type="primary"
+                                        onClick={() =>
+                                            appendExpense({ item: 0, amount: 0, remarks: "" })
+                                        }
+                                    >
                                         Add Item
                                     </Button>
                                     <Button
                                         danger
                                         onClick={() => {
                                             if (expenseFields.length > 0) {
-                                                console.log('selectedTripExpenses: ', selectedTripExpenses);
-                                                const expenseIds = selectedTripExpenses.map((expense: any) => (expense.existingId));
+                                                console.log(
+                                                    "selectedTripExpenses: ",
+                                                    selectedTripExpenses,
+                                                );
+                                                const expenseIds = selectedTripExpenses.map(
+                                                    (expense: any) => expense.existingId,
+                                                );
                                                 if (expenseIds.length === 0) {
-                                                    toast.error('Please select an item to delete');
+                                                    toast.error("Please select an item to delete");
                                                     return;
                                                 }
                                                 deleteItem.mutateAsync(expenseIds);
                                                 removeExpense(
-                                                    selectedTripExpenses.map((expense: any) => expense.id)
+                                                    selectedTripExpenses.map(
+                                                        (expense: any) => expense.id,
+                                                    ),
                                                 );
-                                                toast.success('Item removed successfully');
+                                                toast.success("Item removed successfully");
                                             }
                                         }}
                                     >
@@ -761,9 +882,11 @@ const TripModal: React.FC<TripModalProps> = ({ isOpen, onClose, onSubmit, initia
                                 <div className="flex justify-end gap-2">
                                     <div className="text-lg font-bold">Total Expenses:</div>
                                     <div className="text-lg font-bold">
-                                        {expenseFields.reduce((acc, _item, index) => acc +
-                                            watch(`expenses.${index
-                                                }.amount`) || 0, 0)}
+                                        {expenseFields.reduce(
+                                            (acc, _item, index) =>
+                                                acc + watch(`expenses.${index}.amount`) || 0,
+                                            0,
+                                        )}
                                     </div>
                                 </div>
                             </div>

@@ -95,10 +95,10 @@ const TyrePressureContent: React.FC = () => {
             headerName: 'Tyre Pressure',
             field: 'tyre_pressure'
         },
-        {
-            headerName: 'Depth',
-            field: 'Depth'
-        },
+        // {
+        //     headerName: 'Depth',
+        //     field: 'Depth'
+        // },
         {
             headerName: 'To be Run',
             field: 'Toberun',
@@ -113,7 +113,7 @@ const TyrePressureContent: React.FC = () => {
             field: 'fixedDep',
         },
         {
-            headerName: 'Actual Depth',
+            headerName: 'Current Depth',
             field: 'actualDep',
         }
     ], []);

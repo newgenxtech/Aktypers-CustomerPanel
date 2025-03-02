@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
-import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetItemMaster, useGetTripData, useGetTruckData } from '@/hooks/GetHooks';
+import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetItemMaster, useGetTripData, useGetTruckData, useGetUserProfile } from '@/hooks/GetHooks';
 import { Edit } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
@@ -21,10 +21,6 @@ export interface FilterData {
 }
 
 const SummaryListPage = () => {
-    // const [pageSize, setPageSize] = useState<number>(10);
-    // const [, setSearchText] = useState<string>('');
-    // const gridRef = useRef<any>(null);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTrip, setSelectedTrip] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
@@ -32,6 +28,7 @@ const SummaryListPage = () => {
     const createTrip = useCreateTrip(isEdit);
 
     const createTripDetail = useCreateTripDetail(isEdit);
+    const { data: profileData, isLoading:profileDataloading } = useGetUserProfile();
 
     const {
         data: tripData,
@@ -60,14 +57,6 @@ const SummaryListPage = () => {
     } = useGetItemMaster(
         localStorage.getItem("customer_id") || ""
     )
-
-    // const [filterData, setFilterData] = useState<FilterData>({
-    //     arrivalDate: null,
-    //     returnDate: null,
-    //     truck: '',
-    //     driver: '',
-    //     returnDriver: ''
-    // });
 
     const columnDefs: ColDef[] = [
         { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true, width: 80 },
@@ -127,58 +116,6 @@ const SummaryListPage = () => {
             }
         }
     ];
-
-
-    // const handleSearch = useCallback((value: string) => {
-    //     setSearchText(value);
-    //     if (gridRef.current) {
-    //         gridRef.current.api.setQuickFilter(value);
-    //     }
-    // }, []);
-
-    // const handleFilter = useCallback(() => {
-    //     if (!gridRef.current) return;
-
-    //     const filterModel: any = {};
-
-    //     if (filterData.truck) {
-    //         filterModel.truck_no = {
-    //             type: 'contains',
-    //             filter: filterData.truck
-    //         };
-    //     }
-
-    //     if (filterData.driver) {
-    //         filterModel.driver_name = {
-    //             type: 'contains',
-    //             filter: filterData.driver
-    //         };
-    //     }
-
-    //     if (filterData.returnDriver) {
-    //         filterModel.return_driver_name = {
-    //             type: 'contains',
-    //             filter: filterData.returnDriver
-    //         };
-    //     }
-
-    //     if (filterData.arrivalDate) {
-    //         filterModel.loading_date = {
-    //             type: 'equals',
-    //             dateFrom: filterData.arrivalDate.startOf('day').toISOString()
-    //         };
-    //     }
-
-    //     if (filterData.returnDate) {
-    //         filterModel.unloading_date = {
-    //             type: 'equals',
-    //             dateFrom: filterData.returnDate.startOf('day').toISOString()
-    //         };
-    //     }
-
-    //     gridRef.current.api.setFilterModel(filterModel);
-    // }, [filterData]);
-
 
     const handleEdit = (data: TripDetails) => {
         console.log('Edit data:', data);
@@ -278,58 +215,7 @@ const SummaryListPage = () => {
                     <h2 className="text-xl font-bold text-gray-800">Trip Details</h2>
                 </div>
 
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <DatePicker
-                        placeholder="Arrival Date"
-                        onChange={(date) => setFilterData({ ...filterData, arrivalDate: date })}
-                        className="w-full"
-                        disabled
-                    />
-                    <DatePicker
-                        placeholder="Return Date"
-                        onChange={(date) => setFilterData({ ...filterData, returnDate: date })}
-                        className="w-full"
-                        disabled
-                    />
-                    <Input
-                        placeholder="Select Truck"
-                        onChange={(e) => setFilterData({ ...filterData, truck: e.target.value })}
-                        disabled
-                        className="w-full"
-                    />
-                    <Input
-                        placeholder="Select Driver"
-                        onChange={(e) => setFilterData({ ...filterData, driver: e.target.value })}
-                        className="w-full"
-                        disabled
-                    />
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Select Return Driver"
-                            onChange={(e) => setFilterData({ ...filterData, returnDriver: e.target.value })}
-                            disabled
-                            className="w-full"
-                        />
-                        <Button
-                            onClick={handleFilter}
-                            disabled
-                            className="bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                            Filter
-                        </Button>
-                    </div>
-                </div> */}
-
                 <div className="flex justify-end items-center">
-                    {/* <div className="relative">
-                        <Input
-                            placeholder="Search"
-                            onChange={(e) => handleSearch(e.target.value)}
-                            className="w-full pl-8"
-                            disabled
-                        />
-                        <Search className="h-4 w-4 absolute left-2 top-2 text-gray-400" />
-                    </div> */}
                     <Button
                         onClick={() => {
                             setIsModalOpen(true)
@@ -376,6 +262,8 @@ const SummaryListPage = () => {
                     setIsEdit={setIsEdit}
                     itemMasterData={itemMasterData?.body || []}
                     itemMasterLoading={itemMasterLoading}
+                    profileData={profileData! || []}
+                    profileDataloading={profileDataloading}
                 />
             </div>
         </div>

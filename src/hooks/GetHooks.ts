@@ -639,7 +639,7 @@ export const useGetAnalyticsByCustomer = (customer_id: string) => {
 }
 
 
-interface UserProfile {
+export interface UserProfile {
   login_id: string;
   username: string;
   email: string;
