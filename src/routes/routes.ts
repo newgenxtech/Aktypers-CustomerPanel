@@ -86,12 +86,10 @@ export const routes = {
             deleteInsurance: `${base}?route=deleteInsurance`,
         },
         invoice: {
-            getCustomerpayfilter: `${base}?route=getCustomerpayfilter`,
-
-            getInvoiceFiles: `${base}?route=getInvoiceFiles&invoice_id=`,
-            getPaymentAnalytics: `${base}?route=getPaymentAnalytics`,
+            getCustomerpayfilter: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getCustomerpayfilter`,
+            getInvoiceFiles: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getInvoiceFiles&invoice_id=`,
+            getPaymentAnalytics: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getPaymentAnalytics`,
         },
-
         complaints: {
             getComplaintsByCustomerId: `${base}?route=getComplaintsByCustomerId&customer_id=`,
         },

@@ -213,8 +213,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        {/* Pie Chart Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
         <Suspense fallback={<Spin size="large" />}>
           {!tyreAnalyticsLoading && tyreAnalyticsData && (
             <div className="my-6">

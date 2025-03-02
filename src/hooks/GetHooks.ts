@@ -153,8 +153,8 @@ export const useGetInvoiceData = (fromDate?: string, toDate?: string) => {
         const res = await axios.post(
           routes.backend.invoice.getCustomerpayfilter,
           {
-            // customer_id: localStorage.getItem('customer_id') || '',
-            customer_id: '1006',
+            customer_id: localStorage.getItem('customer_id') || '',
+            // customer_id: '1006',
           }
         );
         return res.data;
