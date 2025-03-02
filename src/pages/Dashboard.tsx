@@ -27,7 +27,6 @@ import {
 import { Spin } from "antd";
 import InsuranceExpiryTable from "@/components/DashboardComponent/InsuranceExpiryTable";
 import RecentComplaintsTable from "@/components/DashboardComponent/RecentComplaintsTable";
-import TyreConditionTable from "@/components/DashboardComponent/TyreConditionTable";
 import AktyrePurchasedTable from "@/components/DashboardComponent/AktyrePurchasedTable";
 import TyresMaintainanceTable from "@/components/DashboardComponent/TyresMaintainanceTable";
 

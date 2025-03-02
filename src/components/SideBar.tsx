@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee, BookOpenCheck, FileSpreadsheet, CircleUserRound, Space, CircleUser } from "lucide-react";
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee, BookOpenCheck, FileSpreadsheet, CircleUserRound, CircleUser } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 // import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
