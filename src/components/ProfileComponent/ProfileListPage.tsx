@@ -74,7 +74,7 @@ const ProfileListPage = () => {
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <div className="relative group">
+                        <div className="relative group flex flex-col">
                             <Avatar
                                 size={150}
                                 icon={<CircleUserRound className="text-gray-400" />}

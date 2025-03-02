@@ -34,11 +34,6 @@ const TyresMaintainanceTable: React.FC<TyresMaintainanceTableProps> = ({ data })
       render: (record: ITyrePressure) => record.tyre_pressure,
     },
     {
-      label: 'Depth',
-      key: 'Depth',
-      render: (record: ITyrePressure) => record.Depth || '-',
-    },
-    {
       label: 'To Be Run',
       key: 'Toberun',
       render: (record: ITyrePressure) => record.Toberun || '-',

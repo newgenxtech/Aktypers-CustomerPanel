@@ -469,7 +469,7 @@ const TripModal: React.FC<TripModalProps> = ({
                             <p><strong>To:</strong> ${watch("to") || "N/A"}</p>
                         </div>
                         <div>
-                            <p><strong>Customer:</strong> ${watch("customer") || "N/A"}</p>
+                            <p><strong>Company:</strong> ${watch("customer") || "N/A"}</p>
                             <img src="https://aktyres-in.stackstaging.com/php-truck/class/${profileData?.pic}" alt="Customer Logo" style="max-width: 50px; max-height:50px; border-radius: 50%;"/>
                         </div>
                     </div>

@@ -65,13 +65,13 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
             field: 'year_of_manufacture'
         },
         {
-            headerName: 'Wheels',
-            field: 'wheels'
+            headerName: 'Tyre Type',
+            field: 'axle_configuration'
         },
-        {
-            headerName: 'Truck Type',
-            field: 'tyre_type'
-        },
+        // {
+        //     headerName: 'Truck Type',
+        //     field: 'tyre_type'
+        // },
         {
             headerName: 'Load Capacity',
             field: 'load_capacity'
