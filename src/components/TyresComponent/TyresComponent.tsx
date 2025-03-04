@@ -185,7 +185,7 @@ const TyresMasterListPage = () => {
                   TruckListData?.body.find((item) => item.id === value),
                 );
               }}
-              options={TruckListData?.body.map((item) => ({
+              options={TruckListData?.body?.map((item) => ({
                 value: item.id,
                 label: item.registration_number,
               }))}
@@ -237,7 +237,7 @@ const TyresMasterListPage = () => {
         <AgGridTable
           columns={columns}
           data={
-            data?.body.map((item: TyresMaster, index: number) => ({
+            data?.body?.map((item: TyresMaster, index: number) => ({
               ...item,
               key: index,
             })) ?? []

@@ -65,14 +65,25 @@ const TyrePressureContent: React.FC = () => {
     });
 
     useEffect(() => {
-        if (TruckListData?.body[0].id) {
-            setSelectedTruckId(TruckListData.body[0].id);
+        try {
+            if (TruckListData?.body && Array.isArray(TruckListData.body) && TruckListData.body.length > 0) {
+                const firstTruck = TruckListData.body[0];
+                if (firstTruck && firstTruck.id) {
+                    setSelectedTruckId(firstTruck.id);
+                } else {
+                    console.warn('First truck data is missing ID');
+                }
+            } else {
+                console.warn('No truck data available');
+            }
+        } catch (error) {
+            console.error('Error setting selected truck ID:', error);
         }
     }, [TruckListData]);
 
     useEffect(() => {
         if (TruckDemensionDetails && TruckDemensionDetailLoading === false) {
-            setSelectedTyre(TruckDemensionDetails.body[0]);
+            setSelectedTyre(TruckDemensionDetails?.body[0]);
         }
     }, [TruckDemensionDetailLoading, TruckDemensionDetails]);
 
@@ -150,7 +161,7 @@ const TyrePressureContent: React.FC = () => {
                                 onChange={(value) => {
                                     setSelectedTruckId(value);
                                 }}
-                                options={TruckListData?.body.map((item) => ({
+                                options={TruckListData?.body?.map((item) => ({
                                     value: item.id,
                                     label: item.registration_number,
                                 }))}

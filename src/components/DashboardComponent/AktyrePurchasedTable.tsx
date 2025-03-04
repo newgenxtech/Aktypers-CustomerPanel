@@ -8,7 +8,7 @@ interface AktyrePurchasedTableProps {
 
 const AktyrePurchasedTable: React.FC<AktyrePurchasedTableProps> = ({ data }) => {
   // Transform the data into a format suitable for the table
-  const transformedData = data?.product.map((_item, index) => ({
+  const transformedData = data?.product?.map((_item, index) => ({
     product: data.product[index].name,
     quantity: data.quantity[index].name,
     rate: data.rate[index].name,
@@ -50,7 +50,7 @@ const AktyrePurchasedTable: React.FC<AktyrePurchasedTableProps> = ({ data }) => 
         <h2 className="text-2xl font-semibold mb-4">Purchased Items</h2>
         <TableComponent
           columns={columns}
-          data={transformedData}
+          data={transformedData ?? []}
           pagination={pagination}
           setPagination={setPagination}
         />

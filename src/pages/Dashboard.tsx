@@ -108,9 +108,9 @@ const Dashboard: React.FC = () => {
     ],
   };
 
-  const totalTrucks = useMemo(() => truckData?.body.length || 0, [truckData]);
+  const totalTrucks = useMemo(() => truckData?.body?.length || 0, [truckData]);
   const totalDrivers = useMemo(
-    () => driverData?.body.length || 0,
+    () => driverData?.body?.length || 0,
     [driverData]
   );
 
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Tyres purchased - AKTyres</h2>
-            <p className="text-2xl font-bold">{analyticsByCustomer?.body.quantity.reduce((acc, item) => acc + (item.name), 0) ?? 0}</p>
+            <p className="text-2xl font-bold">{analyticsByCustomer?.body?.quantity?.reduce((acc, item) => acc + (item.name), 0) ?? 0}</p>
           </div>
         </Suspense>
         <Suspense fallback={<Spin size="large" />}>
@@ -164,7 +164,7 @@ const Dashboard: React.FC = () => {
         <Suspense fallback={<Spin size="large" />}>
           <div className="metric-card">
             <h2>Total Tyres</h2>
-            <p className="text-2xl font-bold">{tyresData?.body.length ?? 0}</p>
+            <p className="text-2xl font-bold">{tyresData?.body?.length ?? 0}</p>
           </div>
         </Suspense>
       </div>
@@ -276,14 +276,16 @@ const Dashboard: React.FC = () => {
         </Suspense>
         <Suspense fallback={<Spin size="large" />}>
           {!tyreAnalyticsLoading && tyreAnalyticsData && (
-            <TyresMaintainanceTable data={tyreAnalyticsData?.body} />
+            <TyresMaintainanceTable data={tyreAnalyticsData?.body
+              ?? []
+            } />
           )}
         </Suspense>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
         {complaintsData && (
-          <RecentComplaintsTable data={complaintsData?.body} thresholdDays={60} />
+          <RecentComplaintsTable data={complaintsData?.body ?? []} thresholdDays={60} />
         )}
         {complaintsData && (
           <AktyrePurchasedTable data={analyticsByCustomer?.body ?? {

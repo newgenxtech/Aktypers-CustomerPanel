@@ -30,10 +30,10 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
   // Calculate the data to be displayed on the current page
   const indexOfLastRow = props.pagination.currentPage * props.pagination.rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - props.pagination.rowsPerPage;
-  const currentData = props.data.slice(indexOfFirstRow, indexOfLastRow);
+  const currentData = props?.data?.slice(indexOfFirstRow, indexOfLastRow) ?? [];
 
   // Calculate the total number of pages
-  const totalPages = Math.ceil(props.data.length / props.pagination.rowsPerPage);
+  const totalPages = Math.ceil(props?.data?.length / props.pagination.rowsPerPage);
   // Function to handle page change
   const handlePageChange = (pageNumber: number) => {
     // setCurrentPage(pageNumber);

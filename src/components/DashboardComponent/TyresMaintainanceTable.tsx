@@ -67,7 +67,7 @@ const TyresMaintainanceTable: React.FC<TyresMaintainanceTableProps> = ({ data })
         <h2 className="text-2xl font-semibold mb-4" >Tyre Maintainance</h2>
         <TableComponent
           columns={columns}
-          data={data}
+          data={data ?? []}
           pagination={pagination}
           setPagination={setPagination}
         />
