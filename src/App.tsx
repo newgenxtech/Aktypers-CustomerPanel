@@ -7,6 +7,7 @@ import { queryClient } from "./hooks/queryClient";
 import { store } from "./store/store";
 import SummaryMasterListPage from "./pages/Summary/Summary";
 import ProfileMasterListPage from "./pages/Profile/Profile";
+import ForgetPassordComponent from "./components/ui/ForgetPassordComponent";
 
 // Layouts
 const BaseLayout = lazy(() => import("./layouts/BaseLayout"));
@@ -193,6 +194,14 @@ const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<LoadingSpinner />}>
                         <Signup />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "forgot-password",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ForgetPassordComponent />
                     </Suspense>
                 ),
             },

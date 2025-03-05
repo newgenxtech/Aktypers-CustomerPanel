@@ -65,7 +65,7 @@ const ForgetPassordComponent = () => {
       {
         onSuccess: (data) => {
           if (data.message === 'Password updated successfully.') {
-            navigate("/login");
+            navigate("/auth/login");
           }
         }
       }
