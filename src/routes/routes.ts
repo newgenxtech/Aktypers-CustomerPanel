@@ -23,9 +23,10 @@ export const routes = {
     },
     backend: {
         auth: {
-            // login: `${base}?route=login`,
             login: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=login',
             signup: `${base}?route=signup`,
+               requestOTP: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=requestOTP',
+      verifyOTP: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=verifyOTP',
         },
         profile: {
             getUserProfile: `${base}?route=getuserprofile&customer_id=`,

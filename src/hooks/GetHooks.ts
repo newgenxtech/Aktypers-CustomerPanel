@@ -298,32 +298,6 @@ export const useGetTruckMakers = (customer_id: string) => {
   });
 }
 
-// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=createTrip
-
-// {
-//     "truck_no": "ABC1234",
-//     "driver": "Bob Johnson",
-//     "driverid": "3",
-//     "Rdriverid": "3",
-//     "Rdriver": "Bob Johnson",
-//     "from_location": "Vakaga",
-//     "to_location": "Chennai",
-//     "trip_date": "2025-02-17",
-//     "reverse_date": "2025-02-10",
-//     "Rfrom": "Neyveli",
-//     "Rto": "Chemin",
-//     "current_km": "30",
-//     "fuel_level": "30",
-//     "customerid": "1001",
-//     "mobile_number": "7654321098",
-//     "Rmobile_number": "7654321098",
-//     "driverexpense": "[{"item":"poice","amount":"300","remark":""}]",
-//     "Rdriverexpense": "[{"item":"","amount":0,"remark":""}]",
-//     "supertotal": 500
-// }
-
-
-
 import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
 import { readFileAsBase64 } from "@/lib/utils";
@@ -359,33 +333,6 @@ export const useCreateTrip = (
     }
   });
 }
-
-
-// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=createTripDetail
-// [
-//     {
-//         "item": "goods",
-//         "weight": "2",
-//         "driver_advance": 0,
-//         "is_single": 0,
-//         "tripid": "12",
-//         "tonnage_rate": "100",
-//         "total": 200,
-//         "balance": 0,
-//         "remarks": ""
-//     },
-//     {
-//         "item": "",
-//         "weight": "",
-//         "driver_advance": 0,
-//         "is_single": 1,
-//         "tripid": "12",
-//         "tonnage_rate": 0,
-//         "total": 0,
-//         "balance": 0,
-//         "remarks": ""
-//     }
-// ]
 
 interface TripDetailData {
   item: number;
@@ -462,20 +409,6 @@ export const useCreateItem = () => {
   });
 }
 
-// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=getTruckNames&customer_id=1003
-
-// {
-//     "itemCount": 1,
-//     "body": [
-//         {
-//             "id": "2",
-//             "name": "Tata Prima",
-//             "customer": "1003"
-//         }
-//     ]
-// }
-
-
 export const useGetItemMaster = (customerid: string) => {
   return useQuery<GetApiResponse<{
     id: number
@@ -524,9 +457,6 @@ export const useDeleteTripDetail = () => {
   });
 }
 
-// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=analyticsOfTyre&customer_id=1001
-
-
 
 interface Tyre {
   wheels: string;
@@ -568,39 +498,6 @@ export const useGetTyreAnalyticsByCustomer = (customer_id: string) => {
     },
   });
 }
-
-
-// getdatbyaktyresByCustomerId
-
-// {
-//   "itemCount": 2,
-//   "body": {
-//       "product": [
-//           {
-//               "name": "paper"
-//           },
-//           {
-//               "name": "paper"
-//           }
-//       ],
-//       "quantity": [
-//           {
-//               "name": 1
-//           },
-//           {
-//               "name": 2
-//           }
-//       ],
-//       "rate": [
-//           {
-//               "name": 20000
-//           },
-//           {
-//               "name": 40000
-//           }
-//       ]
-//   }
-// }
 
 interface Product {
   name: string;
@@ -722,4 +619,72 @@ export const handleFileUpload = async (file: File) => {
     message.error('Failed to upload file');
     return null;
   }
+};
+
+
+export interface OTPRequestPayload {
+  email: string;
+}
+
+export interface OTPVerificationPayload {
+  email: string;
+  otp: string;
+  new_password: string;
+}
+
+export interface AuthResponse {
+  message: string;
+  email_status?: boolean;
+}
+
+const AUTH_API_BASE = 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php';
+
+export const authService = {
+  requestOTP: async (payload: OTPRequestPayload): Promise<AuthResponse> => {
+    const response = await axios.post(
+      `${AUTH_API_BASE}?route=requestOTP`,
+      payload
+    );
+    return response.data;
+  },
+
+  verifyOTP: async (payload: OTPVerificationPayload): Promise<AuthResponse> => {
+    const response = await axios.post(
+      `${AUTH_API_BASE}?route=verifyOTP`,
+      payload
+    );
+    return response.data;
+  }
+};
+
+export const useRequestOTP = () => {
+  return useMutation({
+    mutationFn: (payload: OTPRequestPayload) => authService.requestOTP(payload),
+    onSuccess: (data) => {
+      if (data.email_status) {
+        message.success('OTP sent successfully');
+      } else {
+        message.error(data.message);
+      }
+    },
+    onError: () => {
+      message.error('Failed to send OTP');
+    }
+  });
+};
+
+export const useVerifyOTP = () => {
+  return useMutation({
+    mutationFn: (payload: OTPVerificationPayload) => authService.verifyOTP(payload),
+    onSuccess: (data) => {
+      if (data.message === 'Password updated successfully.') {
+        message.success('Password updated successfully');
+      } else {
+        message.error(data.message);
+      }
+    },
+    onError: () => {
+      message.error('Failed to verify OTP');
+    }
+  });
 };
