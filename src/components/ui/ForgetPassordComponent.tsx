@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { Input, message } from "antd";
 import { useRequestOTP, useVerifyOTP } from "@/hooks/GetHooks";
-import { routes } from "@/routes/routes";
 
 interface FormState {
   email: string;
