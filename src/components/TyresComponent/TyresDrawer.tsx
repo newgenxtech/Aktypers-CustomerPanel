@@ -77,8 +77,9 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
       formMethods.setValue("Wheeler_Type", SelectedTruck?.wheels);
       formMethods.setValue("Manufacturer", SelectedTruck?.make);
       formMethods.setValue("Brand", SelectedTruck?.model);
-      formMethods.setValue("Vehicle_Registration_Number", SelectedTruck?.truckid);
-
+    } else if (isEdit && open) {
+      console.log("SelectedTruck?.truckid", SelectedTruck);
+      formMethods.setValue("Vehicle_Registration_Number", CurrentTyres?.truckid);
     }
   }, [SelectedTruck, formMethods, isEdit, open]);
 

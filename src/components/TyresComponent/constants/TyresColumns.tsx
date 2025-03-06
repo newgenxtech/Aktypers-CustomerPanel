@@ -8,83 +8,84 @@ const TyresColumns = (
   setCurrentTyres: React.Dispatch<React.SetStateAction<TyresMaster | null>>,
   setSelectedTruckId: React.Dispatch<React.SetStateAction<string>>,
 ): (ColDef | ColGroupDef)[] => [
-  {
-    headerName: "S.No",
-    field: "key",
-    width: 80,
-    minWidth: 0,
-    flex: 0,
-    autoHeight: false,
-    valueGetter: "node.rowIndex + 1",
-  },
-  {
-    headerName: "Serial Number",
-    field: "Tyre_Serial_Number",
-    cellRenderer: (params: CustomCellRendererProps) => (
-      <span
-        className="text-[#00008B] font-semibold cursor-pointer text-base"
-        onClick={() => {
-          setOpen(true);
-          setIsEdit(true);
-          setCurrentTyres(params.data);
-          setSelectedTruckId(params.data.truckid);
-        }}
-      >
-        {params.value}
-      </span>
-    ),
-  },
-  {
-    headerName: "Wheeler Type",
-    field: "Wheeler_Type",
-    cellRenderer: (params: CustomCellRendererProps) => (
-      <span className="text-base">{params.value}</span>
-    ),
-  },
-  {
-    headerName: "Manufacturer",
-    field: "Manufacturer",
-  },
-  {
-    headerName: "Brand",
-    field: "Brand",
-  },
-  {
-    headerName: "Fitment KM",
-    field: "Fitment_KM",
-  },
-  {
-    headerName: "Removal KM",
-    field: "Removal_KM",
-  },
-  {
-    headerName: "Total Covered KM",
-    field: "Total_Covered_KM",
-  },
-  {
-    headerName: "Re Used",
-    field: "Retread_Yes_No",
-  },
-  {
-    headerName: "Tyre Condition",
-    field: "Tyre_Condition",
-  },
-  {
-    headerName: "Reason for Removal Month",
-    field: "Reason_for_Removal_MONTH",
-  },
-  {
-    headerName: "Date",
-    field: "Date",
-  },
-  {
-    headerName: "Position",
-    field: "position",
-  },
-  {
-    headerName: "Registration Number",
-    field: "registration_number",
-  },
-];
+    {
+      headerName: "S.No",
+      field: "key",
+      width: 80,
+      minWidth: 0,
+      flex: 0,
+      autoHeight: false,
+      valueGetter: "node.rowIndex + 1",
+    },
+    {
+      headerName: "Serial Number",
+      field: "Tyre_Serial_Number",
+      cellRenderer: (params: CustomCellRendererProps) => (
+        <span
+          className="text-[#00008B] font-semibold cursor-pointer text-base"
+          onClick={() => {
+            setOpen(true);
+            setIsEdit(true);
+            console.log("params.data", params.data);
+            setCurrentTyres(params.data);
+            setSelectedTruckId(params.data.truckid);
+          }}
+        >
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      headerName: "Registration Number",
+      field: "registration_number",
+    },
+    {
+      headerName: "Wheeler Type",
+      field: "Wheeler_Type",
+      cellRenderer: (params: CustomCellRendererProps) => (
+        <span className="text-base">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "Manufacturer",
+      field: "Manufacturer",
+    },
+    {
+      headerName: "Brand",
+      field: "Brand",
+    },
+    {
+      headerName: "Fitment KM",
+      field: "Fitment_KM",
+    },
+    {
+      headerName: "Removal KM",
+      field: "Removal_KM",
+    },
+    {
+      headerName: "Total Covered KM",
+      field: "Total_Covered_KM",
+    },
+    {
+      headerName: "Re Used",
+      field: "Retread_Yes_No",
+    },
+    {
+      headerName: "Tyre Condition",
+      field: "Tyre_Condition",
+    },
+    {
+      headerName: "Reason for Removal Month",
+      field: "Reason_for_Removal_MONTH",
+    },
+    {
+      headerName: "Date",
+      field: "Date",
+    },
+    {
+      headerName: "Position",
+      field: "position",
+    },
+  ];
 
 export default TyresColumns;
