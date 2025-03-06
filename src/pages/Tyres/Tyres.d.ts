@@ -1,19 +1,7 @@
 import { CommonTableEntity } from "@/Interfaces/interface";
 
 export interface TyresMaster extends CommonTableEntity {
-  // "Wheeler_Type": "4 Wheeler",
-  //     "Manufacturer": "Hyundai",
-  //     "Brand": "Apollo",
-  //     "Tyre_Serial_Number": "TSN33445",
-  //     "Fitment_KM": "1500",
-  //     "Removal_KM": "35000",
-  //     "Total_Covered_KM": "33500",
-  //     "Retread_Yes_No": "Yes",
-  //     "Reason_for_Removal_MONTH": "Sidewall Damage",
-  //     "Date": "2024-10-05",
-  //     "position": "Front Right",
-  //     "registration_number": "ABC1234"
-
+  id?: string;
   Wheeler_Type?: string;
   Manufacturer: string;
   Brand: string;

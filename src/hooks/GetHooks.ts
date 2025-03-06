@@ -863,7 +863,7 @@ export const useTyresOperations = () => {
     mutationFn: async (data: TyresMaster & { Vehicle_Registration_Number: string }) => {
       message.loading({ content: 'Creating tyre...', key: 'tyreOperation' });
       const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
-      
+
       const response = await axios.post(routes.backend.tyre.createTyre, {
         ...data,
         Total_Covered_KM: totalCoveredKM,
@@ -899,10 +899,11 @@ export const useTyresOperations = () => {
     mutationFn: async (data: TyresMaster & { id: string }) => {
       message.loading({ content: 'Updating tyre...', key: 'tyreOperation' });
       const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
-      
+
       const response = await axios.post(routes.backend.tyre.updateTyre, {
         ...data,
         Total_Covered_KM: totalCoveredKM,
+        Vehicle_Registration_Number: data.truckid
       });
       return response.data;
     },

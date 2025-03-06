@@ -105,6 +105,7 @@ const TyresMasterListPage = () => {
     await updateTyres.mutateAsync({
       ...data,
       id: CurrentTyres?.id!,
+      truckid: SelectedTruckId,
     }, {
       onSuccess: () => {
         setOpen(false);

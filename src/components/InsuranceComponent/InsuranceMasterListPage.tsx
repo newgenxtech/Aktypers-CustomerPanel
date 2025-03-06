@@ -18,11 +18,6 @@ const InsuranceMasterListPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const { data, isLoading } = useGetInsuranceData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
-    // const [selectedTruckId, setSelectedTruckId] = useState<string | null>(null);
-    // const [selectedTruck, setSelectedTruck] = useState<ITruckData | null>(null);
-    // const [fromDate, setFromDate] = useState<string | null>(null);
-    // const [toDate, setToDate] = useState<string | null>(null);
-
 
     const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
 
@@ -71,10 +66,6 @@ const InsuranceMasterListPage = () => {
             <div className="flex flex-col md:flex-row items-center mt-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                     <label className="font-bold text-xl md:text-xl">Insurance Master</label>
-                    {/* <Input
-                        placeholder="Search Insurance"
-                        className="lg:w-1/3 md:w-1/3"
-                    /> */}
                 </div>
                 <Button
                     onClick={() => setOpen(true)}
@@ -83,67 +74,7 @@ const InsuranceMasterListPage = () => {
                     <Plus className='mr-1' />
                     Add Insurance
                 </Button>
-            </div>
-
-            {/* <div className="flex flex-col md:flex-row justify-center gap-4 my-4">
-                <div className="flex items-center justify-center gap-2">
-                    <label>Truck</label>
-                    <Select
-                        className="w-64"
-                        onChange={(value) => {
-                            setSelectedTruckId(value);
-                            setSelectedTruck(
-                                TruckListData?.body.find((item) => item.id === value) ?? null
-                            );
-                        }}
-                        options={TruckListData?.body.map((item) => ({
-                            value: item.id,
-                            label: item.registration_number,
-                        }))}
-                        placeholder="Select Truck"
-                        allowClear
-                        filterOption={(inputValue, option) =>
-                            option!
-                                .label!.toUpperCase()
-                                .indexOf(inputValue.toUpperCase()) !== -1
-                        }
-                        showSearch
-                    />
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                    <label>Condition</label>
-                    <Select
-                        mode="multiple"
-                        options={[
-                            { value: "New", label: "New" },
-                            { value: "Re-Used", label: "Re-Used" },
-                            { value: "Old", label: "Old" },
-                        ]}
-                        placeholder="Select conditions..."
-                        className="w-32 md:w-60"
-                        allowClear
-                        onChange={(selectedOptions) => {
-                            console.log(selectedOptions);
-                        }}
-                    />
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                    <label>From Date</label>
-                    <DatePicker
-                        onChange={(_date, dateString) => {
-                            setFromDate(dateString as string);
-                        }}
-                    />
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                    <label>To Date</label>
-                    <DatePicker
-                        onChange={(_date, dateString) => {
-                            setToDate(dateString as string);
-                        }}
-                    />
-                </div>
-            </div> */}
+            </div>            
             <Suspense fallback={<div>Loading...</div>}>
                 <InsuranceTable
                     data={data?.body || []}
