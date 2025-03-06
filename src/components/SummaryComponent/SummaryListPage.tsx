@@ -3,7 +3,7 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import { ColDef } from 'ag-grid-community';
 import { useCreateTrip, useCreateTripDetail, useGetDriverData, useGetItemMaster, useGetTripData, useGetTruckData, useGetUserProfile } from '@/hooks/GetHooks';
-import { Edit } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import AgGridTable from '@/components/AgGridTable';
 import { Button } from '@/components/ui/button';
 import { CustomCellRendererProps } from 'ag-grid-react';
@@ -28,7 +28,7 @@ const SummaryListPage = () => {
     const createTrip = useCreateTrip(isEdit);
 
     const createTripDetail = useCreateTripDetail(isEdit);
-    const { data: profileData, isLoading:profileDataloading } = useGetUserProfile();
+    const { data: profileData, isLoading: profileDataloading } = useGetUserProfile();
 
     const {
         data: tripData,
@@ -221,8 +221,9 @@ const SummaryListPage = () => {
                             setIsModalOpen(true)
                             setIsEdit(false)
                         }}
-                        className="bg-red-600 text-white hover:bg-blue-700"
+                        className="bg-red-600 text-white hover:bg-red-700"
                     >
+                        <Plus className='mr-1' />
                         Add Trip Details
                     </Button>
                 </div>

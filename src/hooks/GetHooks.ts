@@ -825,7 +825,7 @@ export const useTruckOperations = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      if (data?.message === "Record created successfully.") {
+      if (data?.message === "Record updated successfully.") {
         message.success({
           content: data?.data?.message || 'Truck updated successfully',
           key: 'truckOperation'

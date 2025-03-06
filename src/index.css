@@ -104,23 +104,25 @@ table tr:nth-child(2n+1) td {
 
 .ant-picker-panel-container {
   .ant-picker-presets {
-      min-height: 25rem !important;
+    min-height: 25rem !important;
   }
+
   @media (max-width: 800px) {
-      overflow: scroll !important;
-      height: 400px;
-      .ant-picker-panel-layout {
-          flex-direction: column !important;
+    overflow: scroll !important;
+    height: 400px;
 
-          .ant-picker-presets {
-              max-width: 100% !important;
-              min-height: 10rem !important;
-          }
+    .ant-picker-panel-layout {
+      flex-direction: column !important;
 
-          .ant-picker-panels,
-          .ant-picker-datetime-panel {
-              flex-direction: column !important;
-          }
+      .ant-picker-presets {
+        max-width: 100% !important;
+        min-height: 10rem !important;
       }
+
+      .ant-picker-panels,
+      .ant-picker-datetime-panel {
+        flex-direction: column !important;
+      }
+    }
   }
 }
