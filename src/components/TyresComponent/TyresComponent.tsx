@@ -79,10 +79,6 @@ const TyresMasterListPage = () => {
 
   const [open, setOpen] = useState(false);
 
-  // const handleSearch = useCallback((data: string) => {
-  //   console.log(data);
-  // }, []);
-
   const columns: (ColDef | ColGroupDef)[] = useMemo(
     () => TyresColumns(setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId),
     [setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId],
@@ -105,7 +101,7 @@ const TyresMasterListPage = () => {
     await updateTyres.mutateAsync({
       ...data,
       id: CurrentTyres?.id!,
-      truckid: SelectedTruckId,
+      // truckid: SelectedTruckId,
     }, {
       onSuccess: () => {
         setOpen(false);
@@ -115,7 +111,7 @@ const TyresMasterListPage = () => {
   };
 
   const formField: CustomField[] = useMemo(
-    () => TyresFormFields(Position, isEdit, CurrentTyres),
+    () => TyresFormFields(Position, isEdit, CurrentTyres, TruckListData?.body ?? []),
     [isEdit, CurrentTyres, Position],
   );
 
@@ -244,7 +240,6 @@ const TyresMasterListPage = () => {
           CurrentTyres={CurrentTyres}
           setIsEdit={setIsEdit}
           SelectedTruck={SelectedTruck}
-        // isLoading={createTyres.isPending || updateTyres.isPending}
         />
       </div>
     </div>

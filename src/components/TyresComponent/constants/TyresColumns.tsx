@@ -68,10 +68,6 @@ const TyresColumns = (
   {
     headerName: "Tyre Condition",
     field: "Tyre_Condition",
-    // filter: CustomFilter,
-    // filterParams: {
-    //     values: ['New', 'Re-Used', 'Old']
-    // }
   },
   {
     headerName: "Reason for Removal Month",
