@@ -34,10 +34,6 @@ const AlloyListPage = () => {
         }
     );
 
-    // const handleSearch = useCallback((data: string) => {
-    //     console.log(data);
-    // }, []);
-
     return (
         <div className='warehouse'>
             <div
@@ -45,14 +41,9 @@ const AlloyListPage = () => {
                 <div className="flex flex-col md:flex-row items-center mt-2">
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                         <label className="font-bold md:text-xl">Alloy Master</label>
-                        {/* <Input
-                            placeholder="Search Driver"
-                            onChange={(e) => handleSearch(e.target.value)}
-                            className="lg:w-1/3 md:w-1/3"
-                        /> */}
                     </div>
 
-                    <Button
+                    {/* <Button
                         onClick={() => {
                             // setOpen(true)
                         }}
@@ -61,7 +52,7 @@ const AlloyListPage = () => {
                     >
                         <Plus className='mr-1' />
                         Add Alloy
-                    </Button>
+                    </Button> */}
                 </div>
                 <div className="flex justify-center gap-6 my-4 px-4">
                     {['From Date', 'To Date'].map((label, index) => (

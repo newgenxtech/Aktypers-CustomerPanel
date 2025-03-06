@@ -221,7 +221,7 @@ const SummaryListPage = () => {
                             setIsModalOpen(true)
                             setIsEdit(false)
                         }}
-                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        className="bg-red-600 text-white hover:bg-blue-700"
                     >
                         Add Trip Details
                     </Button>

@@ -48,21 +48,21 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'name',
             type: 'text',
             isInputProps: { placeholder: 'Enter Name' },
-            validation: { required: true, pattern: z.string().min(1).max(50) }
+            validation: { required: true, pattern: z.string().refine((val) => val.length >= 1 && val.length <= 70, { message: 'Name must be between 1 and 70 characters' }) }
         },
         {
             label: 'License Number',
             name: 'license_number',
             type: 'text',
             isInputProps: { placeholder: 'Enter License Number' },
-            validation: { required: true, pattern: z.string().min(1).max(40) }
+            validation: { required: true, pattern: z.string().refine((val) => val.length >= 1 && val.length <= 20, { message: 'License number must be between 1 and 20 characters' }) }
         },
         {
             label: 'License Expiry Date',
             name: 'license_expiry_date',
             type: 'date',
             isInputProps: { placeholder: 'Enter License Expiry Date', defaultValue: isEdit ? CurrentDriver?.license_expiry_date : '' },
-            validation: { required: true, pattern: z.string().refine((val) => new Date(val) >= new Date()) }
+            validation: { required: true, pattern: z.string().refine((val) => new Date(val) >= new Date(), { message: "Date must be greater than today" }) }
         },
         {
             label: 'Phone Number',
@@ -77,9 +77,13 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
         {
             label: 'Address',
             name: 'address',
-            type: 'text',
+            type: 'textarea',
             isInputProps: { placeholder: 'Enter Address' },
-            validation: { required: true, pattern: z.string().min(3).max(120) }
+            validation: {
+                required: true, pattern: z.string().refine((val) => val.length >= 1 && val.length <= 200, {
+                    message: 'Address must be between 1 and 200 characters'
+                })
+            }
         },
         {
             label: 'Date of Birth',
@@ -113,7 +117,10 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'status',
             type: 'select',
             isInputProps: { placeholder: 'Select Status' },
-            validation: { required: true, pattern: z.string().min(3).max(20) },
+            validation: {
+                required: true,
+                pattern: z.string().refine((val) => ['Active', 'Inactive'].includes(val), { message: 'Invalid status' })
+            },
             options: [
                 { label: 'Active', value: 'Active' },
                 { label: 'Inactive', value: 'Inactive' }
@@ -145,7 +152,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'email',
             type: 'text',
             isInputProps: { placeholder: 'Enter Email' },
-            validation: { required: true, pattern: z.string().min(3).max(40) }
+            validation: { required: true, pattern: z.string().email({ message: "Invalid email address" }) }
         }
     ];
     const formMethods = useForm<FieldValues>({
