@@ -332,7 +332,8 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
         }
     }, [CurrentTruck, formMethods, isEdit, open]);
     return (
-        <Drawer.Root direction="right" open={open} onOpenChange={setOpen} dismissible={false}>
+        <Drawer.Root
+            direction="right" open={open} onOpenChange={setOpen} modal={true} dismissible={true}>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                 <Drawer.Content

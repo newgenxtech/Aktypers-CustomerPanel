@@ -2,13 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { CustomField } from "@/components/FormComponentV2";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { message, DatePicker, Select } from "antd";
 import { routes } from "@/routes/routes";
 import axios from "axios";
-import { queryClient } from "@/hooks/queryClient";
 import { useQuery } from "@tanstack/react-query";
-import { useGetTruckData, useGetTruckDemensionDetails } from "@/hooks/GetHooks";
+import { useGetTruckData, useGetTruckDemensionDetails, useTyresOperations } from "@/hooks/GetHooks";
 import { getTyreLayout } from "@/lib/utils";
 import AgGridTable from "@/components/AgGridTable";
 import { ColDef, ColGroupDef } from "ag-grid-community";
@@ -90,57 +88,29 @@ const TyresMasterListPage = () => {
     [setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId],
   );
 
-  const handleCreateTyres = async (data: TyresMaster) => {
-    const totalCoveredKM =
-      parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
-    try {
-      const response = await axios.post(routes.backend.tyre.createTyre, {
-        ...data,
-        Vehicle_Registration_Number: SelectedTruckId,
-        Total_Covered_KM: totalCoveredKM,
-      });
-      const { data: responseData } = response;
+  const { createTyres, updateTyres } = useTyresOperations();
 
-      if (responseData?.status === 201) {
-        alert(responseData?.data?.message);
-        message.success(responseData?.data?.message);
+  const handleCreateTyres = async (data: TyresMaster) => {
+    await createTyres.mutateAsync({
+      ...data,
+      Vehicle_Registration_Number: SelectedTruckId,
+    }, {
+      onSuccess: () => {
+        setOpen(false);
       }
-      await queryClient.invalidateQueries({
-        queryKey: ["tyres"],
-        exact: true,
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to add tyres");
-    }
+    });
   };
 
   const handleUpdateTyres = async (data: TyresMaster) => {
-    const totalCoveredKM =
-      parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
-
-    try {
-      const response = await axios.post(routes.backend.tyre.updateTyre, {
-        ...data,
-        id: CurrentTyres?.id,
-        Total_Covered_KM: totalCoveredKM,
-      });
-      const { data: responseData } = response;
-
-      if (responseData?.status === 200) {
-        alert(responseData?.data?.message);
-        message.success(responseData?.data?.message);
+    await updateTyres.mutateAsync({
+      ...data,
+      id: CurrentTyres?.id!,
+    }, {
+      onSuccess: () => {
+        setOpen(false);
+        setIsEdit(false);
       }
-      await queryClient.invalidateQueries({
-        queryKey: ["tyres"],
-        exact: true,
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to update tyres");
-    }
+    });
   };
 
   const formField: CustomField[] = useMemo(
@@ -168,9 +138,22 @@ const TyresMasterListPage = () => {
             }
           }}
           className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0"
+          disabled={createTyres.isPending}
         >
-          <Plus className="mr-1" />
-          Add Tyres
+          {createTyres.isPending ? (
+            <span className="flex items-center">
+              <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Creating...
+            </span>
+          ) : (
+            <>
+              <Plus className="mr-1" />
+              Add Tyres
+            </>
+          )}
         </Button>
       </div>
       <div className="w-full ">
@@ -249,18 +232,20 @@ const TyresMasterListPage = () => {
           }}
         />
       </div>
-
-      <TyresDrawer
-        open={open}
-        setOpen={setOpen}
-        isEdit={isEdit}
-        formField={formField}
-        handleCreateTyres={handleCreateTyres}
-        handleUpdateTyres={handleUpdateTyres}
-        CurrentTyres={CurrentTyres}
-        setIsEdit={setIsEdit}
-        SelectedTruck={SelectedTruck}
-      />
+      <div className="TyresComponentDrawer">
+        <TyresDrawer
+          open={open}
+          setOpen={setOpen}
+          isEdit={isEdit}
+          formField={formField}
+          handleCreateTyres={handleCreateTyres}
+          handleUpdateTyres={handleUpdateTyres}
+          CurrentTyres={CurrentTyres}
+          setIsEdit={setIsEdit}
+          SelectedTruck={SelectedTruck}
+        // isLoading={createTyres.isPending || updateTyres.isPending}
+        />
+      </div>
     </div>
   );
 };

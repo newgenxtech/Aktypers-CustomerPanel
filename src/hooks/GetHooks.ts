@@ -302,6 +302,7 @@ import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
 import { readFileAsBase64 } from "@/lib/utils";
 import { MessageInstance } from "antd/es/message/interface";
+import { TyresMaster } from "@/pages/Tyres/Tyres";
 
 export const useCreateTrip = (
   isEdit: boolean) => {
@@ -849,5 +850,89 @@ export const useTruckOperations = () => {
   return {
     createTruck,
     updateTruck
+  };
+};
+
+
+
+
+export const useTyresOperations = () => {
+  const queryClient = useQueryClient();
+
+  const createTyres = useMutation({
+    mutationFn: async (data: TyresMaster & { Vehicle_Registration_Number: string }) => {
+      message.loading({ content: 'Creating tyre...', key: 'tyreOperation' });
+      const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
+      
+      const response = await axios.post(routes.backend.tyre.createTyre, {
+        ...data,
+        Total_Covered_KM: totalCoveredKM,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message === "Tyre record created successfully.") {
+        message.success({
+          content: data?.data?.message || 'Tyre created successfully',
+          key: 'tyreOperation',
+          duration: 2
+        });
+        queryClient.invalidateQueries({ queryKey: ['tyres'] });
+      } else {
+        message.error({
+          content: data?.data?.message || 'Failed to create tyre',
+          key: 'tyreOperation',
+          duration: 2
+        });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to create tyre',
+        key: 'tyreOperation',
+        duration: 2
+      });
+    }
+  });
+
+  const updateTyres = useMutation({
+    mutationFn: async (data: TyresMaster & { id: string }) => {
+      message.loading({ content: 'Updating tyre...', key: 'tyreOperation' });
+      const totalCoveredKM = parseInt(data.Removal_KM) - parseInt(data.Fitment_KM);
+      
+      const response = await axios.post(routes.backend.tyre.updateTyre, {
+        ...data,
+        Total_Covered_KM: totalCoveredKM,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message === "Tyre record updated successfully.") {
+        message.success({
+          content: data?.data?.message || 'Tyre updated successfully',
+          key: 'tyreOperation',
+          duration: 2
+        });
+        queryClient.invalidateQueries({ queryKey: ['tyres'] });
+      } else {
+        message.error({
+          content: data?.data?.message || 'Failed to update tyre',
+          key: 'tyreOperation',
+          duration: 2
+        });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to update tyre',
+        key: 'tyreOperation',
+        duration: 2
+      });
+    }
+  });
+
+  return {
+    createTyres,
+    updateTyres
   };
 };

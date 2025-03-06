@@ -77,7 +77,8 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
       formMethods.setValue("Wheeler_Type", SelectedTruck?.wheels);
       formMethods.setValue("Manufacturer", SelectedTruck?.make);
       formMethods.setValue("Brand", SelectedTruck?.model);
-      
+      formMethods.setValue("registration_number", SelectedTruck?.registration_number);
+
     }
   }, [SelectedTruck, formMethods, isEdit, open]);
 
@@ -86,7 +87,8 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
       direction="right"
       open={open}
       onOpenChange={setOpen}
-      dismissible={false}
+      dismissible={true}
+      modal={true}
     >
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
