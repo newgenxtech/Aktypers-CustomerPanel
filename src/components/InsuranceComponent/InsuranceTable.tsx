@@ -51,10 +51,7 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
         },
         {
             headerName: 'Truck',
-            field: 'vehicle_id',
-            // cellRenderer: (params: CustomCellRendererProps) => (
-            //     <span>{params.data.vehicle_id}</span>
-            // )
+            field: 'vehicle_registration_number'
         },
         {
             headerName: 'Purchase Date',
@@ -95,11 +92,11 @@ const InsuranceTable: React.FC<InsuranceTableProps> = ({
             columns={columns}
             data={data}
             isLoading={isLoading}
-            // defaultColDef={{
-            //     flex: 0,
-            //     autoHeight: true,
-            //     floatingFilter: true,
-            // }}
+        // defaultColDef={{
+        //     flex: 0,
+        //     autoHeight: true,
+        //     floatingFilter: true,
+        // }}
         />
     );
 };

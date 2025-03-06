@@ -30,7 +30,6 @@ const InsuranceMasterListPage = () => {
         await updateInsurance.mutateAsync({
             ...data,
             insurance_id: CurrentInsurance.insurance_id,
-            
         }, {
             onSuccess: () => {
                 setOpen(false);
