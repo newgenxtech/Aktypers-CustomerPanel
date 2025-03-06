@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { useGetDriverData, useDriverOperations } from "@/hooks/GetHooks";
 import React from "react";
+import { message } from 'antd';
 
 const DriverTable = React.lazy(() => import('@/components/DriverComponent/DriverTable'));
 const DriverDrawer = React.lazy(() => import('@/components/DriverComponent/DriverDrawer'));
 
 const DriverListPage = () => {
+    const [messageApi, contextHolder] = message.useMessage();
     const [CurrentDriver, setCurrentDriver] = useState<DriverMaster | null>(null);
     const [isEdit, setIsEdit] = useState(false);
     const [open, setOpen] = useState(false);
 
     const { data, isLoading } = useGetDriverData(localStorage.getItem('customer_id') || '');
-    const { createDriver, updateDriver } = useDriverOperations();
+    const { createDriver, updateDriver } = useDriverOperations(messageApi);
 
     const handleCreateDriver = async (data: DriverMaster) => {
         await createDriver.mutateAsync(data);
@@ -32,6 +34,7 @@ const DriverListPage = () => {
 
     return (
         <div className='warehouse'>
+            {contextHolder}
             <div className="flex flex-col md:flex-row items-center mt-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                     <label className="font-bold text-xl md:text-xl">Driver Master</label>
@@ -76,6 +79,7 @@ const DriverListPage = () => {
                     handleCreateDriver={handleCreateDriver}
                     handleUpdateDriver={handleUpdateDriver}
                     isLoading={createDriver.isPending || updateDriver.isPending}
+                    messageApi={messageApi}
                 />
             </Suspense>
         </div>

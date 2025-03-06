@@ -301,6 +301,7 @@ export const useGetTruckMakers = (customer_id: string) => {
 import { queryClient } from "./queryClient";
 import toast from "react-hot-toast";
 import { readFileAsBase64 } from "@/lib/utils";
+import { MessageInstance } from "antd/es/message/interface";
 
 export const useCreateTrip = (
   isEdit: boolean) => {
@@ -367,16 +368,6 @@ export const useCreateTripDetail = (
     }
   });
 }
-
-
-// https://aktyres-in.stackstaging.com/php-truck/class/employees.php?route=GoodName
-
-// [
-//   {
-//       "name": "Arvind Blazo",
-//       "customer": 1002
-//   }
-// ]
 
 export const useCreateItem = () => {
   return useMutation({
@@ -689,12 +680,17 @@ export const useVerifyOTP = () => {
   });
 };
 
-export const useDriverOperations = () => {
+export const useDriverOperations = (messageApi: MessageInstance) => {
   const queryClient = useQueryClient();
 
   const createDriver = useMutation({
     mutationFn: async (data: DriverMaster) => {
-      message.loading('Creating driver...');
+      // messageApi.loading('Creating driver...');
+      messageApi.open({
+        key: "updatable",
+        type: 'loading',
+        content: 'Loading...',
+      })
       const response = await axios.post(routes.backend.driver.create, {
         ...data,
         customerid: localStorage.getItem('customer_id')
@@ -702,19 +698,43 @@ export const useDriverOperations = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      if (data?.status === 201) {
-        message.success(data?.data?.message || 'Driver created successfully');
+      if (data?.message === 'Record created successfully.') {
+        // message.success(data?.data?.message || 'Driver created successfully');
+        messageApi.open({
+          key: "updatable",
+          type: 'success',
+          content: data?.data?.message || 'Record created successfully.',
+          duration: 2
+        })
+      } else {
+        messageApi.open({
+          key: "updatable",
+          type: 'error',
+          content: data?.data?.message || 'Failed to create driver',
+          duration: 5
+        })
       }
       queryClient.invalidateQueries({ queryKey: ['drivers'] });
     },
     onError: (error: any) => {
-      message.error(error?.response?.data?.message || 'Failed to create driver');
+      // message.error(error?.response?.data?.message || 'Failed to create driver');
+      messageApi.open({
+        key: "updatable",
+        type: 'error',
+        content: error?.response?.data?.message || 'Failed to create driver',
+        duration: 2
+      })
     }
   });
 
   const updateDriver = useMutation({
     mutationFn: async (data: DriverMaster) => {
-      message.loading('Updating driver...');
+      // message.loading('Updating driver...');
+      messageApi.open({
+        key: "updatable",
+        type: 'loading',
+        content: 'Loading...',
+      })
       const response = await axios.post(routes.backend.driver.update, {
         ...data,
         customerid: localStorage.getItem('customer_id')
@@ -722,13 +742,33 @@ export const useDriverOperations = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      if (data?.status === 200) {
-        message.success(data?.data?.message || 'Driver updated successfully');
+      console.log(data);
+      if (data?.message === "Record updated successfully.") {
+        // message.success(data?.data?.message || 'Driver updated successfully');
+        messageApi.open({
+          key: "updatable",
+          type: 'success',
+          content: data?.data?.message || 'Driver updated successfully',
+          duration: 2
+        })
+      } else {
+        messageApi.open({
+          key: "updatable",
+          type: 'error',
+          content: data?.data?.message || 'Failed to update driver',
+          duration: 5
+        })
       }
       queryClient.invalidateQueries({ queryKey: ['drivers'] });
     },
     onError: (error: any) => {
-      message.error(error?.response?.data?.message || 'Failed to update driver');
+      // message.error(error?.response?.data?.message || 'Failed to update driver');
+      messageApi.open({
+        key: "updatable",
+        type: 'error',
+        content: error?.response?.data?.message || 'Failed to update driver',
+        duration: 2
+      })
     }
   });
 

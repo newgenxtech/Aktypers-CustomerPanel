@@ -8,7 +8,8 @@ import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
-// import { Button } from 'antd';
+import { MessageInstance } from 'antd/es/message/interface';
+
 
 interface DriverDrawerProps {
     open: boolean;
@@ -19,6 +20,7 @@ interface DriverDrawerProps {
     handleCreateDriver: (data: DriverMaster) => void;
     handleUpdateDriver: (data: DriverMaster) => void;
     isLoading?: boolean;
+    messageApi: MessageInstance;
 }
 
 const DriverDrawer: React.FC<DriverDrawerProps> = ({
@@ -32,7 +34,6 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
     // isLoading
 }) => {
     const navigate = useNavigate();
-
     const createSchemaObject = (fields: CustomField[]) =>
         Object.fromEntries(
             fields.map((field) => [
@@ -49,13 +50,6 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             isInputProps: { placeholder: 'Enter Name' },
             validation: { required: true, pattern: z.string().min(1).max(50) }
         },
-        // {
-        //     label: 'Customer ID',
-        //     name: 'customerid',
-        //     type: 'text',
-        //     isInputProps: { placeholder: 'Enter Customer ID' },
-        //     validation: { required: true, pattern: z.string().min(3).max(20) }
-        // },
         {
             label: 'License Number',
             name: 'license_number',
@@ -75,7 +69,10 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'phone_number',
             type: 'text',
             isInputProps: { placeholder: 'Enter Phone Number' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
+            validation: {
+                required: true,
+                pattern: z.string().regex(/^(?:(?:\+91[-\s]?|0)?[6-9]\d{9})$/, { message: 'Invalid phone number format. Expected either a 10-digit number or a valid Indian telephone number' })
+            }
         },
         {
             label: 'Address',
@@ -89,22 +86,27 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'date_of_birth',
             type: 'date',
             isInputProps: { placeholder: 'Enter Date of Birth', defaultValue: isEdit ? CurrentDriver?.date_of_birth : '' },
-            validation: { required: true, pattern: z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" }) }
+            validation: {
+                required: true,
+                pattern: z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" })
+            }
         },
         {
             label: 'Date of Joining',
             name: 'date_of_joining',
             type: 'date',
             isInputProps: { placeholder: 'Enter Date of Joining', defaultValue: isEdit ? CurrentDriver?.date_of_joining : '' },
-            validation: { required: true, pattern: 
-                z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" }) }
+            validation: {
+                required: true,
+                pattern: z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" })
+            }
         },
         {
             label: 'Emergency Contact',
             name: 'emergency_contact',
             type: 'text',
             isInputProps: { placeholder: 'Enter Emergency Contact' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
+            validation: { required: true, pattern: z.string().regex(/^(?:(?:\+91[-\s]?|0)?[6-9]\d{9})$/, { message: 'Invalid phone number format. Expected either a 10-digit number or a valid Indian telephone number' }) }
         },
         {
             label: 'Status',
