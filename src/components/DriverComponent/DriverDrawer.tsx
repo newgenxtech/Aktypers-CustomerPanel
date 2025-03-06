@@ -8,6 +8,7 @@ import { DriverMaster } from '@/pages/Driver/Driver.d';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
+// import { Button } from 'antd';
 
 interface DriverDrawerProps {
     open: boolean;
@@ -17,6 +18,7 @@ interface DriverDrawerProps {
     CurrentDriver: DriverMaster | null;
     handleCreateDriver: (data: DriverMaster) => void;
     handleUpdateDriver: (data: DriverMaster) => void;
+    isLoading?: boolean;
 }
 
 const DriverDrawer: React.FC<DriverDrawerProps> = ({
@@ -26,7 +28,8 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
     setIsEdit,
     CurrentDriver,
     handleCreateDriver,
-    handleUpdateDriver
+    handleUpdateDriver,
+    // isLoading
 }) => {
     const navigate = useNavigate();
 
@@ -44,7 +47,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'name',
             type: 'text',
             isInputProps: { placeholder: 'Enter Name' },
-            validation: { required: true, pattern: z.string().min(3).max(30) }
+            validation: { required: true, pattern: z.string().min(1).max(50) }
         },
         // {
         //     label: 'Customer ID',
@@ -58,7 +61,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'license_number',
             type: 'text',
             isInputProps: { placeholder: 'Enter License Number' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
+            validation: { required: true, pattern: z.string().min(1).max(40) }
         },
         {
             label: 'License Expiry Date',
@@ -93,7 +96,8 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             name: 'date_of_joining',
             type: 'date',
             isInputProps: { placeholder: 'Enter Date of Joining', defaultValue: isEdit ? CurrentDriver?.date_of_joining : '' },
-            validation: { required: true, pattern: z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" }) }
+            validation: { required: true, pattern: 
+                z.string().refine((val) => new Date(val) >= new Date('1900-01-01') && new Date(val) <= new Date(), { message: "Date must be between 01-01-1900 and today" }) }
         },
         {
             label: 'Emergency Contact',
@@ -183,7 +187,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
                     </div>
                 </Drawer.Content>
             </Drawer.Portal>
-        </Drawer.Root>
+        </Drawer.Root >
     );
 };
 

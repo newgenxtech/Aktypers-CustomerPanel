@@ -688,3 +688,54 @@ export const useVerifyOTP = () => {
     }
   });
 };
+
+export const useDriverOperations = () => {
+  const queryClient = useQueryClient();
+
+  const createDriver = useMutation({
+    mutationFn: async (data: DriverMaster) => {
+      message.loading('Creating driver...');
+      const response = await axios.post(routes.backend.driver.create, {
+        ...data,
+        customerid: localStorage.getItem('customer_id')
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.status === 201) {
+        message.success(data?.data?.message || 'Driver created successfully');
+      }
+      queryClient.invalidateQueries({ queryKey: ['drivers'] });
+    },
+    onError: (error: any) => {
+      message.error(error?.response?.data?.message || 'Failed to create driver');
+    }
+  });
+
+  const updateDriver = useMutation({
+    mutationFn: async (data: DriverMaster) => {
+      message.loading('Updating driver...');
+      const response = await axios.post(routes.backend.driver.update, {
+        ...data,
+        customerid: localStorage.getItem('customer_id')
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.status === 200) {
+        message.success(data?.data?.message || 'Driver updated successfully');
+      }
+      queryClient.invalidateQueries({ queryKey: ['drivers'] });
+    },
+    onError: (error: any) => {
+      message.error(error?.response?.data?.message || 'Failed to update driver');
+    }
+  });
+
+  return {
+    createDriver,
+    updateDriver
+  };
+};
+
+
