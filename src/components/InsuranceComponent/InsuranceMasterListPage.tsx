@@ -1,14 +1,8 @@
 import { useState, Suspense, lazy } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { message } from 'antd';
-import { useGetInsuranceData, useGetTruckData } from "@/hooks/GetHooks";
-import { queryClient } from "@/hooks/queryClient";
-import axios from "axios";
+import { useGetInsuranceData, useGetTruckData, useInsuranceOperations } from "@/hooks/GetHooks";
 import { InsuranceMaster } from '@/pages/Insurance/Insurance.d';
-import { routes } from "@/routes/routes";
-import toast from 'react-hot-toast';
-// import { ITruckData } from '@/pages/Truck/Truck.d';
 
 const InsuranceTable = lazy(() => import('./InsuranceTable'));
 const InsuranceDrawer = lazy(() => import('./InsuranceDrawer'));
@@ -16,49 +10,33 @@ const InsuranceDrawer = lazy(() => import('./InsuranceDrawer'));
 const InsuranceMasterListPage = () => {
     const [CurrentInsurance, setCurrentInsurance] = useState<InsuranceMaster | null>(null);
     const [isEdit, setIsEdit] = useState(false);
-    const { data, isLoading } = useGetInsuranceData(localStorage.getItem('customer_id') || '');
     const [open, setOpen] = useState(false);
 
+    const { data, isLoading } = useGetInsuranceData(localStorage.getItem('customer_id') || '');
     const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
+    const { createInsurance, updateInsurance } = useInsuranceOperations();
 
     const handleCreateInsurance = async (data: InsuranceMaster) => {
-        toast.loading("Creating Insurance...", {
-            duration: 0,
-        })
-        try {
-            const response = await axios.post(routes.backend.insurance.create, [
-                {
-                    ...data,
-                    customer_id: parseInt(localStorage.getItem('customer_id') || '0'),
-                    vehicle_id: parseInt(data.vehicle_id || '0')
-                }
-            ]
-            );
-            if (response.data?.message) {
-                message.success(response.data.message);
+        await createInsurance.mutateAsync(data, {
+            onSuccess: () => {
+                setOpen(false);
             }
-            await queryClient.invalidateQueries({ queryKey: ['insurance'] });
-            setOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error('Failed to add insurance');
-        }
+        });
     };
 
     const handleUpdateInsurance = async (data: InsuranceMaster) => {
-        try {
-            const response = await axios.post(routes.backend.insurance.update,
-                { ...data, insurance_id: CurrentInsurance?.insurance_id }
-            );
-            if (response.data?.message) {
-                message.success(response.data.message);
+        if (!CurrentInsurance?.insurance_id) return;
+
+        await updateInsurance.mutateAsync({
+            ...data,
+            insurance_id: CurrentInsurance.insurance_id,
+            
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+                setIsEdit(false);
             }
-            await queryClient.invalidateQueries({ queryKey: ['insurance'] });
-            setOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error('Failed to update insurance');
-        }
+        });
     };
 
     return (
@@ -70,11 +48,24 @@ const InsuranceMasterListPage = () => {
                 <Button
                     onClick={() => setOpen(true)}
                     className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2"
+                    disabled={createInsurance.isPending}
                 >
-                    <Plus className='mr-1' />
-                    Add Insurance
+                    {createInsurance.isPending ? (
+                        <span className="flex items-center">
+                            <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Creating...
+                        </span>
+                    ) : (
+                        <>
+                            <Plus className='mr-1' />
+                            Add Insurance
+                        </>
+                    )}
                 </Button>
-            </div>            
+            </div>
             <Suspense fallback={<div>Loading...</div>}>
                 <InsuranceTable
                     data={data?.body || []}
@@ -92,6 +83,7 @@ const InsuranceMasterListPage = () => {
                     handleCreateInsurance={handleCreateInsurance}
                     handleUpdateInsurance={handleUpdateInsurance}
                     TruckListData={TruckListData?.body || []}
+                // isLoading={createInsurance.isPending || updateInsurance.isPending}
                 />
             </Suspense>
         </div>

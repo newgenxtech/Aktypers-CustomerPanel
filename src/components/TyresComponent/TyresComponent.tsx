@@ -180,7 +180,7 @@ const TyresMasterListPage = () => {
             />
           </div>
           {/* Tyre Condition filter with these option - ['New', 'Re-Used', 'Old'] */}
-          <div className="flex items-center justify-center gap-2">
+          {/* <div className="flex items-center justify-center gap-2">
             <label>Condition</label>
             <Select
               mode="multiple"
@@ -196,7 +196,7 @@ const TyresMasterListPage = () => {
                 console.log(selectedOptions);
               }}
             />
-          </div>
+          </div> */}
           <div className="flex items-center justify-center gap-2">
             <label>From Date</label>
             <DatePicker

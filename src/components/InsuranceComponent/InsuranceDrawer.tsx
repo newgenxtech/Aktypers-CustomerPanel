@@ -84,7 +84,7 @@ const InsuranceDrawer: React.FC<InsuranceDrawerProps> = ({
             type: 'select',
             isInputProps: {
                 placeholder: 'Select Vehicle ID',
-                defaultValue: isEdit ? CurrentInsurance?.vehicle_id : ''
+                // defaultValue: isEdit ? CurrentInsurance?.vehicle_id : ''
             },
             validation: {
                 required: true,

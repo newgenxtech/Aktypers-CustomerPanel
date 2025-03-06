@@ -937,3 +937,68 @@ export const useTyresOperations = () => {
     updateTyres
   };
 };
+
+
+
+export const useInsuranceOperations = () => {
+  const queryClient = useQueryClient();
+
+  const createInsurance = useMutation({
+    mutationFn: async (data: InsuranceMaster) => {
+      message.loading({ content: 'Creating insurance...', key: 'insuranceOperation' });
+      const response = await axios.post(routes.backend.insurance.create, [{
+        ...data,
+        customer_id: parseInt(localStorage.getItem('customer_id') || '0'),
+        vehicle_id: parseInt(data.vehicle_id || '0')
+      }]);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message == "Insurance record created successfully.") {
+        message.success({
+          content: data.message,
+          key: 'insuranceOperation',
+          duration: 2
+        });
+        queryClient.invalidateQueries({ queryKey: ['insurance'] });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to create insurance',
+        key: 'insuranceOperation',
+        duration: 2
+      });
+    }
+  });
+
+  const updateInsurance = useMutation({
+    mutationFn: async (data: InsuranceMaster & { insurance_id: string }) => {
+      message.loading({ content: 'Updating insurance...', key: 'insuranceOperation' });
+      const response = await axios.post(routes.backend.insurance.update, data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message == "Insurance record updated successfully.") {
+        message.success({
+          content: data.message,
+          key: 'insuranceOperation',
+          duration: 2
+        });
+        queryClient.invalidateQueries({ queryKey: ['insurance'] });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to update insurance',
+        key: 'insuranceOperation',
+        duration: 2
+      });
+    }
+  });
+
+  return {
+    createInsurance,
+    updateInsurance
+  };
+};
