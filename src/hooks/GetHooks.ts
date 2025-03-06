@@ -779,3 +779,75 @@ export const useDriverOperations = (messageApi: MessageInstance) => {
 };
 
 
+export const useTruckOperations = () => {
+  const queryClient = useQueryClient();
+
+  const createTruck = useMutation({
+    mutationFn: async (data: ITruckData) => {
+      message.loading({ content: 'Creating truck...', key: 'truckOperation' });
+      const response = await axios.post(routes.backend.truck.create, {
+        ...data,
+        customerid: localStorage.getItem('customer_id'),
+        wheels: data.tyre_type.split('Tyres')[0]
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message === "Record created successfully.") {
+        message.success({
+          content: data?.data?.message || 'Truck created successfully',
+          key: 'truckOperation'
+        });
+        queryClient.invalidateQueries({ queryKey: ['trucks'] });
+      } else {
+        message.error({
+          content: data?.data?.message || 'Failed to create truck',
+          key: 'truckOperation'
+        });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to create truck',
+        key: 'truckOperation'
+      });
+    }
+  });
+
+  const updateTruck = useMutation({
+    mutationFn: async (data: ITruckData & { id: string }) => {
+      message.loading({ content: 'Updating truck...', key: 'truckOperation' });
+      const response = await axios.post(routes.backend.truck.update, {
+        ...data,
+        customerid: localStorage.getItem('customer_id'),
+        wheels: data.tyre_type.split('Tyres')[0]
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data?.message === "Record created successfully.") {
+        message.success({
+          content: data?.data?.message || 'Truck updated successfully',
+          key: 'truckOperation'
+        });
+        queryClient.invalidateQueries({ queryKey: ['trucks'] });
+      } else {
+        message.error({
+          content: data?.data?.message || 'Failed to update truck',
+          key: 'truckOperation'
+        });
+      }
+    },
+    onError: (error: any) => {
+      message.error({
+        content: error?.response?.data?.message || 'Failed to update truck',
+        key: 'truckOperation'
+      });
+    }
+  });
+
+  return {
+    createTruck,
+    updateTruck
+  };
+};

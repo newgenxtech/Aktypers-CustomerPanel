@@ -61,18 +61,6 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
     };
 
     const formFields: CustomField[] = [
-        // {
-        //     label: 'Customer ID',
-        //     name: 'customerid',
-        //     type: 'text',
-        //     isInputProps: {
-        //         placeholder: 'Enter Customer ID'
-        //     },
-        //     validation: {
-        //         required: true,
-        //         pattern: z.string().min(1)
-        //     }
-        // },
         {
             label: 'Registration Number',
             name: 'registration_number',
@@ -82,7 +70,11 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3)
+                pattern: z.string().refine((val) => {
+                    return val.length >= 5 && val.length <= 25;
+                }, {
+                    message: "Registration Number must be between 5 and 25 characters"
+                })
             }
         },
         {
@@ -94,7 +86,9 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3)
+                pattern: z.string()
+                    .length(17, "Chassis number must be exactly 17 characters")
+                    .regex(/^[A-HJ-NPR-Z0-9]{17}$/, "Invalid chassis number format")
             }
         },
         {
@@ -106,7 +100,10 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3)
+                pattern: z.string()
+                    .min(6, "Engine number must be at least 6 characters")
+                    .max(20, "Engine number must not exceed 20 characters")
+                    .regex(/^[A-Z0-9]+$/, "Engine number can only contain uppercase letters and numbers")
             }
         },
         {
@@ -118,7 +115,10 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3)
+                pattern: z.string()
+                    .min(2, "Make must be at least 2 characters")
+                    .max(50, "Make must not exceed 50 characters")
+                    .regex(/^[a-zA-Z0-9\s-]+$/, "Make can only contain letters, numbers, spaces, and hyphens")
             }
         },
         {
@@ -130,7 +130,10 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3)
+                pattern: z.string()
+                    .min(2, "Model must be at least 2 characters")
+                    .max(50, "Model must not exceed 50 characters")
+                    .regex(/^[a-zA-Z0-9\s-]+$/, "Model can only contain letters, numbers, spaces, and hyphens")
             }
         },
         {
@@ -142,22 +145,15 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(4).max(4)
+                pattern: z.string()
+                    .length(4, "Year must be 4 digits")
+                    .regex(/^(19|20)\d{2}$/, "Year must be between 1900 and current year")
+                    .refine(year => {
+                        const numYear = parseInt(year);
+                        return numYear >= 1900 && numYear <= new Date().getFullYear();
+                    }, "Year must be between 1900 and current year")
             }
         },
-        // {
-        //     label: 'Wheels',
-        //     name: 'wheels',
-        //     type: 'text',
-        //     isInputProps: {
-        //         placeholder: 'Enter Wheels'
-        //     },
-        //     validation: {
-        //         required: true,
-        //         pattern: z.string().min(1).max(2)
-        //     }
-        // },
-        // {"json":{"truck_id":"1","truck_type":"6 tyre","total_tyres":"6","axle_configuration":"1-1 2-2","total_axles":"2","axtyre":"[{\"tyre\":1},{\"tyre\":2}]","config":"[{\n    \"TotalWheel\": 12,\n    \"TotalAxle\": 4,\n    \"wheelPositions\": [\n        [-1, 0, 4.7], [1, 0, 4.7],\n        [-1.2, 0, 3.3], [1.2, 0, 3.3],\n        [-1.2, 0, -3], [-0.9, 0, -3], [0.9, 0, -3], [1.2, 0, -3], \n        [-1.2, 0, -4], [-0.9, 0, -4], [1.2, 0, -4], [0.9, 0, -4]\n    ],\n    \"axlesData\": [true, true, false, true, true, false]\n}]"}}
         {
             label: 'Truck Type',
             name: 'tyre_type',
@@ -181,23 +177,31 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             name: 'load_capacity',
             type: 'text',
             isInputProps: {
-                placeholder: 'Enter Load Capacity'
+                placeholder: 'Enter Load Capacity (in tons)'
             },
             validation: {
                 required: true,
-                pattern: z.string().min(1)
+                pattern: z.string()
+                    .regex(/^\d+(\.\d{1,2})?$/, "Invalid load capacity format (e.g., 10 or 10.50)")
+                    .refine(val => parseFloat(val) > 0, "Load capacity must be greater than 0")
             }
         },
         {
             label: 'Fuel Type',
             name: 'fuel_type',
-            type: 'text',
+            type: 'select',
             isInputProps: {
-                placeholder: 'Enter Fuel Type'
+                placeholder: 'Select Fuel Type'
             },
+            options: [
+                { label: 'Diesel', value: 'Diesel' },
+                { label: 'Petrol', value: 'Petrol' },
+                { label: 'CNG', value: 'CNG' },
+                { label: 'Electric', value: 'Electric' }
+            ],
             validation: {
                 required: true,
-                pattern: z.string().min(1)
+                pattern: z.enum(['Diesel', 'Petrol', 'CNG', 'Electric'])
             }
         },
         {
@@ -209,7 +213,10 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().min(1)
+                pattern: z.string()
+                    .min(8, "Insurance number must be at least 8 characters")
+                    .max(30, "Insurance number must not exceed 30 characters")
+                    .regex(/^[A-Z0-9-/]+$/, "Insurance number can only contain uppercase letters, numbers, hyphens, and forward slashes")
             }
         },
         {
@@ -222,12 +229,15 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().refine((val) => {
-                    const date = new Date(val);
-                    return date >= new Date();
-                }, {
-                    message: "Date must be greater than today"
-                })
+                pattern: z.string().refine(
+                    (val) => {
+                        const date = new Date(val);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date >= today;
+                    },
+                    { message: "Insurance expiry date must be today or in the future" }
+                )
             }
         },
         {
@@ -240,24 +250,31 @@ const TruckDrawer: React.FC<TruckDrawerProps> = ({
             },
             validation: {
                 required: true,
-                pattern: z.string().refine((val) => {
-                    const date = new Date(val);
-                    return date >= new Date('1900-01-01') && date <= new Date();
-                }, {
-                    message: "Date must be between 01-01-1900 and today"
-                })
+                pattern: z.string().refine(
+                    (val) => {
+                        const date = new Date(val);
+                        const minDate = new Date('1900-01-01');
+                        const today = new Date();
+                        today.setHours(23, 59, 59, 999);
+                        return date >= minDate && date <= today;
+                    },
+                    { message: "Last service date must be between 01-01-1900 and today" }
+                )
             }
         },
         {
             label: 'Remarks',
             name: 'remarks',
-            type: 'text',
+            type: 'textarea',
             isInputProps: {
                 placeholder: 'Enter Remarks'
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(120)
+                pattern: z.string()
+                    .min(3, "Remarks must be at least 3 characters")
+                    .max(120, "Remarks must not exceed 120 characters")
+                    .regex(/^[a-zA-Z0-9\s.,!?()-]+$/, "Remarks can only contain letters, numbers, and basic punctuation")
             }
         },
         {

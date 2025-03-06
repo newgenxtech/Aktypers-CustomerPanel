@@ -42,17 +42,6 @@ const AlloyListPage = () => {
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                         <label className="font-bold md:text-xl">Alloy Master</label>
                     </div>
-
-                    {/* <Button
-                        onClick={() => {
-                            // setOpen(true)
-                        }}
-                        className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0 mb-2"
-                        disabled={true}
-                    >
-                        <Plus className='mr-1' />
-                        Add Alloy
-                    </Button> */}
                 </div>
                 <div className="flex justify-center gap-6 my-4 px-4">
                     {['From Date', 'To Date'].map((label, index) => (
