@@ -545,7 +545,7 @@ const TripModal: React.FC<TripModalProps> = ({
                         </table>
 
                         <div class="grand-total">
-                            <p>Grand Total: Rs. ${(basicItemsTotal + expensesTotal).toFixed(2)}</p>
+                            <p>Grand Total: Rs. ${(basicItemsTotal - expensesTotal).toFixed(2)}</p>
                         </div>
                     `
                     : ""
@@ -579,7 +579,7 @@ const TripModal: React.FC<TripModalProps> = ({
                             control={control}
                             rules={{ required: "Required" }}
                             render={({ field }) => (
-                                <InputNumber
+                                <Input
                                     placeholder="Enter Customer Name"
                                     className="w-full"
                                     {...field}

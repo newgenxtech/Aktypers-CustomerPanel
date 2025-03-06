@@ -81,8 +81,7 @@ const Truck: React.FC<TruckProps> = ({
   TyrePressureData,
 }) => {
   const renderWheels = () => {
-    return wheelPositions.map((position, index) => {
-      console.log(position, index, TyrePressureData[index].tyre_position);
+    return wheelPositions?.map((position, index) => {
       return <group key={index} position={position}>
         {/* Tire */}
         <Cylinder
@@ -208,7 +207,7 @@ const TruckCanvas: React.FC<TruckCanvasProps> = ({
   const wheelWidth = React.useMemo(() => 0.2, []);
 
   const wheelPositions: Array<[number, number, number]> = React.useMemo(() => {
-    return WheelPositionData[0].wheelPositions;
+    return WheelPositionData[0]?.wheelPositions;
 
   }, [WheelPositionData]);
 

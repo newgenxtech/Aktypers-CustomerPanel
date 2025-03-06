@@ -24,7 +24,11 @@ const DriverListPage = () => {
 
     const handleCreateDriver = async (data: DriverMaster) => {
         try {
-            const response = await axios.post(routes.backend.driver.create, data);
+            const response = await axios.post(routes.backend.driver.create, {
+
+                ...data,
+                customer_id: localStorage.getItem('customer_id')
+            });
             const { data: responseData } = response;
 
             if (responseData?.status === 201) {
@@ -40,7 +44,7 @@ const DriverListPage = () => {
 
     const handleUpdateDriver = async (data: DriverMaster) => {
         try {
-            const response = await axios.post(routes.backend.driver.update, { ...data, id: CurrentDriver?.id });
+            const response = await axios.post(routes.backend.driver.update, { ...data, id: CurrentDriver?.id, customer_id: localStorage.getItem('customer_id') });
             const { data: responseData } = response;
 
             if (responseData?.status === 200) {

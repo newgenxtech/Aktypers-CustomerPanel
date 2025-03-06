@@ -192,7 +192,7 @@ const TyrePressureContent: React.FC = () => {
                     </div>
                     <AgGridTable
                         columns={columns}
-                        data={TyrePressureData?.body.map((item, index) => ({ ...item, key: index })) ?? []}
+                        data={TyrePressureData?.body?.map((item, index) => ({ ...item, key: index })) ?? []}
                         isLoading={TyrePressureDataLoading}
                         defaultColDef={{
                             flex: 0,

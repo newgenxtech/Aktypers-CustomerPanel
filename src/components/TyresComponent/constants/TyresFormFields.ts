@@ -17,7 +17,7 @@ const TyresFormFields = (
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(30)
+                pattern: z.string()
             }
         },
         {

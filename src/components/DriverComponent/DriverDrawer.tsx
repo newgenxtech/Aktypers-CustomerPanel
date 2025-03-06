@@ -46,13 +46,13 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             isInputProps: { placeholder: 'Enter Name' },
             validation: { required: true, pattern: z.string().min(3).max(30) }
         },
-        {
-            label: 'Customer ID',
-            name: 'customerid',
-            type: 'text',
-            isInputProps: { placeholder: 'Enter Customer ID' },
-            validation: { required: true, pattern: z.string().min(3).max(20) }
-        },
+        // {
+        //     label: 'Customer ID',
+        //     name: 'customerid',
+        //     type: 'text',
+        //     isInputProps: { placeholder: 'Enter Customer ID' },
+        //     validation: { required: true, pattern: z.string().min(3).max(20) }
+        // },
         {
             label: 'License Number',
             name: 'license_number',
