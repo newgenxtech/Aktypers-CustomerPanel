@@ -93,7 +93,6 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
     if (isEdit && open) {
       console.log("SelectedTruck?.truckid", CurrentTyres?.truckid);
       formMethods.setValue("Vehicle_Registration_Number", CurrentTyres?.truckid);
-      setSelectedTruckId(CurrentTyres?.truckid ?? "");
     }
   }, [
     formMethods,
@@ -109,6 +108,7 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
       TruckListData.find((truck) => {
         if (truck.id === formMethods.watch("Vehicle_Registration_Number")) {
           formMethods.setValue("Wheeler_Type", truck.wheels);
+          setSelectedTruckId(truck.id);
           // formMethods.setValue("Manufacturer", truck.make);
           // formMethods.setValue("Brand", truck.model);
         }
