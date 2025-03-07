@@ -1,7 +1,5 @@
 
 import { useState, lazy, Suspense } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { AlloyMaster } from '@/pages/Alloy/Alloy.d';
 import { DatePicker, message } from 'antd';
 import axios from "axios";

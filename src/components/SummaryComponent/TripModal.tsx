@@ -721,6 +721,7 @@ const TripModal: React.FC<TripModalProps> = ({
                             total: itemFields.length,
                             pageSize: 10,
                         }}
+                        scroll={{ x: 768 }}
                         rowSelection={
                             itemFields.length > 0
                                 ? {
@@ -818,6 +819,7 @@ const TripModal: React.FC<TripModalProps> = ({
                             total: expenseFields.length,
                             pageSize: 10,
                         }}
+                        scroll={{ x: 500 }}
                         rowSelection={
                             expenseFields.length > 0
                                 ? {
