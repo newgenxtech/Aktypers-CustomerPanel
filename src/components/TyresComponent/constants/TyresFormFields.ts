@@ -9,13 +9,15 @@ const TyresFormFields = (
     isEdit: boolean,
     CurrentTyres: TyresMaster | null,
     TruckListData: ITruckData[],
+    TruckListDataLoading: boolean
 ): CustomField[] => [
         {
             label: 'Truck',
             name: 'Vehicle_Registration_Number',
             type: 'select',
             isInputProps: {
-                placeholder: 'Select Truck'
+                placeholder: 'Select Truck',
+                loading: TruckListDataLoading,
             },
             validation: {
                 required: true,
@@ -33,7 +35,8 @@ const TyresFormFields = (
             name: 'Wheeler_Type',
             type: 'text',
             isInputProps: {
-                placeholder: 'Enter Wheeler Type'
+                placeholder: 'Enter Wheeler Type',
+                disabled: true
             },
             validation: {
                 required: true,

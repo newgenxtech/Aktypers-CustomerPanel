@@ -22,6 +22,7 @@ export interface CustomField {
         defaultSelected?: boolean,
         multiple?: boolean,
         disabled?: boolean,
+        loading?: boolean,
     };
     options?: {
         label: string | number | boolean;
@@ -145,6 +146,8 @@ const ReusableForm = <T,>({ fields, onSubmit, buttonComponent, isUpdate, Additio
                         }
                         getPopupContainer={(trigger) => trigger.parentElement}
                         disabled={field?.isInputProps?.disabled}
+                        loading={field?.isInputProps?.loading}
+                        showSearch
                     />
                 );
             case 'textarea':

@@ -856,8 +856,35 @@ export const useTruckOperations = () => {
 
 
 
-export const useTyresOperations = () => {
+export const useTyresOperations = (
+  filterTruck?: string,
+  fromDate?: string,
+  toDate?: string
+) => {
   const queryClient = useQueryClient();
+
+  const getTyres = useQuery({
+    queryKey: ["tyres", filterTruck, fromDate, toDate],
+    queryFn: async () => {
+      try {
+        const res = await axios.post(
+          routes.backend.tyre.getTyreDetailsByCustomer,
+          {
+            truck_id: filterTruck,
+            from_date: fromDate,
+            to_date: toDate,
+            customerid: localStorage.getItem("customer_id") || "",
+          },
+        );
+        const result = res.data;
+        return result;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        message.error("Error fetching data");
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const createTyres = useMutation({
     mutationFn: async (data: TyresMaster & { Vehicle_Registration_Number: string }) => {
@@ -934,7 +961,8 @@ export const useTyresOperations = () => {
 
   return {
     createTyres,
-    updateTyres
+    updateTyres,
+    getTyres
   };
 };
 

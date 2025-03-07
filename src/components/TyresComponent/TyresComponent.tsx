@@ -2,10 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CustomField } from "@/components/FormComponentV2";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { message, DatePicker, Select } from "antd";
-import { routes } from "@/routes/routes";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { DatePicker, Select } from "antd";
 import { useGetTruckData, useGetTruckDemensionDetails, useTyresOperations } from "@/hooks/GetHooks";
 import { getTyreLayout } from "@/lib/utils";
 import AgGridTable from "@/components/AgGridTable";
@@ -14,42 +11,26 @@ import { TyresMaster } from "@/pages/Tyres/Tyres";
 import TyresFormFields from "./constants/TyresFormFields";
 import TyresDrawer from "./TyresDrawer";
 import TyresColumns from "./constants/TyresColumns";
-import { ITruckData } from "@/pages/Truck/Truck.d";
+// import { ITruckData } from "@/pages/Truck/Truck.d";
 
 const TyresMasterListPage = () => {
+
+  const [filterTruck, setFilterTruck] = useState<string>(""); // Only for Table Filter Purpose
+
   const [CurrentTyres, setCurrentTyres] = useState<TyresMaster | null>(null);
+
   const [SelectedTruckId, setSelectedTruckId] = useState<string>("");
-  const [SelectedTruck, setSelectedTruck] = useState<ITruckData>();
+  console.log("SelectedTruckId", SelectedTruckId);
+  // const [SelectedTruck, setSelectedTruck] = useState<ITruckData>();
   const [Position, setPosition] = useState<string[]>([]);
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
   const [isEdit, setIsEdit] = useState(false);
 
-  const { data: TruckListData } = useGetTruckData(
+  const { data: TruckListData, isLoading: TruckListDataLoading } = useGetTruckData(
     localStorage.getItem("customer_id") || "",
   );
-  const { data, isLoading } = useQuery({
-    queryKey: ["tyres", SelectedTruckId, fromDate, toDate],
-    queryFn: async () => {
-      try {
-        const res = await axios.post(
-          routes.backend.tyre.getTyreDetailsByCustomer,
-          {
-            truck_id: SelectedTruckId,
-            from_date: fromDate,
-            to_date: toDate,
-            customerid: localStorage.getItem("customer_id") || "",
-          },
-        );
-        const result = res.data;
-        return result;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        message.error("Error fetching data");
-      }
-    },
-    refetchOnWindowFocus: false,
-  });
+
 
   const {
     data: TruckDemensionDetails,
@@ -84,7 +65,11 @@ const TyresMasterListPage = () => {
     [setOpen, setIsEdit, setCurrentTyres, setSelectedTruckId],
   );
 
-  const { createTyres, updateTyres } = useTyresOperations();
+  const { createTyres, updateTyres, getTyres } = useTyresOperations(
+    filterTruck,
+    fromDate,
+    toDate,
+  );
 
   const handleCreateTyres = async (data: TyresMaster) => {
     await createTyres.mutateAsync({
@@ -111,8 +96,8 @@ const TyresMasterListPage = () => {
   };
 
   const formField: CustomField[] = useMemo(
-    () => TyresFormFields(Position, isEdit, CurrentTyres, TruckListData?.body ?? []),
-    [isEdit, CurrentTyres, Position],
+    () => TyresFormFields(Position, isEdit, CurrentTyres, TruckListData?.body ?? [], TruckListDataLoading),
+    [isEdit, CurrentTyres, Position, TruckListData, TruckListDataLoading],
   );
 
   return (
@@ -128,11 +113,11 @@ const TyresMasterListPage = () => {
         </div>
         <Button
           onClick={() => {
-            if (SelectedTruckId === "" && Position.length === 0) {
-              message.error("Please select a truck");
-            } else {
-              setOpen(true);
-            }
+            // if (SelectedTruckId === "" && Position.length === 0) {
+            //   message.error("Please select a truck");
+            // } else {
+            setOpen(true);
+            // }
           }}
           className="flex justify-center md:justify-end bg-[#D64848] text-white px-4 py-2 rounded-md hover:bg-[#D64848] hover:text-white mx-2 mt-2 md:mt-0"
           disabled={createTyres.isPending}
@@ -160,10 +145,11 @@ const TyresMasterListPage = () => {
             <Select
               className="w-64"
               onChange={(value) => {
-                setSelectedTruckId(value);
-                setSelectedTruck(
-                  TruckListData?.body.find((item) => item.id === value),
-                );
+                setFilterTruck(value as string);
+                // setSelectedTruckId(value);
+                // setSelectedTruck(
+                //   TruckListData?.body.find((item) => item.id === value),
+                // );
               }}
               options={TruckListData?.body?.map((item) => ({
                 value: item.id,
@@ -217,12 +203,12 @@ const TyresMasterListPage = () => {
         <AgGridTable
           columns={columns}
           data={
-            data?.body?.map((item: TyresMaster, index: number) => ({
+            getTyres.data?.body?.map((item: TyresMaster, index: number) => ({
               ...item,
               key: index,
             })) ?? []
           }
-          isLoading={isLoading}
+          isLoading={getTyres.isLoading}
           defaultColDef={{
             flex: 0,
             autoHeight: true,
@@ -239,7 +225,8 @@ const TyresMasterListPage = () => {
           handleUpdateTyres={handleUpdateTyres}
           CurrentTyres={CurrentTyres}
           setIsEdit={setIsEdit}
-          SelectedTruck={SelectedTruck}
+          TruckListData={TruckListData?.body ?? []}
+          setSelectedTruckId={setSelectedTruckId}
         />
       </div>
     </div>

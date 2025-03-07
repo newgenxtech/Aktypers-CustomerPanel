@@ -8,6 +8,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ITruckData } from "@/pages/Truck/Truck.d";
+// import { ITruckData } from "@/pages/Truck/Truck.d";
 
 interface TyresDrawerProps {
   open: boolean;
@@ -18,7 +19,9 @@ interface TyresDrawerProps {
   handleCreateTyres: (data: TyresMaster) => void;
   handleUpdateTyres: (data: TyresMaster) => void;
   formField: CustomField[];
-  SelectedTruck: ITruckData | undefined;
+  // SelectedTruck: ITruckData | undefined;
+  TruckListData: ITruckData[];
+  setSelectedTruckId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const TyresDrawer: React.FC<TyresDrawerProps> = ({
@@ -30,9 +33,12 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
   handleCreateTyres,
   handleUpdateTyres,
   formField,
-  SelectedTruck,
+  // SelectedTruck,
+  TruckListData,
+  setSelectedTruckId
 }) => {
   const navigate = useNavigate();
+  // const [SelectedTruck, setSelectedTruck] = useState<ITruckData>();
 
   const createSchemaObject = (fields: CustomField[]) =>
     Object.fromEntries(
@@ -71,17 +77,46 @@ const TyresDrawer: React.FC<TyresDrawerProps> = ({
     values: CurrentTyres as FieldValues,
   });
 
+  // useEffect(() => {
+  //   if (!isEdit && open) {
+  //     console.log("SelectedTruck", SelectedTruck);
+  //     formMethods.setValue("Wheeler_Type", SelectedTruck?.wheels);
+  //     formMethods.setValue("Manufacturer", SelectedTruck?.make);
+  //     formMethods.setValue("Brand", SelectedTruck?.model);
+  //   } else if (isEdit && open) {
+  //     console.log("SelectedTruck?.truckid", SelectedTruck);
+  //     formMethods.setValue("Vehicle_Registration_Number", CurrentTyres?.truckid);
+  //   }
+  // }, [SelectedTruck, formMethods, isEdit, open]);
+
   useEffect(() => {
-    if (!isEdit && open) {
-      console.log("SelectedTruck", SelectedTruck);
-      formMethods.setValue("Wheeler_Type", SelectedTruck?.wheels);
-      formMethods.setValue("Manufacturer", SelectedTruck?.make);
-      formMethods.setValue("Brand", SelectedTruck?.model);
-    } else if (isEdit && open) {
-      console.log("SelectedTruck?.truckid", SelectedTruck);
+    if (isEdit && open) {
+      console.log("SelectedTruck?.truckid", CurrentTyres?.truckid);
       formMethods.setValue("Vehicle_Registration_Number", CurrentTyres?.truckid);
+      setSelectedTruckId(CurrentTyres?.truckid ?? "");
     }
-  }, [SelectedTruck, formMethods, isEdit, open]);
+  }, [
+    formMethods,
+    CurrentTyres?.truckid,
+    isEdit,
+    setSelectedTruckId,
+    open
+  ]);
+
+
+  useEffect(() => {
+    if (formMethods.watch("Vehicle_Registration_Number") !== undefined || formMethods.watch("Vehicle_Registration_Number") !== "") {
+      TruckListData.find((truck) => {
+        if (truck.id === formMethods.watch("Vehicle_Registration_Number")) {
+          formMethods.setValue("Wheeler_Type", truck.wheels);
+          // formMethods.setValue("Manufacturer", truck.make);
+          // formMethods.setValue("Brand", truck.model);
+        }
+      });
+    }
+  }, [
+    formMethods.watch("Vehicle_Registration_Number"),
+  ]);
 
   return (
     <Drawer.Root
