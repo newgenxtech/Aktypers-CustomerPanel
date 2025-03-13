@@ -114,7 +114,7 @@ const TripModal: React.FC<TripModalProps> = ({
         }[]
     >([]);
 
-    const { control, handleSubmit, watch, reset } = useForm<FormValues>({
+    const { control, handleSubmit, watch, reset, getValues } = useForm<FormValues>({
         defaultValues: initialData
             ? {
                 customer: initialData.customer || "",
@@ -459,18 +459,20 @@ const TripModal: React.FC<TripModalProps> = ({
                     </div>
                     <div class="details">
                         <div>
+                            <p><strong>Company:</strong> ${watch("customer") || "N/A"}</p>
+                            <img src="https://aktyres-in.stackstaging.com/php-truck/class/${profileData?.pic}" alt="Customer Logo" style="max-width: 50px; max-height:50px; border-radius: 50%; object-fit: contain"/>
+                        </div>
+                        <div>
                             <p><strong>Date:</strong> ${watch("date")?.format("DD-MM-YYYY") || "N/A"}</p>
-                            <p><strong>Driver:</strong> ${driverData.find((d) => d.id === watch("driverId"))?.name || "N/A"}</p>
+                            <p><strong>Driver:</strong> ${"driverId"}
+                // getValues("driverId")
+                || "N/A"}</p>
                             <p><strong>Current Mileage:</strong> ${watch("currentMileage") || "N/A"}</p>
                         </div>
                         <div>
-                            <p><strong>Truck Number:</strong> ${truckData.find((t) => t.id === watch("truckNumber"))?.registration_number || "N/A"}</p>
+                            <p><strong>Truck Number:</strong> ${watch("truckNumber") || "N/A"}</p>
                             <p><strong>From:</strong> ${watch("from") || "N/A"}</p>
                             <p><strong>To:</strong> ${watch("to") || "N/A"}</p>
-                        </div>
-                        <div>
-                            <p><strong>Company:</strong> ${watch("customer") || "N/A"}</p>
-                            <img src="https://aktyres-in.stackstaging.com/php-truck/class/${profileData?.pic}" alt="Customer Logo" style="max-width: 50px; max-height:50px; border-radius: 50%;"/>
                         </div>
                     </div>
 

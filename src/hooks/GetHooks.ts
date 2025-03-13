@@ -1030,3 +1030,52 @@ export const useInsuranceOperations = () => {
     updateInsurance
   };
 };
+
+
+export interface LoginProps {
+  username: string;
+  password: string;
+}
+
+interface LoginResponse {
+  jwt: {
+    jwt: string;
+    customer_id: string;
+    role: string;
+    login_id: string;
+    driver: string | null;
+  }
+}
+
+export const useLogin = () => {
+  return useMutation({
+    mutationFn: async (data: LoginProps) => {
+      const response = await axios.post(routes.backend.auth.login, data);
+      const responseJson: LoginResponse = response.data;
+
+      if (responseJson.jwt.jwt) {
+        if (responseJson.jwt.role !== 'user' && responseJson.jwt.customer_id !== '' && responseJson.jwt.customer_id !== null) {
+          throw new Error("You are not authorized to login");
+        }
+
+        // Store user data in localStorage
+        localStorage.setItem('jwt', responseJson.jwt.jwt);
+        localStorage.setItem('customer_id', responseJson.jwt.customer_id);
+        localStorage.setItem('role', responseJson.jwt.role);
+        localStorage.setItem('login_id', responseJson.jwt.login_id);
+        if (responseJson.jwt.driver !== null) {
+          localStorage.setItem('driver', responseJson.jwt.driver);
+        }
+
+        return responseJson;
+      }
+      throw new Error("Invalid response from server");
+    },
+    onSuccess: () => {
+      message.success("Login Successful");
+    },
+    onError: (error: Error) => {
+      message.error(error.message || "Login Failed");
+    }
+  });
+};
