@@ -559,6 +559,68 @@ const TripModal: React.FC<TripModalProps> = ({
             }, 1000);
         }
     };
+
+
+
+
+    // Add a reset function that properly resets the form
+    const resetForm = () => {
+        // Show confirmation dialog
+        Modal.confirm({
+            title: 'Reset Form',
+            content: 'Are you sure you want to reset all fields? This will clear all your entries.',
+            okText: 'Yes, Reset',
+            cancelText: 'Cancel',
+            onOk: () => {
+                if (initialData) {
+                    // If editing, reset to initial data
+                    reset({
+                        customer: initialData.customer || "",
+                        currentMileage: Number(initialData.current_km) || 0,
+                        date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
+                        driverId: Number(initialData.driverid) || undefined,
+                        truckNumber: initialData.truck_no || undefined,
+                        from: initialData.from_location || "",
+                        to: initialData.to_location || "",
+                        items: parseJsonSafely(initialData.trip_items)
+                            .filter((item: any) => item !== null)
+                            .map((item: any) => ({
+                                ...item,
+                                existingId: item.id,
+                                item: Number(item.item) || 0,
+                                weight: Number(item.weight) || 0,
+                                tonageRate: Number(item.tonnage_rate) || 0,
+                                remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : "",
+                            })) || [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
+                        expenses: parseJsonSafely(initialData.expense_items)
+                            .filter((expense: any) => expense !== null)
+                            .map((expense: any) => ({
+                                ...expense,
+                                existingId: expense.id,
+                                item: Number(expense.item) || 0,
+                                amount: Number(expense.total) || 0,
+                                remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : "",
+                            })) || [{ item: 0, amount: 0, remarks: "" }],
+                    });
+                } else {
+                    // If creating new, reset to empty form
+                    reset({
+                        customer: "",
+                        currentMileage: 0,
+                        date: null,
+                        driverId: undefined,
+                        truckNumber: undefined,
+                        from: "",
+                        to: "",
+                        items: [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
+                        expenses: [{ item: 0, amount: 0, remarks: "" }],
+                    });
+                }
+                toast.success('Form reset successfully');
+            },
+        });
+    };
+
     return (
         <Modal
             title="Trip Details"
@@ -925,14 +987,34 @@ const TripModal: React.FC<TripModalProps> = ({
                     />
                 </div>
                 <Divider />
-                <div className="flex justify-end gap-2 mt-4">
-                    {/* Print Preview Or save as Pdf */}
-                    <Button type="primary" onClick={handlePrintPreview}>
-                        Print Preview
+                <div className="flex justify-between items-center mt-4">
+                    <Button
+                        onClick={() => resetForm()}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>}
+                        className="hover:bg-gray-100 text-gray-600 border border-gray-300"
+                    >
+                        Reset Form
                     </Button>
-                    <Button type="primary" htmlType="submit">
-                        Save
-                    </Button>
+
+                    <div className="flex gap-3">
+                        <Button
+                            type="default"
+                            onClick={handlePrintPreview}
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>}
+                            className="flex items-center border border-blue-500 text-blue-500 hover:bg-blue-50"
+                        >
+                            Preview
+                        </Button>
+
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>}
+                            className="flex items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md"
+                        >
+                            Save Changes
+                        </Button>
+                    </div>
                 </div>
             </form>
         </Modal>
