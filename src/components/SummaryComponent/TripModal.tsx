@@ -560,20 +560,88 @@ const TripModal: React.FC<TripModalProps> = ({
         }
     };
 
+    // Clear All Fields function - completely empties the form regardless of initial state
+    const clearAllFields = () => {
+        Modal.confirm({
+            title: 'Clear All Fields',
+            content: 'Are you sure you want to clear all fields? This will remove all data from the form.',
+            okText: 'Yes, Clear All',
+            cancelText: 'Cancel',
+            onOk: () => {
+                // First, clear all field arrays
+                if (itemFields.length > 0) {
+                    removeItem(itemFields.map((_, idx) => idx));
+                }
 
+                if (expenseFields.length > 0) {
+                    removeExpense(expenseFields.map((_, idx) => idx));
+                }
 
+                // Reset all form fields to empty values
+                reset({
+                    customer: "",
+                    currentMileage: 0,
+                    date: null,
+                    driverId: undefined,
+                    truckNumber: undefined,
+                    from: "",
+                    to: ""
+                });
 
-    // Add a reset function that properly resets the form
+                // Add one empty row to each array
+                setTimeout(() => {
+                    appendItem({ item: 0, weight: 0, tonageRate: 0, remarks: "" });
+                    appendExpense({ item: 0, amount: 0, remarks: "" });
+                }, 0);
+
+                // Clear selections
+                setSelectedTripitems([]);
+                setSelectedTripExpenses([]);
+
+                toast.success('All fields cleared successfully');
+            }
+        });
+    };
+
+    // Updated resetForm function for TripModal.tsx
     const resetForm = () => {
-        // Show confirmation dialog
         Modal.confirm({
             title: 'Reset Form',
             content: 'Are you sure you want to reset all fields? This will clear all your entries.',
             okText: 'Yes, Reset',
             cancelText: 'Cancel',
             onOk: () => {
+                // First, manually clear field arrays to ensure proper reset
+                if (itemFields.length > 0) {
+                    removeItem(itemFields.map((_, idx) => idx));
+                }
+
+                if (expenseFields.length > 0) {
+                    removeExpense(expenseFields.map((_, idx) => idx));
+                }
+
+                // Then reset the form with default values
                 if (initialData) {
-                    // If editing, reset to initial data
+                    // When editing, reset to initial data
+                    const initialItems = parseJsonSafely(initialData.trip_items)
+                        .filter((item: any) => item !== null)
+                        .map((item: any) => ({
+                            existingId: item.id,
+                            item: Number(item.item) || 0,
+                            weight: Number(item.weight) || 0,
+                            tonageRate: Number(item.tonnage_rate) || 0,
+                            remarks: item.remarks || ""
+                        }));
+
+                    const initialExpenses = parseJsonSafely(initialData.expense_items)
+                        .filter((expense: any) => expense !== null)
+                        .map((expense: any) => ({
+                            existingId: expense.id,
+                            item: Number(expense.item) || 0,
+                            amount: Number(expense.total) || 0,
+                            remarks: expense.remarks || ""
+                        }));
+
                     reset({
                         customer: initialData.customer || "",
                         currentMileage: Number(initialData.current_km) || 0,
@@ -581,29 +649,21 @@ const TripModal: React.FC<TripModalProps> = ({
                         driverId: Number(initialData.driverid) || undefined,
                         truckNumber: initialData.truck_no || undefined,
                         from: initialData.from_location || "",
-                        to: initialData.to_location || "",
-                        items: parseJsonSafely(initialData.trip_items)
-                            .filter((item: any) => item !== null)
-                            .map((item: any) => ({
-                                ...item,
-                                existingId: item.id,
-                                item: Number(item.item) || 0,
-                                weight: Number(item.weight) || 0,
-                                tonageRate: Number(item.tonnage_rate) || 0,
-                                remarks: item.remarks && item.remarks !== undefined && item.remarks !== null ? item.remarks : "",
-                            })) || [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
-                        expenses: parseJsonSafely(initialData.expense_items)
-                            .filter((expense: any) => expense !== null)
-                            .map((expense: any) => ({
-                                ...expense,
-                                existingId: expense.id,
-                                item: Number(expense.item) || 0,
-                                amount: Number(expense.total) || 0,
-                                remarks: expense.remarks && expense.remarks !== undefined && expense.remarks !== null ? expense.remarks : "",
-                            })) || [{ item: 0, amount: 0, remarks: "" }],
+                        to: initialData.to_location || ""
                     });
+
+                    // Add items after the main form reset
+                    setTimeout(() => {
+                        initialItems.forEach((item: { existingId?: number | undefined; item: number; weight: number; tonageRate: number; remarks?: string; } | { existingId?: number | undefined; item: number; weight: number; tonageRate: number; remarks?: string; }[]) => {
+                            appendItem(item);
+                        });
+
+                        initialExpenses.forEach((expense: { existingId?: number | undefined; item: number; amount: number; remarks?: string; } | { existingId?: number | undefined; item: number; amount: number; remarks?: string; }[]) => {
+                            appendExpense(expense);
+                        });
+                    }, 0);
                 } else {
-                    // If creating new, reset to empty form
+                    // When creating, reset to empty form
                     reset({
                         customer: "",
                         currentMileage: 0,
@@ -611,13 +671,22 @@ const TripModal: React.FC<TripModalProps> = ({
                         driverId: undefined,
                         truckNumber: undefined,
                         from: "",
-                        to: "",
-                        items: [{ item: 0, weight: 0, tonageRate: 0, remarks: "" }],
-                        expenses: [{ item: 0, amount: 0, remarks: "" }],
+                        to: ""
                     });
+
+                    // Add empty item and expense
+                    setTimeout(() => {
+                        appendItem({ item: 0, weight: 0, tonageRate: 0, remarks: "" });
+                        appendExpense({ item: 0, amount: 0, remarks: "" });
+                    }, 0);
                 }
+
+                // Clear selections
+                setSelectedTripitems([]);
+                setSelectedTripExpenses([]);
+
                 toast.success('Form reset successfully');
-            },
+            }
         });
     };
 
@@ -988,13 +1057,23 @@ const TripModal: React.FC<TripModalProps> = ({
                 </div>
                 <Divider />
                 <div className="flex justify-between items-center mt-4">
-                    <Button
-                        onClick={() => resetForm()}
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>}
-                        className="hover:bg-gray-100 text-gray-600 border border-gray-300"
-                    >
-                        Reset Form
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            onClick={() => resetForm()}
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>}
+                            className="hover:bg-gray-100 text-gray-600 border border-gray-300"
+                        >
+                            Reset Form
+                        </Button>
+
+                        <Button
+                            onClick={() => clearAllFields()}
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><line x1="7" y1="16" x2="17" y2="16"></line><path d="M13 15v3"></path></svg>}
+                            className="hover:bg-red-50 text-red-600 border border-red-300"
+                        >
+                            Clear All Fields
+                        </Button>
+                    </div>
 
                     <div className="flex gap-3">
                         <Button
