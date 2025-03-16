@@ -16,5 +16,7 @@ export interface TripDetails {
   trip_items: string | null;
   expense_items: string | null;
   customer?: string;
+  drivername?: string;
+  registration_number?: string;
 }
 

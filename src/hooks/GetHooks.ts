@@ -260,7 +260,9 @@ interface TripData {
   supertotal: string;
   trip_items?: string;
   driverid: number
+  drivername?: string;
   total_expense?: string;
+  registration_number?: string;
 }
 
 

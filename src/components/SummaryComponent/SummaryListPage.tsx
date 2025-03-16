@@ -60,7 +60,7 @@ const SummaryListPage = () => {
 
     const columnDefs: ColDef[] = [
         { field: 'sl_no', headerName: 'Sl No', sortable: true, filter: true, width: 80 },
-        { field: 'truck_no', headerName: 'Truck No', sortable: true, filter: true },
+        { field: 'registration_number', headerName: 'Truck No', sortable: true, filter: true },
         { field: 'driver_name', headerName: 'Driver name', sortable: true, filter: true },
         { field: 'customer', headerName: 'Customer Name', sortable: true, filter: true },
         {
@@ -124,6 +124,7 @@ const SummaryListPage = () => {
             current_km: data.current_km,
             loading_date: data.trip_date,
             driver: data.driverid,
+            drivername: data.drivername,
             truck_no: data.truck_no,
             from_location: data.from_location,
             to_location: data.to_location,
@@ -233,8 +234,8 @@ const SummaryListPage = () => {
                         tripData && tripData.body &&
                         tripData?.body.map((trip, index) => ({
                             sl_no: index + 1,
-                            registration_number: truckData?.body.find((truck) => truck.id === trip.truck_no)?.registration_number,
-                            driver_name: driverData?.body.find((driver) => driver.id === trip.driverid)?.name,
+                            registration_number: trip.registration_number,
+                            driver_name: trip.drivername,
                             loading_date: trip.trip_date,
                             from: trip.from_location,
                             to: trip.to_location,

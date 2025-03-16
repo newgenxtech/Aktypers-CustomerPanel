@@ -6,7 +6,6 @@ import {
     Input,
     DatePicker,
     InputNumber,
-    Select,
     Space,
     Table,
     Divider,
@@ -114,14 +113,14 @@ const TripModal: React.FC<TripModalProps> = ({
         }[]
     >([]);
 
-    const { control, handleSubmit, watch, reset, getValues } = useForm<FormValues>({
+    const { control, handleSubmit, watch, reset } = useForm<FormValues>({
         defaultValues: initialData
             ? {
                 customer: initialData.customer || "",
                 currentMileage: Number(initialData.current_km) || 0,
                 date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
                 driverId: Number(initialData.driverid) || undefined,
-                truckNumber: initialData.truck_no || "",
+                truckNumber: initialData.truck_no || undefined,
                 from: initialData.from_location || "",
                 to: initialData.to_location || "",
                 items:
@@ -169,7 +168,7 @@ const TripModal: React.FC<TripModalProps> = ({
                 currentMileage: Number(initialData.current_km) || 0,
                 date: initialData.trip_date ? dayjs(initialData.trip_date) : null,
                 driverId: Number(initialData.driverid) || undefined,
-                truckNumber: initialData.truck_no || "",
+                truckNumber: initialData.truck_no || undefined,
                 from: initialData.from_location || "",
                 to: initialData.to_location || "",
                 items: parseJsonSafely(initialData.trip_items)
@@ -464,13 +463,11 @@ const TripModal: React.FC<TripModalProps> = ({
                         </div>
                         <div>
                             <p><strong>Date:</strong> ${watch("date")?.format("DD-MM-YYYY") || "N/A"}</p>
-                            <p><strong>Driver:</strong> ${"driverId"}
-                // getValues("driverId")
-                || "N/A"}</p>
+                            <p><strong>Driver:</strong> ${initialData?.drivername || "N/A"}</p>
                             <p><strong>Current Mileage:</strong> ${watch("currentMileage") || "N/A"}</p>
                         </div>
                         <div>
-                            <p><strong>Truck Number:</strong> ${watch("truckNumber") || "N/A"}</p>
+                            <p><strong>Truck Number:</strong> ${initialData?.registration_number || "N/A"}</p>
                             <p><strong>From:</strong> ${watch("from") || "N/A"}</p>
                             <p><strong>To:</strong> ${watch("to") || "N/A"}</p>
                         </div>
@@ -627,25 +624,41 @@ const TripModal: React.FC<TripModalProps> = ({
                             control={control}
                             rules={{ required: "Required" }}
                             render={({ field }) => (
-                                <Select
-                                    placeholder="Select driver"
-                                    className="w-full"
-                                    options={
-                                        driverData &&
-                                        driverData?.map((driver) => ({
-                                            label: driver.name,
-                                            value: driver.id,
-                                        }))
-                                    }
-                                    showSearch
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
-                                    loading={driverLoading}
+                                // <Select
+                                //     {...field}
+                                //     placeholder="Select driver"
+                                //     className="w-full"
+                                //     options={
+                                //         driverData &&
+                                //         driverData?.map((driver) => ({
+                                //             key: driver.id,
+                                //             label: `${driver.name} - ${driver.id}`,
+                                //             value: driver.id,
+                                //         }))
+                                //     }
+                                //     showSearch
+                                //     filterOption={(input, option) =>
+                                //         (option?.label ?? "")
+                                //             .toLowerCase()
+                                //             .includes(input.toLowerCase())
+                                //     }
+                                //     loading={driverLoading}
+                                //     onChange={field.onChange}
+                                // />
+
+                                <select
                                     {...field}
-                                />
+                                    onChange={field.onChange}
+                                    className="w-full bg-white border border-gray-300 rounded-md py-1.5 px-4 shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    <option value="">Select driver</option>
+                                    {driverData &&
+                                        driverData?.map((driver) => (
+                                            <option key={driver.id} value={driver.id}>
+                                                {driver.name} - {driver.id}
+                                            </option>
+                                        ))}
+                                </select>
                             )}
                         />
                     </div>
@@ -659,28 +672,42 @@ const TripModal: React.FC<TripModalProps> = ({
                             control={control}
                             rules={{ required: "Required" }}
                             render={({ field }) => (
-                                <Select
-                                    placeholder="Select truck"
-                                    className="w-full"
-                                    showSearch
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
-                                    options={
-                                        truckData &&
-                                        truckData?.map((truck) => ({
-                                            label: truck.registration_number,
-                                            value: truck.id,
-                                        }))
-                                    }
-                                    loading={truckLoading}
+                                // <Select
+                                //     {...field}
+                                //     onChange={field.onChange}
+                                //     placeholder="Select truck"
+                                //     className="w-full"
+                                //     showSearch
+                                //     filterOption={(input, option) =>
+                                //         (option?.label ?? "")
+                                //             .toLowerCase()
+                                //             .includes(input.toLowerCase())
+                                //     }
+                                //     options={
+                                //         truckData &&
+                                //         truckData?.map((truck) => ({
+                                //             label: truck.registration_number,
+                                //             value: truck.id,
+                                //         }))
+                                //     }
+                                //     loading={truckLoading}
+                                // disabled={isEdit}
+                                // />
+                                // )}
+                                <select
                                     {...field}
-                                />
+                                    onChange={field.onChange}
+                                    className="w-full bg-white border border-gray-300 rounded-md py-1.5 px-4 shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    <option value="">Select truck</option>
+                                    {truckData &&
+                                        truckData?.map((truck) => (
+                                            <option key={truck.id} value={truck.id}>
+                                                {truck.registration_number} - {truck.id}
+                                            </option>
+                                        ))}
+                                </select>
                             )}
-                            // defaultValue={initialData?.truckNumber}
-                            disabled={isEdit}
                         />
                     </div>
                 </div>
