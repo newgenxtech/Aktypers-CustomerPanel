@@ -43,10 +43,10 @@ const DriverTable: React.FC<DriverTableProps> = ({ data, isLoading, setOpen, set
                 </span>
             )
         },
-        // {
-        //     headerName: 'Cus ID',
-        //     field: 'customerid',
-        // },
+        {
+            headerName: 'Truck Number',
+            field: 'registration_number',
+        },
         {
             headerName: 'License Number',
             field: 'license_number',

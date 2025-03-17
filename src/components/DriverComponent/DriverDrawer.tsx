@@ -1,7 +1,6 @@
 import React from 'react';
 import { Drawer } from 'vaul';
-import { Expand, X } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
+import { X } from 'lucide-react';
 import FormComponentV2, { CustomField } from '@/components/FormComponentV2';
 import { z } from 'zod';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
@@ -9,6 +8,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
 import { MessageInstance } from 'antd/es/message/interface';
+import { ITruckData } from '@/pages/Truck/Truck.d';
 
 
 interface DriverDrawerProps {
@@ -21,6 +21,7 @@ interface DriverDrawerProps {
     handleUpdateDriver: (data: DriverMaster) => void;
     isLoading?: boolean;
     messageApi: MessageInstance;
+    truckData: ITruckData[];
 }
 
 const DriverDrawer: React.FC<DriverDrawerProps> = ({
@@ -31,9 +32,10 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
     CurrentDriver,
     handleCreateDriver,
     handleUpdateDriver,
+    truckData,
     // isLoading
 }) => {
-    const navigate = useNavigate();
+
     const createSchemaObject = (fields: CustomField[]) =>
         Object.fromEntries(
             fields.map((field) => [
@@ -56,6 +58,14 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
             type: 'text',
             isInputProps: { placeholder: 'Enter License Number' },
             validation: { required: true, pattern: z.string().refine((val) => val.length >= 1 && val.length <= 20, { message: 'License number must be between 1 and 20 characters' }) }
+        },
+        {
+            label: 'Truck',
+            name: 'truck_id',
+            type: 'select',
+            isInputProps: { placeholder: 'Enter Truck' },
+            validation: { required: true, pattern: z.string().refine((val) => val.length >= 1 && val.length <= 20, { message: 'Truck number must be between 1 and 20 characters' }) },
+            options: truckData && truckData?.map((truck) => ({ label: truck.registration_number, value: truck.id }))
         },
         {
             label: 'License Expiry Date',
@@ -176,8 +186,8 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({
                 >
                     <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col justify-between items-center rounded-[16px] overflow-y-auto">
                         <div className="w-full">
-                            <div className="flex justify-between">
-                                <Expand className='w-5 cursor-pointer' onClick={() => navigate({ pathname: `/warehouse/1` })} />
+                            <div className="flex justify-end">
+                                {/* <Expand className='w-5 cursor-pointer' onClick={() => navigate({ pathname: `/warehouse/1` })} /> */}
                                 <X className='cursor-pointer' onClick={() => { setOpen(false); setIsEdit(false); }} />
                             </div>
                             <Drawer.Title className="font-semibold text-xl mb-8 text-zinc-900 text-center">

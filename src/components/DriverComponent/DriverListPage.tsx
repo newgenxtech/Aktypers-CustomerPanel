@@ -2,7 +2,7 @@ import { useState, Suspense } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DriverMaster } from '@/pages/Driver/Driver.d';
-import { useGetDriverData, useDriverOperations } from "@/hooks/GetHooks";
+import { useGetDriverData, useDriverOperations, useGetTruckData } from "@/hooks/GetHooks";
 import React from "react";
 import { message } from 'antd';
 
@@ -16,6 +16,7 @@ const DriverListPage = () => {
     const [open, setOpen] = useState(false);
 
     const { data, isLoading } = useGetDriverData(localStorage.getItem('customer_id') || '');
+    const { data: truckData } = useGetTruckData(localStorage.getItem('customer_id') || '');
     const { createDriver, updateDriver } = useDriverOperations(messageApi);
 
     const handleCreateDriver = async (data: DriverMaster) => {
@@ -76,6 +77,7 @@ const DriverListPage = () => {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     CurrentDriver={CurrentDriver}
+                    truckData={truckData?.body ?? []}
                     handleCreateDriver={handleCreateDriver}
                     handleUpdateDriver={handleUpdateDriver}
                     isLoading={createDriver.isPending || updateDriver.isPending}
