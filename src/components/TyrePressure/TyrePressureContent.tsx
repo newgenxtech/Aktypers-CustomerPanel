@@ -1,6 +1,6 @@
 // src/pages/TyrePressure/TyrePressureContent.tsx
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from 'antd';
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ import { getTyreLayout } from "@/lib/utils";
 import AgGridTable from '@/components/AgGridTable';
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ITyrePressure } from '@/pages/TyprePressure/Tyre.d';
-import { DatePicker, Input, Select, message } from 'antd';
+import { DatePicker, Select, message } from 'antd';
 
 
 export interface TyrePressureProps {
@@ -27,7 +27,7 @@ export interface TyrePressureProps {
 const TyrePressureContent: React.FC = () => {
     const [fromDate, setFromDate] = useState<string>('');
     const [toDate, setToDate] = useState<string>('');
-    const { data: TruckListData } = useGetTruckData('1001');
+    const { data: TruckListData } = useGetTruckData(localStorage.getItem('customer_id') || '');
     const [SelectedTruckId, setSelectedTruckId] = useState<string | undefined>();
     const [SelectedTyre, setSelectedTyre] = useState<TyrePressureProps>();
 
@@ -65,20 +65,31 @@ const TyrePressureContent: React.FC = () => {
     });
 
     useEffect(() => {
-        if (TruckListData?.body[0].id) {
-            setSelectedTruckId(TruckListData.body[0].id);
+        try {
+            if (TruckListData?.body && Array.isArray(TruckListData.body) && TruckListData.body.length > 0) {
+                const firstTruck = TruckListData.body[0];
+                if (firstTruck && firstTruck.id) {
+                    setSelectedTruckId(firstTruck.id);
+                } else {
+                    console.warn('First truck data is missing ID');
+                }
+            } else {
+                console.warn('No truck data available');
+            }
+        } catch (error) {
+            console.error('Error setting selected truck ID:', error);
         }
     }, [TruckListData]);
 
     useEffect(() => {
         if (TruckDemensionDetails && TruckDemensionDetailLoading === false) {
-            setSelectedTyre(TruckDemensionDetails.body[0]);
+            setSelectedTyre(TruckDemensionDetails?.body[0]);
         }
     }, [TruckDemensionDetailLoading, TruckDemensionDetails]);
 
-    const handleSearch = useCallback((data: string) => {
-        console.log(data);
-    }, []);
+    // const handleSearch = useCallback((data: string) => {
+    //     console.log(data);
+    // }, []);
 
     const columns: (ColDef | ColGroupDef)[] = useMemo(() => [
         {
@@ -95,10 +106,10 @@ const TyrePressureContent: React.FC = () => {
             headerName: 'Tyre Pressure',
             field: 'tyre_pressure'
         },
-        {
-            headerName: 'Depth',
-            field: 'Depth'
-        },
+        // {
+        //     headerName: 'Depth',
+        //     field: 'Depth'
+        // },
         {
             headerName: 'To be Run',
             field: 'Toberun',
@@ -108,6 +119,14 @@ const TyrePressureContent: React.FC = () => {
             headerName: 'Recorded At',
             field: 'recorded_at'
         },
+        {
+            headerName: 'Fixed Depth',
+            field: 'fixedDep',
+        },
+        {
+            headerName: 'Current Depth',
+            field: 'actualDep',
+        }
     ], []);
 
     return (
@@ -115,11 +134,11 @@ const TyrePressureContent: React.FC = () => {
             <div className="flex flex-col md:flex-row items-center mt-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full p-4">
                     <label className="font-bold text-lg md:text-xl">Tyre Pressure Master</label>
-                    <Input
+                    {/* <Input
                         placeholder="Search Driver"
                         onChange={(e) => handleSearch(e.target.value)}
                         className="w-full md:w-1/3"
-                    />
+                    /> */}
                 </div>
                 <Button
                     onClick={() => {
@@ -142,7 +161,7 @@ const TyrePressureContent: React.FC = () => {
                                 onChange={(value) => {
                                     setSelectedTruckId(value);
                                 }}
-                                options={TruckListData?.body.map((item) => ({
+                                options={TruckListData?.body?.map((item) => ({
                                     value: item.id,
                                     label: item.registration_number,
                                 }))}
@@ -173,7 +192,7 @@ const TyrePressureContent: React.FC = () => {
                     </div>
                     <AgGridTable
                         columns={columns}
-                        data={TyrePressureData?.body.map((item, index) => ({ ...item, key: index })) ?? []}
+                        data={TyrePressureData?.body?.map((item, index) => ({ ...item, key: index })) ?? []}
                         isLoading={TyrePressureDataLoading}
                         defaultColDef={{
                             flex: 0,

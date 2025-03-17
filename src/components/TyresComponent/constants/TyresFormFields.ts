@@ -1,4 +1,5 @@
 import { CustomField } from '@/components/FormComponentV2';
+import { ITruckData } from '@/pages/Truck/Truck.d';
 import { TyresMaster } from '@/pages/Tyres/Tyres';
 import { z } from 'zod';
 
@@ -6,18 +7,40 @@ import { z } from 'zod';
 const TyresFormFields = (
     Position: string[],
     isEdit: boolean,
-    CurrentTyres: TyresMaster | null
+    CurrentTyres: TyresMaster | null,
+    TruckListData: ITruckData[],
+    TruckListDataLoading: boolean
 ): CustomField[] => [
+        {
+            label: 'Truck',
+            name: 'Vehicle_Registration_Number',
+            type: 'select',
+            isInputProps: {
+                placeholder: 'Select Truck',
+                loading: TruckListDataLoading,
+            },
+            validation: {
+                required: true,
+                pattern: z.string()
+            },
+            options: TruckListData.map((truck) => {
+                return {
+                    label: truck.registration_number,
+                    value: truck.id
+                }
+            })
+        },
         {
             label: 'Wheeler Type',
             name: 'Wheeler_Type',
             type: 'text',
             isInputProps: {
-                placeholder: 'Enter Wheeler Type'
+                placeholder: 'Enter Wheeler Type',
+                disabled: true
             },
             validation: {
                 required: true,
-                pattern: z.string().min(3).max(30)
+                pattern: z.string()
             }
         },
         {
@@ -81,18 +104,6 @@ const TyresFormFields = (
             }
         },
         {
-            label: 'Total Covered KM',
-            name: 'Total_Covered_KM',
-            type: 'text',
-            isInputProps: {
-                placeholder: 'Enter Total Covered KM'
-            },
-            validation: {
-                required: true,
-                pattern: z.string().min(1).max(10)
-            }
-        },
-        {
             label: 'Retread Yes No',
             name: 'Retread_Yes_No',
             type: 'text',
@@ -117,7 +128,20 @@ const TyresFormFields = (
                     message: "Invalid Tyre Condition"
                 })
             },
-            options: ['New', 'Re-Used', 'Old']
+            options: [
+                {
+                    label: 'New',
+                    value: 'New'
+                },
+                {
+                    label: 'Re-Used',
+                    value: 'Re-Used'
+                },
+                {
+                    label: 'Old',
+                    value: 'Old'
+                }
+            ]
         },
         {
             label: 'Reason for Removal Month',
@@ -162,20 +186,25 @@ const TyresFormFields = (
                     message: "Invalid Position"
                 })
             },
-            options: Position ?? []
+            options: Position.map((pos) => {
+                return {
+                    label: pos,
+                    value: pos
+                }
+            })
         },
-        {
-            label: 'Registration Number',
-            name: 'registration_number',
-            type: 'text',
-            isInputProps: {
-                placeholder: 'Enter Registration Number'
-            },
-            validation: {
-                required: true,
-                pattern: z.string().min(3).max(30)
-            }
-        }
+        // {
+        //     label: 'Registration Number',
+        //     name: 'registration_number',
+        //     type: 'text',
+        //     isInputProps: {
+        //         placeholder: 'Enter Registration Number'
+        //     },
+        //     validation: {
+        //         required: true,
+        //         pattern: z.string().min(3).max(30)
+        //     }
+        // }
     ];
 
 export default TyresFormFields;

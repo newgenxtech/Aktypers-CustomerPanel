@@ -2,15 +2,20 @@
 
 export interface ITyrePressure {
     // This is a string, but it should be a
-    wheels: string; //!  number and its a count of the wheels
-    axtyre: string; //!  array of objects and its a count of the axles
-    total_tyres: string; //!  number and its a count of the total tyres
-    total_axles: string; //!  number and its a count of the total axles
-    pressure_id: string; // !  number and its a count of the pressure id
-    truck_id: string; //!  number and its a count of the truck id
-    tyre_position: string; //!  object and its a count of the tyre position
-    tyre_pressure: string; //!  number and its a count of the tyre pressure
-    recorded_at: string; //!  date and its a count of the recorded at
+    wheels: string;
+    axtyre: string;
+    total_tyres: string;
+    total_axles: string;
+    pressure_id: string;
+    truck_id: string;
+    tyre_position: string;
+    tyre_pressure: string;
+    recorded_at: string;
+    Depth?: string;
+    Toberun?: string;
+    fixedDep?: string;
+    actualDep?: string;
+    pressure_status?: string;
 }
 
 

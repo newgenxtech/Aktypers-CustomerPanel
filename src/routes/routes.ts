@@ -23,9 +23,14 @@ export const routes = {
     },
     backend: {
         auth: {
-            // login: `${base}?route=login`,
             login: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=login',
             signup: `${base}?route=signup`,
+               requestOTP: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=requestOTP',
+      verifyOTP: 'https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=verifyOTP',
+        },
+        profile: {
+            getUserProfile: `${base}?route=getuserprofile&customer_id=`,
+            uploadProfilePicture: `${base}?route=createCustomerFile`,
         },
         driver: {
             getAll: `${base}?route=getDriver&customer_id=`,
@@ -38,12 +43,23 @@ export const routes = {
             create: `${base}?route=createTruck`,
             update: `${base}?route=updateTruck`,
             uploadTruckFile: `${base}?route=uploadtruckFile`,
+            getTruckConfig: `${base}?route=gettruckconfig`,
+            getTruckMakersByCustomerId: `${base}?route=getTruckMakersByCustomerId&customer_id=`,
+            getTruckIdsAndGroupByBrand: `${base}?route=insertTruckIdsAndGroupByBrand&customer_id=`,
         },
         trip: {
             getAll: `${base}?route=gettrip&customer_id=`,
             create: `${base}?route=createTrip`,
             update: `${base}?route=updateTrip`,
             uploadTripFile: `${base}?route=uploadtripFile`,
+            getTrip: `${base}?route=gettrip`,
+            createTrip: `${base}?route=createTrip`,
+            editTrip: `${base}?route=editTrip`,
+            editTripDetail: `${base}?route=editTripDetail`,
+            createTripDetail: `${base}?route=createTripDetail`,
+            ItemMaster: `${base}?route=GoodName`,
+            GetItemMaster: `${base}?route=getTruckNames`,
+            deleteTripDetail: `${base}?route=deleteTripDetail`,
         },
         file: {
             upload: `${base}`,
@@ -57,42 +73,32 @@ export const routes = {
             getTyreDetails: `${base}?route=getTyreDetails&truck_id=`,
 
             getTyreDetailsByCustomer: `${base}?route=getTyreDetailsByCustomer`,
-            // {
-            //     "truck_id": 1,
-            //     "from_date": "2024-01-01",
-            //     "to_date": "2024-11-30",
-            //     "customerid": 123
-            // }
+
             createTyre: `${base}?route=createTyre`,
-            // {
-            //     "Wheeler_Type": "4 Wheeler",
-            //     "Manufacturer": "Toyota",
-            //     "Brand": "Michelin",
-            //     "Tyre_Serial_Number": "TYR123456",
-            //     "Fitment_KM": 10000,
-            //     "Removal_KM": 25000,
-            //     "Total_Covered_KM": 15000,
-            //     "Retread_Yes_No": "No",
-            //     "Reason_for_Removal_MONTH": "Wear",
-            //     "Date": "2024-11-20",
-            //     "position": "Front Left",
-            //     "Vehicle_Registration_Number": "2"
-            // }
 
-            // {
-            //     "message": "Tyre record created successfully."
-            // }
             updateTyre: `${base}?route=editTyre`,
-            // {
-            //     "id": 1,
-            //     "Wheeler_Type": "4 Wheeler",
 
-            //     "Vehicle_Registration_Number": "1"
-            // }
-
-
+            getTyreAnalytics: `${base}?route=getTyreAnalytics`,
+        },
+        insurance: {
+            create: `${base}?route=createInsurance`,
+            update: `${base}?route=editInsurance`,
+            getInsuranceByCustomerId: `${base}?route=getInsuranceByCustomerId&customer_id=`,
+            deleteInsurance: `${base}?route=deleteInsurance`,
+        },
+        invoice: {
+            getCustomerpayfilter: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getCustomerpayfilter`,
+            getInvoiceFiles: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getInvoiceFiles&invoice_id=`,
+            getPaymentAnalytics: `https://aktyres-in.stackstaging.com/php-rest-api/class/employees.php?route=getPaymentAnalytics`,
+        },
+        complaints: {
+            getComplaintsByCustomerId: `${base}?route=getComplaintsByCustomerId&customer_id=`,
+        },
+        dashboard: {
+            analyticsOfTyre: `${base}?route=analyticsOfTyre&customer_id=`,
+            getdatbyaktyresByCustomerId: `${base}?route=getdatbyaktyresByCustomerId&customer_id=`,
         }
+
     },
-
-
 };
+

@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import TableComponent, { DataCol } from '../TableComponent';
+
+interface InsuranceRecord {
+    insurance_id: string;
+    customer_id: string;
+    vehicle_id: string;
+    insurance_number: string;
+    insurance_name: string;
+    filename: string;
+    purchase_date: string;
+    expiry_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface InsuranceExpiryTableProps {
+    data: InsuranceRecord[];
+    thresholdDays?: number; // Days within which an insurance is considered near expiry
+}
+
+const InsuranceExpiryTable: React.FC<InsuranceExpiryTableProps> = ({ data }) => {
+    
+    const today = new Date();
+
+
+    const columns: DataCol<InsuranceRecord>[] = [
+        // sno
+        {
+            label: 'S.No',
+            key: 's.no',
+            render: (_, index) => index + 1,
+        },
+        {
+            label: 'Insurance ID',
+            key: 'insurance_id',
+            render: (record: InsuranceRecord) => record.insurance_id,
+        },
+        {
+            label: 'Vehicle ID',
+            key: 'vehicle_id',
+            render: (record: InsuranceRecord) => record.vehicle_id
+        },
+        {
+            label: 'Insurance Number',
+            key: 'insurance_number',
+            render: (record: InsuranceRecord) => record.insurance_number,
+        },
+        {
+            label: 'Insurance Name',
+            key: 'insurance_name',
+            render: (record: InsuranceRecord) => record.insurance_name,
+        },
+        {
+            label: 'Expiry Date',
+            key: 'expiry_date',
+            render: (record: InsuranceRecord) => record.expiry_date,
+        },
+        {
+            label: 'Days Left',
+            key: 'days_left',
+            render: (record: InsuranceRecord) => {
+                const expiry = new Date(record.expiry_date);
+                const diffTime = expiry.getTime() - today.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays;
+            },
+        },
+    ];
+
+    const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 10 });
+
+    return (
+        <div className="container mx-auto">
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 h-[690px] transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+                <h2 className="text-2xl font-semibold mb-4">Insurances Near Expiry</h2>
+                <TableComponent
+                    data={data}
+                    columns={columns}
+                    pagination={pagination}
+                    setPagination={setPagination}
+
+                />
+            </div>
+        </div>
+    );
+};
+
+export default InsuranceExpiryTable;

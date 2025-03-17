@@ -1,119 +1,239 @@
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from "react-router-dom";
-import { Provider } from 'react-redux'
-import BaseLayout from "./layouts/BaseLayout";
-import Home from "./pages/HomePage";
-import ErrorPage from "./pages/ErrorPage";
-import { store } from "./store/store";
-import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
-import DriverListPage from "./pages/Driver/Driver";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from 'react-redux';
+import { lazy, Suspense } from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from "./hooks/queryClient";
-import AlloyListPage from "./pages/Alloy/Alloy";
-import TyrePressure from "./pages/TyprePressure/TyrePressure";
-import Truck from "./pages/Truck/Truck";
-import TyresMasterListPage from "./pages/Tyres/TyresMaster";
-import Login from "./pages/Auth/Login";
-import AuthLayout from "./layouts/AuthLayout";
-import Signup from "./pages/Auth/Signup";
+import { store } from "./store/store";
+import SummaryMasterListPage from "./pages/Summary/Summary";
+import ProfileMasterListPage from "./pages/Profile/Profile";
+import ForgetPassordComponent from "./components/ui/ForgetPassordComponent";
+
+// Layouts
+const BaseLayout = lazy(() => import("./layouts/BaseLayout"));
+const AuthLayout = lazy(() => import("./layouts/AuthLayout"));
+
+// Pages
+const Home = lazy(() => import("./pages/HomePage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Signup = lazy(() => import("./pages/Auth/Signup"));
+const CompliantListPage = lazy(() => import("./pages/Compliant/Compliant"));
+
+// Feature Components
+const DriverListPage = lazy(() => import("./pages/Driver/Driver"));
+const AlloyListPage = lazy(() => import("./pages/Alloy/Alloy"));
+const Truck = lazy(() => import("./pages/Truck/Truck"));
+const TyrePressure = lazy(() => import("./pages/TyprePressure/TyrePressure"));
+const TyresMasterListPage = lazy(() => import("./pages/Tyres/TyresMaster"));
+const InsuranceMasterListPage = lazy(() => import("./components/InsuranceComponent/InsuranceMasterListPage"));
+const InvoiceMasterListPage = lazy(() => import("./components/InvoiceComponent/InvoiceMasterListPage"));
+const ErrorBoundaryPage = lazy(() => import("./components/ErrorBoundary/ErrorBoundaryPage"));
+
+// Loading Component
+const LoadingSpinner = () => (
+    <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+    </div>
+);
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: (
-            <BaseLayout />
+            <Suspense fallback={<LoadingSpinner />}>
+                <BaseLayout />
+            </Suspense>
         ),
-        errorElement: <ErrorPage />,
+        errorElement: <ErrorBoundaryPage />,
         children: [
             {
                 index: true,
-                element: <Home />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Home />
+                    </Suspense>
+                ),
             },
             {
                 path: 'dashboard',
-                element: <Dashboard />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Dashboard />
+                    </Suspense>
+                ),
             },
             {
                 path: "product",
-                element: <NotFound />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <NotFound />
+                    </Suspense>
+                ),
             },
             {
                 path: "order",
-                element: <NotFound />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <NotFound />
+                    </Suspense>
+                ),
             },
             {
                 path: "billing",
-                element: <NotFound />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <NotFound />
+                    </Suspense>
+                ),
             },
             {
                 path: "driver",
-                element: <DriverListPage />
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <DriverListPage />
+                    </Suspense>
+                ),
             },
             {
                 path: 'alloy',
-                element: <AlloyListPage />
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <AlloyListPage />
+                    </Suspense>
+                ),
             },
             {
                 path: 'truck',
-                element: <Truck />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Truck />
+                    </Suspense>
+                ),
             },
             {
                 path: 'type-pressure',
-                element: <TyrePressure />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <TyrePressure />
+                    </Suspense>
+                ),
             },
             {
                 path: "/tyres",
-                element: <TyresMasterListPage />
-            }
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <TyresMasterListPage />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/insurance",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <InsuranceMasterListPage />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/invoice",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <InvoiceMasterListPage />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/complaints",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <CompliantListPage />
+                    </Suspense>
+                ),
+            },
+            {
+                // summary
+                path: "tripDetails",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <SummaryMasterListPage />
+                    </Suspense>
+                ),
+            },
+            // Profile
+            {
+                path: "profile",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ProfileMasterListPage />
+                    </Suspense>
+                ),
+            },
         ],
     },
-
     {
         path: "/auth",
-        element: <AuthLayout />,
+        element: (
+            <Suspense fallback={<LoadingSpinner />}>
+                <AuthLayout />
+            </Suspense>
+        ),
         children: [
             {
                 path: "login",
-                element: <Login />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Login />
+                    </Suspense>
+                ),
             },
             {
                 path: "signup",
-                element: <Signup />,
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Signup />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "forgot-password",
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ForgetPassordComponent />
+                    </Suspense>
+                ),
             },
             {
                 path: "*",
-                element: <h1 className=" flex
-                justify-center
-                items-center
-                h-screen
-                text-4xl
-                font-bold">Not Found</h1>
+                element: (
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ErrorBoundaryPage />
+                    </Suspense>
+                ),
             }
         ]
     },
     {
-
-
         path: "*",
-        element: <ErrorPage />,
-
+        element: (
+            <Suspense fallback={<LoadingSpinner />}>
+                <ErrorPage />
+            </Suspense>
+        ),
     },
 ]);
+
 const App = () => {
     return (
-        <>
-            <QueryClientProvider client={queryClient}>
-                <ReactQueryDevtools initialIsOpen={false} />
-                <Provider store={store}>
-                    <RouterProvider router={router} />
-                </Provider>
-            </QueryClientProvider>
-        </>
-    )
-}
+        <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Provider store={store}>
+                <RouterProvider router={router} />
+            </Provider>
+        </QueryClientProvider>
+    );
+};
 
-export default App
+export default App;

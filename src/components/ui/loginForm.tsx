@@ -77,12 +77,12 @@ export default function LoginForm({ onLogin, loading, setLoading }: { onLogin: (
               }
             </Button>
           </div>
-          <div className="mt-4 text-center text-sm">
+          {/* <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link to="/auth/signup" className="underline">
               Sign up
             </Link>
-          </div>
+          </div> */}
         </form>
       </div>
       <div className="

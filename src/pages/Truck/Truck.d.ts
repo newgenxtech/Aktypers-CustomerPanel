@@ -1,23 +1,3 @@
-// "id": "1",
-// "customerid": "1001",
-// "registration_number": "ABC1234",
-// "chassis_number": "CH123456789",
-// "engine_number": "EN987654321",
-// "make": "Toyota",
-// "model": "mahindra",
-// "year_of_manufacture": "0000",
-// "wheels": "12",
-// "tyre_type": "3",
-// "load_capacity": "1500.00",
-// "fuel_type": "Diesel",
-// "insurance_number": "",
-// "insurance_expiry_date": "2024-12-31",
-// "last_service_date": "2023-06-01",
-// "remarks": "No issues",
-// "rc_book": "",
-// "insurance": "",
-// "pic": ""
-
 
 export type ITruckData = {
     id: string;
@@ -39,4 +19,15 @@ export type ITruckData = {
     rc_book: string;
     insurance: string;
     pic: string;
+    truckid?: string;
+}
+
+export interface ITruckConfig {
+    truck_id: string;
+    truck_type: string;
+    total_tyres: string;
+    axle_configuration: string;
+    total_axles: string;
+    axtyre: string;
+    config: string;
 }

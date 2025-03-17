@@ -4,8 +4,8 @@ import { FileImage } from 'lucide-react';
 import { ITruckData } from '@/pages/Truck/Truck.d';
 import { routes } from "@/routes/routes";
 import { CustomCellRendererProps } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+// import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { ColDef, ColGroupDef } from 'ag-grid-community';
 import AgGridTable from '../AgGridTable';
 
@@ -65,13 +65,13 @@ const TruckTable: React.FC<TruckTableProps> = ({ data, isLoading, setOpen, setIs
             field: 'year_of_manufacture'
         },
         {
-            headerName: 'Wheels',
-            field: 'wheels'
-        },
-        {
             headerName: 'Tyre Type',
-            field: 'tyre_type'
+            field: 'axle_configuration'
         },
+        // {
+        //     headerName: 'Truck Type',
+        //     field: 'tyre_type'
+        // },
         {
             headerName: 'Load Capacity',
             field: 'load_capacity'

@@ -1,12 +1,13 @@
 import "@/styles/TableComponent.css"
+import clsx from "clsx";
 
-interface DataCol<T> {
+export interface DataCol<T> {
   label: string | React.ReactNode;
   key: string
-  render: (data: T) => React.ReactNode;
+  render: (data: T, index: number) => React.ReactNode;
   sortable?: boolean;
   onSort?: (accessor: string) => void
-
+  className?: string
 }
 
 interface TableComponentProps<T> {
@@ -17,6 +18,8 @@ interface TableComponentProps<T> {
     rowsPerPage: number
   },
   setPagination: (pagination: { currentPage: number, rowsPerPage: number }) => void
+  className?: string
+  NoDataComponent?: React.ReactNode
 }
 
 const TableComponent = <T,>(props: TableComponentProps<T>) => {
@@ -27,10 +30,10 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
   // Calculate the data to be displayed on the current page
   const indexOfLastRow = props.pagination.currentPage * props.pagination.rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - props.pagination.rowsPerPage;
-  const currentData = props.data.slice(indexOfFirstRow, indexOfLastRow);
+  const currentData = props?.data?.slice(indexOfFirstRow, indexOfLastRow) ?? [];
 
   // Calculate the total number of pages
-  const totalPages = Math.ceil(props.data.length / props.pagination.rowsPerPage);
+  const totalPages = Math.ceil(props?.data?.length / props.pagination.rowsPerPage);
   // Function to handle page change
   const handlePageChange = (pageNumber: number) => {
     // setCurrentPage(pageNumber);
@@ -40,8 +43,12 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
 
   return (
     <>
-      <div className="table-container">
-        <table className="modern-table">
+      <div className={clsx("table-container",
+        "h-[550px]"
+      )}>
+        <table className={clsx("modern-table",
+          props.className ? props.className : ""
+        )}>
           {
             props.columns && (
               <thead>
@@ -52,6 +59,7 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
                         key={index}
                         onClick={() => header.sortable && header.onSort ? header.onSort(header.key) : undefined}
                         style={{ cursor: header.sortable ? "pointer" : "default" }}
+                        className={header.className}
                       >
                         {header.label}
                       </th>
@@ -61,19 +69,30 @@ const TableComponent = <T,>(props: TableComponentProps<T>) => {
               </thead>
             )
           }
-          <tbody>
-            {props.data &&
+          <tbody >
+            {(props.data &&
+              props.data.length > 0) ?
               currentData.map((rowData, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr key={rowIndex} >
                   {
                     props.columns && props.columns.map((col, colIndex) => (
                       <td key={colIndex}>
-                        {col.render(rowData)}
+                        {col.render(rowData, rowIndex)}
                       </td>
                     ))
                   }
                 </tr>
-              ))}
+              ))
+              :
+              <tr>
+                <td
+                  colSpan={props.columns?.length}
+                  style={{ textAlign: "center" }}
+                >
+                  {props.NoDataComponent ? props.NoDataComponent : "No data available"}
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
         {/* implement pagination */}

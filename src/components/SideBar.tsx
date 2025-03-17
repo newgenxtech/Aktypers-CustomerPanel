@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut } from "lucide-react";
+import { Link, useNavigate } from 'react-router-dom';
+import { Home, Forklift, TruckIcon, Car, LifeBuoy, LogOut, ShieldCheck, ReceiptIndianRupee, BookOpenCheck, FileSpreadsheet, CircleUserRound, CircleUser } from "lucide-react";
 import WareHouseIcon from '@/assets/icons8-warehouse-96.png';
 // import DocsIcon from '@/assets/icons8-open-book-96.png';
 import AccountIcon from '@/assets/icons8-male-user-96.png';
@@ -11,7 +11,7 @@ import HamburgerIcon from '@/assets/icons8-hamburger-120.png';
 import '@/styles/SideBar.css';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 // import { NavUser } from './nav-user';
-import { message } from 'antd';
+import { Dropdown, MenuProps, message } from 'antd';
 import { Logout } from '@/lib/utils';
 // import { motion, AnimatePresence } from "framer-motion"
 
@@ -23,17 +23,7 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: <Home /> },
-    // { label: 'Product', path: '/product', icon: <Package /> },
-    // { label: 'Warehouse', path: '/warehouse', icon: <Warehouse /> },
-    // { label: 'Purchaser', path: '/purchaser' },
-    // { label: 'Contracts', path: '/contracts' },
-    // { label: 'RFP', path: '/rfp' },
-    // { label: 'WRO', path: '/wro' },
-    // { label: 'Inventory', path: '/inventory' },
-    // { label: 'Order', path: '/order', icon: <ShoppingCart /> },
-    // { label: 'Work Order', path: '/work-order' },
-    // { label: 'Billing', path: '/billing', icon: <CreditCard /> },
-    { label: 'Drvier', path: '/driver', icon: <Car /> },
+    { label: 'Driver', path: '/driver', icon: <Car /> },
     { label: 'Alloy', path: '/alloy', icon: <Forklift /> },
     {
         label: 'Truck',
@@ -64,6 +54,27 @@ const menuItems: MenuItem[] = [
         label: 'Tyres',
         path: '/tyres',
         icon: <LifeBuoy />
+    },
+    {
+        label: 'Insurance',
+        path: '/insurance',
+        icon: <ShieldCheck />
+    },
+    {
+        label: 'Invoice',
+        path: '/invoice',
+        icon: <ReceiptIndianRupee />
+    },
+    {
+        label: 'Complaints',
+        path: '/complaints',
+        icon: <BookOpenCheck />,
+    },
+    {
+        // Summary 
+        label: 'Trip Details',
+        path: '/tripDetails',
+        icon: <FileSpreadsheet />,
     }
 ];
 
@@ -96,6 +107,41 @@ const Sidebar = () => {
         }
         // You can add functionality to navigate or perform actions here
     }, []);
+
+    const items: MenuProps['items'] = [
+        {
+            label: (
+                <Link to='profile' className='cursor-pointer'>
+                    <div className='flex items-center gap-2'>
+                        <CircleUser />
+                        <span>
+                            Profile
+                        </span>
+                    </div>
+                </Link>
+            ),
+            key: '0',
+        },
+        {
+            type: 'divider',
+        },
+        {
+            label: (
+                <div className='flex items-center gap-2'>
+                    <LogOut />
+                    <span>
+                        Logout
+                    </span>
+                </div>
+
+            ),
+            key: '1',
+            onClick: () => {
+                Logout({ navigate, message })
+            },
+        },
+    ];
+
 
 
     return (
@@ -138,7 +184,7 @@ const Sidebar = () => {
                                         marginLeft: '1.2rem',
                                     }} />
                                 </a> */}
-                                {/* <a href='https://stockarea.io' target="_blank">
+                                {/* <a href='https://stockarea.io' target="_blank" className='cursor-pointer'>
                                     <img src={AccountIcon} alt="docs" className="icon" style={{
                                         width: '30px',
                                         height: '30px',
@@ -146,6 +192,7 @@ const Sidebar = () => {
                                         marginLeft: '1.2rem',
                                     }} />
                                 </a> */}
+
                                 {/* <NavUser
                                     user={{
                                         name: 'John Doe',
@@ -153,6 +200,18 @@ const Sidebar = () => {
                                         avatar: 'https://avatars.dicebear.com/api/avataaars/john-doe.svg'
                                     }}
                                 /> */}
+                                <Link to='profile' className='cursor-pointer'>
+                                    <CircleUserRound
+                                        className='icon text-white'
+                                        style={{
+                                            width: '30px',
+                                            height: '30px',
+                                            marginBottom: '1rem',
+                                            marginLeft: '1.2rem',
+                                        }}
+                                    />
+                                </Link>
+
                                 <LogOut
                                     style={{
                                         width: '30px',
@@ -214,15 +273,49 @@ const Sidebar = () => {
                     </div>
                     <div className="flex gap-2">
                         <div className="cursor-pointer">
+                        </div>
+                        <Dropdown menu={{ items }} trigger={['click']}>
                             <img
                                 src={AccountIcon}
                                 alt="docs"
                                 className="w-8 h-8"
-                                onClick={() => {
-                                    Logout({ navigate, message });
-                                }}
+                            // onClick={() => {
+                            //     Logout({ navigate, message });
+                            // }}
                             />
-                        </div>
+                            {/* <a onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                    Click me
+                                </Space>
+                            </a> */}
+                        </Dropdown>
+                        {/* <Link to='profile' className='cursor-pointer'>
+                            <CircleUserRound
+                                className='icon text-white'
+                            // style={{
+                            //     width: '30px',
+                            //     height: '30px',
+                            //     marginBottom: '1rem',
+                            //     marginLeft: '1.2rem',
+                            // }}
+                            />
+                        </Link>
+
+                        <LogOut
+                            // style={{
+                            //     width: '30px',
+                            //     height: '30px',
+                            //     marginBottom: '1rem',
+                            //     marginLeft: '1.2rem',
+                            //     cursor: 'pointer',
+                            //     color: 'white',
+                            // }}
+                            onClick={
+                                () => {
+                                    Logout({ navigate, message })
+                                }
+                            }
+                        /> */}
                     </div>
                 </div>
                 {
